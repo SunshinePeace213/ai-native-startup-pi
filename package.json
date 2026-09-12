@@ -3,11 +3,14 @@
     "test": "bun test",
     "test:py": "uv run pytest",
     "eval:retrieval": "uv run scripts/llm-wiki/retrieve.py eval",
+    "architecture:print": "bun .pi/extensions/architecture-sync/cli.ts --print",
+    "architecture:sync": "bun .pi/extensions/architecture-sync/cli.ts --write",
+    "architecture:check": "bun .pi/extensions/architecture-sync/cli.ts --check",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "check": "bun run typecheck && bun run lint && bun run format && bun test && uv run pytest"
+    "check": "bun run typecheck && bun run lint && bun run format && bun run architecture:check && bun test && uv run pytest"
   },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "^0.85.1",

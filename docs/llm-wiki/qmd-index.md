@@ -30,13 +30,20 @@ repairs the index.
 
 ## Models
 
-Chosen once in `.env` (see `.env.sample`) and read only when the setup script
-creates the index. qmd records them in `.qmd/index.yml` and reads them from
-there afterwards. Changing the embedding model means a full `qmd embed -f`.
+A human configures model variables using `.env.sample`; the agent does not read
+`.env` or `.envrc`. The setup script receives exported `QMD_*_MODEL` values through
+its environment. Explicit values override recorded models on reruns as well as
+initial creation. Without explicit overrides, an existing project index retains
+its models; first-time seeding can inherit models from the global index.
 
-A vector's dimension is fixed by the model that produced it, and a mismatch
-degrades search with no error — so a copied index keeps its source's models
-rather than re-deriving them.
+qmd uses the recorded models in `.qmd/index.yml`. Setup may download models,
+replace collections, and re-embed changed content. An embedding-dimension mismatch
+triggers a full `qmd embed -f`; this can be expensive. Reconfiguration is an explicit
+maintenance operation, not a harmless read-only troubleshooting command.
+
+If the binary/index is unavailable during a query, keep the retriever's available
+state/graph evidence and report skipped coverage. Request setup when needed; do not
+repair or download models as an incidental part of a read-only task.
 
 ## Consumers
 

@@ -17,6 +17,8 @@ export interface FakePi {
   handlers: Map<string, Handler[]>;
   sent: SentMessage[];
   execCalls: ExecCall[];
+  commands: Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>;
+  entries: Array<{ customType: string; data: unknown }>;
   /** Fire one event through every handler registered for it; the first defined result wins. */
   emit(event: string, payload: Record<string, unknown>, ctx: ExtensionContext): Promise<unknown>;
 }
@@ -25,10 +27,16 @@ const notStubbed = (name: string) => () => {
   throw new Error(`fake-pi: ${name} is not stubbed — the extension started using it`);
 };
 
-export function createFakePi(exec: ExecScript): FakePi {
+export function createFakePi(
+  exec: ExecScript,
+  options: { flags?: Record<string, unknown>; activeTools?: string[] } = {},
+): FakePi {
   const handlers = new Map<string, Handler[]>();
   const sent: SentMessage[] = [];
   const execCalls: ExecCall[] = [];
+  const commands = new Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>();
+  const entries: Array<{ customType: string; data: unknown }> = [];
+  const flags: Record<string, unknown> = { ...options.flags };
 
   const stub: Record<string, unknown> = {
     on(event: string, handler: Handler) {
@@ -41,6 +49,17 @@ export function createFakePi(exec: ExecScript): FakePi {
     },
     sendMessage(message: Record<string, unknown>, options?: Record<string, unknown>) {
       sent.push({ message, options });
+    },
+    registerCommand(name: string, command: Parameters<ExtensionAPI["registerCommand"]>[1]) {
+      commands.set(name, command);
+    },
+    registerFlag(name: string, flag: { default?: unknown }) {
+      if (!(name in flags)) flags[name] = flag.default;
+    },
+    getFlag: (name: string) => flags[name],
+    getActiveTools: () => options.activeTools ?? ["read", "write", "edit", "bash"],
+    appendEntry(customType: string, data: unknown) {
+      entries.push({ customType, data });
     },
   };
   const pi = new Proxy(stub, {
@@ -56,6 +75,8 @@ export function createFakePi(exec: ExecScript): FakePi {
     handlers,
     sent,
     execCalls,
+    commands,
+    entries,
     async emit(event, payload, ctx) {
       for (const handler of handlers.get(event) ?? []) {
         const result = await handler({ type: event, ...payload }, ctx);

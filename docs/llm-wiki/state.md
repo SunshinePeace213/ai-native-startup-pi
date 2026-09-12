@@ -26,7 +26,7 @@ llm-wiki/
 └── wiki/<shelf>/<slug>.md              rendered pages
 ```
 
-- `scripts/llm-wiki/state.py` — the engine, and the only writer under `states/`: `register` · `validate` · `apply` (`--inbox` drains `states/inbox/` in name order, one run per file) · `decay` · `merge` · `unmerge` · `undo` · `redo` · `rebuild` · `slice` · `status`, plus the read-only `queue` · `review` · `inbox` · `audit`.
+- `scripts/llm-wiki/state.py` — the engine that maintains state ledgers and views: `register` · `validate` · `apply` (`--inbox` drains `states/inbox/` in name order, one run per file) · `decay` · `merge` · `unmerge` · `undo` · `redo` · `promote` · `rebuild` · `slice` · `status`, plus the read-only `queue` · `review` · `inbox` · `audit`. Authorized workflows may write inbox proposals directly; rendering also appends audit records.
 - `scripts/llm-wiki/render.py` — the renderer, and the only writer under the shelves and of the index rows: `render` · `check`. The audit ledger is the one file under `states/` the renderer also appends to.
 - `scripts/llm-wiki/graph.py` — read-only over the views: `neighbors` · `path` · `impact` · `check`. It writes nothing under `llm-wiki/`.
 - `scripts/llm-wiki/retrieve.py` — read-only over the views, the ledgers, the rendered pages, and qmd: `search` · `eval` · `check`. Contract: [retrieval.md](retrieval.md).
@@ -35,6 +35,20 @@ llm-wiki/
 - Every write verb runs as a *run*: an actor (`--actor`, env `LLM_WIKI_ACTOR`, default `agent:unattributed`) resolved to a role in `llm-wiki/governance.json`, refused with exit 3 and one denied audit row when the policy says no, serialized on `states/.lock`, stamped as `run_id` on every row it appends, and recorded in `states/audit_log.jsonl`. `merge`, `unmerge`, `undo`, and `redo` also take `--by human:<name>`.
 - Every verb takes `--root <repo-root>` (default: the working directory); `--root` and `--actor` are global flags and precede the verb.
 - The LLM never writes under `states/` beyond a proposal into `states/inbox/`, and never under a shelf; it writes the extraction file and the log entry, nothing else.
+
+## Implemented versus enabled segments
+
+The layout above describes the shared segment. The implementation also accepts
+`--segment private` (or `LLM_WIKI_SEGMENT=private`), rooted at `llm-wiki/private/`,
+with shared schemas and governance. The current policy grants every role access
+only to `shared`; private writes are not enabled. Do not change that policy from
+an agent session or describe dormant functionality as verified readiness.
+
+`promote` is implemented to re-file private evidence into the shared segment and
+requires human attribution and a reason. Its existence is not authorization to
+use private material. Private-segment/promote behavior lacks dedicated cases in
+the current scratch-vault suite. Enabling or removing this capability requires a
+separate reviewed change, not a documentation cleanup.
 
 ## Ledgers and views
 

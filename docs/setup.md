@@ -1,7 +1,8 @@
 # Setup
 
-One-shot setup for a fresh clone. Every step is idempotent — safe to re-run.
-Work the steps in order; each depends on the one before it.
+Bootstrap a fresh clone in order. Installs, trust decisions, model downloads, and
+index reconfiguration have side effects; do not run setup incidentally during a
+read-only review. Preserve existing configuration when returning to an old checkout.
 
 ## 1. Toolchain
 
@@ -33,11 +34,14 @@ installed binary is still not on `PATH`, reopen the shell.
 ## 2. Environment file
 
 ```bash
-cp .env.sample .env
+[ -e .env ] || [ -L .env ] || cp .env.sample .env
 direnv allow
 ```
 
-`.env.sample` is the committed catalog of every variable the repo understands.
+Existing `.env` files and symlinks are preserved. A human should merge newly needed
+keys from the sample rather than replacing local values.
+
+`.env.sample` is the committed catalog of repository environment variables.
 The `QMD_*` model variables are optional — left unset, qmd resolves its own
 defaults (embeddinggemma-300M, Qwen3-Reranker-0.6B): smaller and weaker than the
 sample's Qwen3-8B models, but they need no configuration and no large downloads.
@@ -82,13 +86,20 @@ bun test            # tests/pi — the extension hooks against a fake Pi
 
 ## 4. Trust the project
 
-Project skills (`.agents/skills/`), agents (`.pi/agents/`), settings, and the
-llm-wiki extension load only after Pi trusts the folder. Open `pi` once in the
-repo and run `/trust`. Non-interactive runs pass `-a` instead:
+Project skills (`.agents/skills/`), agents (`.pi/agents/`), settings, and extensions
+load only after Pi trusts the folder. Review the project before trusting it. Open
+`pi` in the repo, run `/trust`, then restart for that decision to take effect.
+Non-interactive runs can explicitly approve the project with `-a`:
 
 ```bash
 pi -a -p "/skill:llm-wiki-query what does the wiki know about pi skills"
 ```
+
+For existing trusted sessions, `/reload` picks up extension edits. The architecture
+extension starts check-only; `/architecture-sync auto` enables automatic tree updates
+for one editing session. See [architecture-sync.md](architecture-sync.md) for modes,
+folder descriptions, and writer boundaries. Architecture maintenance is TypeScript
+and requires Bun/Git, not the old Python helper.
 
 ## 5. Search index
 
@@ -110,13 +121,16 @@ uv run scripts/llm-wiki/render.py check
 uv run scripts/llm-wiki/lint.py
 ```
 
-All four clean means the knowledge base is ready. The skills, the agents, and
-the extension that operate it are described in `AGENTS.md`.
+These check state and page integrity, not model quality or complete retrieval coverage.
+Additional read-only diagnostics and mutating workflows are in
+[KB operations](llm-wiki/operations.md). Component responsibilities are in
+[ARCHITECTURE.md](../ARCHITECTURE.md).
 
 ## 7. Run the suite
 
 ```bash
-bun run check         # typecheck · lint · format · bun test · uv run pytest
+bun run architecture:check  # read-only; sync explicitly if structure changed
+bun run check         # typecheck · lint · format · architecture · bun test · pytest
 bun run eval:retrieval  # the retrieval golden set; needs qmd and its models
 ```
 

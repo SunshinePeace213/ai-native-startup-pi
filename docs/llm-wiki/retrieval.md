@@ -80,8 +80,10 @@ with `--intent`, which defaults to `factual`; the script never classifies.
 
 ## Evals
 
-- Two surfaces: contract tests over a fixture vault with a replaying fake qmd, which run in CI and never skip, and the
-  tracked live golden set `eval` runs against the pilot vault.
+- Current ranking coverage is the tracked live golden set `eval` runs against the pilot vault.
+  The former fixture/replaying-qmd runner under `tests/harness-layer/` is absent, and no CI workflow is checked in.
+  Treat old runner references in `llm-wiki/evals/retrieval_tests.md` as historical, not runnable coverage;
+  [testing.md](../testing.md#current-coverage-and-gaps) records the current gap.
 - A case belongs to one family — `exact-token`, `paraphrase`, `structure`, `history`, `current-fact`, `flags` — carries
   exactly one expectation (`expect_claims`, `expect_keys`, `expect_pages`, or `expect_flag`) plus an optional
   `expect_status`, and names in `needs` the streams that must have run.

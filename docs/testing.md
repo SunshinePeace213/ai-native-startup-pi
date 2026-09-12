@@ -55,10 +55,13 @@ Every test file opens with its numbered contract; every case is named
 | Command | What |
 | --- | --- |
 | `bun test` | every TS test (`bunfig.toml` roots discovery at `tests/`) |
-| `bun test tests/pi/llm-wiki` | one extension |
+| `bun test tests/pi/llm-wiki` | KB extension |
+| `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
+| `bun test tests/docs` | Local documentation links and heading targets |
+| `bun run architecture:check` | Generated map matches the current projected tree; no repairs |
 | `uv run pytest` | every Python test, in parallel, each on its own scratch vault |
 | `uv run pytest tests/scripts/llm-wiki -k L4` | one contract line |
-| `bun run check` | typecheck · lint · format · `bun test` · `uv run pytest` — the definition of done |
+| `bun run check` | typecheck · lint · format · architecture drift check · `bun test` · `uv run pytest` |
 | `bun run eval:retrieval` | the retrieval golden set against the live vault; exits 1 below the floor |
 
 Tests import the code under test by alias — `@ext/llm-wiki/guard`,
@@ -76,7 +79,38 @@ Tests import the code under test by alias — `@ext/llm-wiki/guard`,
    `scripted-exec.ts`.
 4. `bun run check`, quote the output.
 
-## Adding a second extension
+## Architecture and documentation tests
+
+`tests/pi/architecture-sync/` holds `generate/`, `cli/`, and `session/` contracts.
+The generator and CLI use scratch Git repositories, including a linked worktree;
+the lifecycle tests run against the shared fake Pi. No model or live KB is invoked.
+`fixture.ts` is the shared scratch-repository builder.
+
+`tests/docs/references.test.ts` checks local Markdown links and heading targets in
+`AGENTS.md`, `ARCHITECTURE.md`, and `docs/`, without executing examples, fetching URLs,
+or crawling KB contents. This checks references, not the truth of prose. Markdown
+is excluded from Prettier; a passing format check alone does not verify documentation.
+
+Before validating structural changes, run `bun run architecture:sync`. The check
+command only detects drift; the after-run Pi callback cannot fix an earlier gate.
+Unknown folder descriptions are reported for curation, not inferred from filenames.
+
+## Current coverage and gaps
+
+- The code suite runs locally through `bun run check`; no CI workflow is currently
+  checked into this repository.
+- The live retrieval golden set is separate and requires qmd/models. The former
+  fixture-based retrieval runner under `tests/harness-layer/` is absent. Older
+  runner references in `llm-wiki/evals/retrieval_tests.md` are not runnable coverage.
+- A directory convention is not proof of eval coverage. The librarian has a
+  standalone eval file; `source-archiver` currently does not. Trigger-eval files
+  alone do not establish output quality for a skill or its delegated agent.
+- AGENTS.md adherence requires clean-session behavioral trials (read-only tasks,
+  unrelated KB leads, queue reminders, and generated-block ownership), not exact
+  string assertions against the instructions. Those behavioral trials were not
+  executed as part of the deterministic architecture implementation.
+
+## Adding another extension
 
 `tests/pi/<extension>/<feature>/…` beside `llm-wiki/`; the harness is shared.
 If the extension needs a double the harness lacks, add it to `_harness/` with
