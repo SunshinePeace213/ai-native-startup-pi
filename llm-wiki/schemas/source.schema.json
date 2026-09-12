@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Source",
+  "description": "One registration of an immutable raw archive (housamkak v3 §6.1) — a row of llm-wiki/states/sources.jsonl. The ledger is append-only: re-registering a source (for example to override its authority) appends a new row with the same source_id, and the latest row wins on replay. hash proves immutability; a mismatch at register time means the archive was edited in place, which the raw layer forbids.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "channel",
+    "path",
+    "title",
+    "author",
+    "created_at",
+    "ingested_at",
+    "source_authority",
+    "scope",
+    "sensitivity",
+    "hash"
+  ],
+  "properties": {
+    "source_id": {
+      "description": "src_ + first 12 hex of sha256(repo-relative path). Content-derived, so parallel sessions never collide.",
+      "type": "string",
+      "pattern": "^src_[0-9a-f]{12}$"
+    },
+    "type": {
+      "description": "Document kind in the author's words — gist, spec, adr, transcript, paper, clipping.",
+      "type": "string",
+      "minLength": 1
+    },
+    "channel": {
+      "description": "The raw folder the archive lives in; sets the default source_authority.",
+      "enum": [
+        "articles",
+        "papers",
+        "books",
+        "docs",
+        "chats",
+        "notes",
+        "meetings",
+        "code-sessions",
+        "screenshots"
+      ]
+    },
+    "path": {
+      "description": "Repo-relative path of the archive — the same string a page's sources[].resource carries. Admits the private segment's raw/ alongside the shared one.",
+      "type": "string",
+      "pattern": "^llm-wiki/(private/)?raw/[^\\s]+\\.md$"
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "url": {
+      "description": "The archive's source: frontmatter value when it was fetched from the web.",
+      "type": "string",
+      "format": "uri"
+    },
+    "author": { "type": ["string", "null"], "minLength": 1 },
+    "created_at": {
+      "description": "The source's own date: the archive's published/last_modified/date/created frontmatter, else register --created-at; null when unknown. Recency at observation time counts from it.",
+      "type": ["string", "null"],
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "ingested_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "source_authority": {
+      "description": "How trusted this source is, 0–1. Defaults per channel; a human may override at register time.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "authority_set_by": {
+      "description": "Present when source_authority is a human override rather than the channel default.",
+      "type": "string",
+      "pattern": "^human:[a-z0-9-]+$"
+    },
+    "scope": { "enum": ["private", "shared"] },
+    "sensitivity": {
+      "description": "The note's vocabulary. This layer is fully tracked: the shared segment registers only public and internal, the private segment also accepts private, and secret is refused in both.",
+      "enum": ["public", "internal", "private", "secret"]
+    },
+    "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "run_id": {
+      "description": "The run that appended this row (spec.md `### Ledger rows`) — run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes · views_before), the same id stamped on the row's states/audit_log.jsonl entry. Optional: absent on every row from Phases 1–5, present on every row Phase 6 on appends.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    }
+  }
+}

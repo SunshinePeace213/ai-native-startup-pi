@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Audit",
+  "description": "One row of llm-wiki/states/audit_log.jsonl — the trail of every write run and every denial (housamkak v3 §17.4, spec.md `### Ledger rows`). run_id = run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes joined by comma · views_before) — the same id stamped on every ledger row the run appends, so this row and its rows join on it. outcome distinguishes a run that changed the views (ok), one that ran and changed nothing (unchanged), one the policy refused (denied, with detail naming the reason), and one that raised (failed); appended and pages count what the run wrote, and views_before/views_after are the sha256 over the sorted per-file sha256 of the five views (null when states/ is absent), letting audit --check prove the ledgers and the views agree.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "timestamp",
+    "actor",
+    "role",
+    "verb",
+    "segment",
+    "args",
+    "outcome",
+    "inputs",
+    "appended",
+    "pages",
+    "views_before",
+    "views_after",
+    "detail"
+  ],
+  "properties": {
+    "run_id": {
+      "description": "run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes · views_before). Content-derived, so re-running the same inputs at the same moment never collides silently.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "actor": {
+      "description": "The identity the run resolved, either from --actor/LLM_WIKI_ACTOR or the human-only --by.",
+      "type": "string",
+      "pattern": "^(human|agent|routine|process):[a-z0-9][a-z0-9._-]*$"
+    },
+    "role": {
+      "description": "The actor's role at governance.json lookup time — actors[actor], else the actor's own prefix.",
+      "enum": ["human", "agent", "routine", "process"]
+    },
+    "verb": {
+      "enum": [
+        "register",
+        "apply",
+        "decay",
+        "merge",
+        "unmerge",
+        "undo",
+        "redo",
+        "promote",
+        "rebuild",
+        "render"
+      ]
+    },
+    "segment": { "enum": ["shared", "private"] },
+    "args": {
+      "description": "The verb's own arguments, in the order given on the command line.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "outcome": { "enum": ["ok", "unchanged", "denied", "failed"] },
+    "inputs": {
+      "description": "The files the run read to decide what to append, each hashed at read time so a later dispute can confirm which bytes drove the run.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "hash"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "appended": {
+      "description": "How many rows the run added to each ledger — zero everywhere on a denied or failed run.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "observations", "transitions", "merges", "retractions"],
+      "properties": {
+        "sources": { "type": "integer", "minimum": 0 },
+        "observations": { "type": "integer", "minimum": 0 },
+        "transitions": { "type": "integer", "minimum": 0 },
+        "merges": { "type": "integer", "minimum": 0 },
+        "retractions": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "pages": {
+      "description": "Which rendered pages the run touched — empty on every engine run; the renderer's own audit row names what render wrote or removed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["written", "removed"],
+      "properties": {
+        "written": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "removed": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "views_before": {
+      "description": "sha256 over the sorted per-file sha256 of the five views before the run; null when states/ is absent (the very first run).",
+      "type": ["string", "null"],
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "views_after": {
+      "description": "The same hash taken after the run; equal to views_before on an unchanged, denied, or failed outcome.",
+      "type": ["string", "null"],
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "detail": {
+      "description": "null on ok and unchanged; the denial or failure message otherwise.",
+      "type": ["string", "null"],
+      "minLength": 1
+    }
+  }
+}

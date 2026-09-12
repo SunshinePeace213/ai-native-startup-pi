@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Retraction",
+  "description": "One row of llm-wiki/states/retractions.jsonl — an undo (retract) or redo (restore) of a run, replayed by load_state alongside the ledgers it governs (spec.md `### Ledger rows`, `### Replay`). retraction_id = rtr_ + 12 hex of sha256(target_run_id · action · timestamp); target_run_id names the run being retracted or restored, and run_id is the id minted for this undo/redo run itself (present on the matching states/audit_log.jsonl row too, never on the target's own rows, which are never rewritten). Folding retractions.jsonl in ledger order and keeping the last action per target_run_id is what a row proves: a target whose last action is retract is skipped on replay, one whose last action is restore is folded again.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["retraction_id", "target_run_id", "action", "by", "reason", "timestamp", "run_id"],
+  "properties": {
+    "retraction_id": {
+      "description": "rtr_ + 12 hex of sha256(target_run_id · action · timestamp). Content-derived, so parallel sessions never collide.",
+      "type": "string",
+      "pattern": "^rtr_[0-9a-f]{12}$"
+    },
+    "target_run_id": {
+      "description": "The run being retracted or restored.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    },
+    "action": { "enum": ["retract", "restore"] },
+    "by": {
+      "description": "The human who ran undo or redo — every reversal is audited as a human, never as the actor of the original run.",
+      "type": "string",
+      "pattern": "^human:[a-z0-9-]+$"
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "run_id": {
+      "description": "The id minted for this undo/redo run itself, distinct from target_run_id — the run that appended this very row.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+[project]
+name = "ai-native-startup"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "jsonschema>=4.23",
+    "pytest>=8",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.15.1",
+    "pytest-sugar>=1.1.1",
+    "pytest-timeout>=2.4.0",
+    "pytest-xdist>=3.8.0",
+    "pyyaml>=6.0.3",
+    "ruff>=0.15.20",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# importlib mode: the per-layer test folders (harness-layer/, llm-wiki/) mirror module
+# names, so basenames collide across dirs and prepend mode cannot import both. The
+# hyphenated dir names rule out __init__.py packages. pythonpath keeps test_governance.py's
+# the two cross-module test imports resolving (test_governance.py -> test_state.py,
+# test_offline.py -> test_wiring.py), which importlib mode alone would break.
+addopts = "-n auto --import-mode=importlib"
+pythonpath = ["tests/llm-wiki", "tests/harness-layer/hooks"]
+timeout = 60
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

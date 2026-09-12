@@ -1,0 +1,797 @@
+---
+type: system
+status: current
+created: 2026-08-23
+updated: 2026-09-11
+sources:
+  - {resource: llm-wiki/raw/articles/anthropic/a-harness-for-every-task-dynamic-workflows-in-claude-code.md, title: "A harness for every task: dynamic workflows in Claude Code", id: src_7415e8608f3c}
+  - {resource: llm-wiki/raw/articles/anthropic/claude-model-and-effort-level-in-claude-code.md, title: "Choosing a Claude model and effort level in Claude Code", id: src_fbabc2423960}
+  - {resource: llm-wiki/raw/articles/anthropic/getting-started-with-loops.md, title: "Loop engineering: Getting started with loops", id: src_d0a8a3247101}
+  - {resource: llm-wiki/raw/articles/anthropic/steering-claude-code-skills-hooks-rules-subagents-and-more.md, title: "Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents", id: src_93a1e6058bf1}
+  - {resource: llm-wiki/raw/articles/anthropic/the-ai-native-sdlc-playbook.md, title: "The AI-Native SDLC playbook", id: src_c65435745c66}
+  - {resource: llm-wiki/raw/articles/anthropic/the-new-rules-of-context-engineering-for-claude-5-generation-models.md, title: "the-new-rules-of-context-engineering-for-claude-5-generation-models", id: src_8419bce2e672}
+  - {resource: llm-wiki/raw/articles/anthropic/using-claude-code-the-unreasonable-effectiveness-of-html.md, title: "Using Claude Code: The unreasonable effectiveness of HTML", id: src_ee5ae103a89f}
+  - {resource: llm-wiki/raw/books/founders-playbook/index.md, title: "The Founder's Playbook: Building an AI-Native Startup", id: src_72a67c0111dc}
+  - {resource: llm-wiki/raw/docs/agent-skills/adding-skills-support.md, title: "How to add skills support to your agent", id: src_6932f817f8b4}
+  - {resource: llm-wiki/raw/docs/agent-skills/quickstart.md, title: "Quickstart", id: src_cc19a042a4fe}
+  - {resource: llm-wiki/raw/docs/claude-code/agent-teams.md, title: "Orchestrate teams of Claude Code sessions", id: src_67017872e4a4}
+  - {resource: llm-wiki/raw/docs/claude-code/artifacts.md, title: "Share session output as artifacts", id: src_9e45f4ba4e23}
+  - {resource: llm-wiki/raw/docs/claude-code/claude-security.md, title: "Scan your codebase for vulnerabilities", id: src_2eb7a799d8a7}
+  - {resource: llm-wiki/raw/docs/claude-code/cli-reference.md, title: "CLI reference", id: src_716248fd9713}
+  - {resource: llm-wiki/raw/docs/claude-code/code-review.md, title: "Code Review", id: src_1d5f4c9615f1}
+  - {resource: llm-wiki/raw/docs/claude-code/commands.md, title: "Commands", id: src_63b61512d6ab}
+  - {resource: llm-wiki/raw/docs/claude-code/cross-session-messaging.md, title: "Message your other Claude Code sessions", id: src_10e9043d62f0}
+  - {resource: llm-wiki/raw/docs/claude-code/deep-links.md, title: "Launch sessions from links", id: src_b72a74a8d21c}
+  - {resource: llm-wiki/raw/docs/claude-code/github-actions.md, title: "Claude Code GitHub Actions", id: src_7962dafdd21b}
+  - {resource: llm-wiki/raw/docs/claude-code/goal.md, title: "Keep Claude working toward a goal", id: src_5229aa475d30}
+  - {resource: llm-wiki/raw/docs/claude-code/headless.md, title: "Run Claude Code programmatically", id: src_d5ec157b2e7b}
+  - {resource: llm-wiki/raw/docs/claude-code/hooks-guide.md, title: "Automate actions with hooks", id: src_3466a5945e1e}
+  - {resource: llm-wiki/raw/docs/claude-code/hooks.md, title: "Hooks reference", id: src_af0a3c9de51d}
+  - {resource: llm-wiki/raw/docs/claude-code/large-codebases.md, title: "Set up Claude Code in a monorepo or large codebase", id: src_5ed7c226af31}
+  - {resource: llm-wiki/raw/docs/claude-code/mcp.md, title: "Connect Claude Code to tools via MCP", id: src_9e7c0cb34402}
+  - {resource: llm-wiki/raw/docs/claude-code/memory.md, title: "How Claude remembers your project", id: src_e698013f1182}
+  - {resource: llm-wiki/raw/docs/claude-code/model-config.md, title: "Model configuration", id: src_a959e4684753}
+  - {resource: llm-wiki/raw/docs/claude-code/permission-modes.md, title: "Choose a permission mode", id: src_4a22e1f99f87}
+  - {resource: llm-wiki/raw/docs/claude-code/scheduled-tasks.md, title: "Run prompts on a schedule", id: src_1aeabecafdc5}
+  - {resource: llm-wiki/raw/docs/claude-code/security-guidance.md, title: "Catch security issues as Claude writes code", id: src_99ad4fe8f1dd}
+  - {resource: llm-wiki/raw/docs/claude-code/settings.md, title: "Claude Code settings", id: src_44aa3ffce603}
+  - {resource: llm-wiki/raw/docs/claude-code/skills.md, title: "Extend Claude with skills", id: src_07950e24c4ee}
+  - {resource: llm-wiki/raw/docs/claude-code/sub-agents.md, title: "Create custom subagents", id: src_5671f6c73f3d}
+  - {resource: llm-wiki/raw/docs/claude-code/tools-reference.md, title: "Tools reference", id: src_ab9f8f38615f}
+  - {resource: llm-wiki/raw/docs/claude-code/workflows.md, title: "Orchestrate subagents at scale with dynamic workflows", id: src_d6586d5c5c4f}
+  - {resource: llm-wiki/raw/docs/claude-code/worktrees.md, title: "Run parallel sessions with worktrees", id: src_0979d158a4cf}
+  - {resource: llm-wiki/raw/papers/llm-as-judge-cross-model-review-guide.md, title: "Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder", id: src_521f898b9896}
+generated: {by: process:llm-wiki-render, at: 2026-09-11}
+entity_ids: [ent_claude_code]
+claim_ids: [clm_6282902285c5, clm_ca5f4231dbc2, clm_19117073da8e, clm_1691eac7dbb3, clm_3a056b12fdae, clm_b4a4dce90006, clm_d6db5eb024a3, clm_69a691b0baea, clm_03dee19f46e9, clm_34b4c7629f8c, clm_639cfed3cd72, clm_bc2e48f39a13, clm_bf04596b7d87, clm_02e514dade50, clm_3c7492d09031, clm_71a4b67427f6, clm_8a5ac3a8a835, clm_00214cae00e1, clm_16151e65ea2f, clm_805bbec6fa51, clm_8d072866bebe, clm_917de29f9f33, clm_9bc86c7e0f02, clm_bd185ee1d648, clm_be29c94c742f, clm_edfd83ab9d0b, clm_fe663417d914, clm_0659b458e4aa, clm_199a3ad4af87, clm_3e4818ada12a, clm_6dfe4cd8cabb, clm_794ee065e6ca, clm_7e83c9cc911e, clm_8c4373808e22, clm_9f8da267ecf6, clm_b7ca365c6ed5, clm_b83cb09bdf7b, clm_c6f907387ca6, clm_dc0ebbb9a51b, clm_ddd5deba5af8, clm_e888d6f6645f, clm_a02b62bcf985, clm_0b4f7948e088, clm_0db4ee93154e, clm_1b386e4233f4, clm_1dae05957203, clm_3072c56e3d0e, clm_65a77d75d064, clm_66b7f6ded709, clm_785d6c7de321, clm_826adcc8fb72, clm_8da3fbe3b018, clm_9094953b81df, clm_971e9091b930, clm_9a6a56d1d7eb, clm_a0b4cf68c8c2, clm_a9f8de81c140, clm_b7452ba63021, clm_da9d8c58cc46, clm_df3973d5ddfb, clm_e24b51402fe1, clm_eaeabd09442d, clm_ed1642c941f5, clm_fa5f76bf370c, clm_1cbbd4529c24, clm_1dc5534f1f11, clm_2629d09b0686, clm_4a55a86ff637, clm_4d483e15f7f2, clm_6ce4b501b320, clm_742b530ea197, clm_a000143bb6c6, clm_a6e2e30ec7ba, clm_a7d0154e1554, clm_b0a4eda36461, clm_ba8a7aa03de1, clm_c7efa28cfcfb, clm_cbe1bfbfb2c0, clm_fcd14cd753ef, clm_614484c4baab, clm_5170f00ac6f2, clm_11a662f3b659, clm_256e3568a77d, clm_51eafce71275, clm_95dd4d28d6cd, clm_c8e724381e5f, clm_e0310c5f4dec, clm_f54dd327d44e, clm_198fc635f5f4, clm_5bd3b13812ff, clm_64b87a2b64e4, clm_714f78c08bf2, clm_77037ce59207, clm_a93159a85dff, clm_c54b34646d07, clm_d3c8688a9a26, clm_08f7ec090a90, clm_a8d109a3feff, clm_b590ceffeda7, clm_dd6d8444326e, clm_13e5b40d313a, clm_4c418d487b7e, clm_0b4380115a9f, clm_1e096059acb6, clm_c95deb689a75, clm_d0b564243947, clm_591380d3c963, clm_890b846d4a42, clm_ad6abaac0af5, clm_e3e1d00b42dd, clm_936676a8d258, clm_c7fff347847f, clm_e4b002d151ce, clm_06937874202e, clm_34217cbae0d3, clm_1654b0d3617a, clm_22b2026c78fb, clm_27ed2b92268c, clm_29d91a7cbb32, clm_3cd9cf0ce96b, clm_3dcf6b089b87, clm_5e882ac2e1b6, clm_e12133e66288, clm_e21271f2bfed, clm_e261e230a5a7, clm_f39d19cef3a9, clm_935a50944ab0, clm_9d7ccdfee9ae, clm_cdb802990e15, clm_fa3bd1f7b469, clm_a9afd6afe40a, clm_5e59824148fe, clm_55681f67bc76, clm_6d413ce21aa5, clm_e283c9c6832b, clm_e5824e43202d, clm_f636b711007c, clm_cdc37e66617c, clm_a1a7d67456ed, clm_ed6e352a269a, clm_14f5761c068a, clm_3e6077428de5, clm_849bb2be606c, clm_87f54b7b4618, clm_ce1b361863a3, clm_fa3825370f1f, clm_175ad8d5489e, clm_023cf54f8d66, clm_5dcc0f9cf720, clm_059a28935b6c, clm_b8c4a4ce61d2, clm_47a3686ce837, clm_708e814f952c, clm_76793491b392, clm_b19037b381c9]
+confidence: 0.92
+stale_after: 2026-11-30
+last_rendered: 2026-09-11T19:57:09Z
+review_required: false
+---
+
+# Claude Code
+
+> **In here:** A mistyped claude subcommand does not fall through to a prompt: Claude Code suggests the closest matching subcommand and exits without starting a session · 155 claims, confidence 0.92.
+
+## Current understanding
+
+- Inside a loop, code review belongs to a second agent, because an agent reviewing its own output carries a bias a separate reviewer does not (1.00)
+- A hook handler can be a shell command, an HTTP endpoint, or an LLM prompt, and the same hook events fire wherever Claude Code runs - terminal sessions, IDE extensions, the Desktop app, and the web (1.00)
+- Exit code 2 is the only exit code that blocks through the code alone for most hook events - without valid JSON on stdout, exit code 1 is treated as a non-blocking error and the action proceeds (0.99)
+- A dynamic workflow executes a JavaScript file with a few special functions that spawn and coordinate subagents, and it can pick which model each agent uses and whether an agent runs in its own worktree, so Claude chooses the intelligence level and isolation the step needs (0.99)
+- Effort is not just thinking time: it controls the total work Claude performs, including how many files it reads, which tools it uses, and how many task-completion steps it takes before checking in (0.98)
+- A subagent's instructional body never enters the parent conversation at all: it runs in its own fresh context window and the only thing returning to the main session is its final message plus metadata (0.98)
+- Claude Code offers seven methods for instructing behavior — CLAUDE.md files, rules, skills, subagents, hooks, output styles, and appending the system prompt — and each trades context cost against authority by controlling when an instruction loads, whether it survives compaction, and how much weight it carries (0.98)
+- A working prototype is not evidence of problem-solution fit — it is a pressure-testing prop for conversations with potential users, and those conversations are the real evidence (0.96)
+- A deep link is a claude-cli:// URL that opens Claude Code in a new terminal window and can carry a working directory and a prompt to pre-fill (0.94)
+- An artifact is a live, interactive web page that Claude Code publishes from a session to a private URL on claude.ai and updates in place as the session continues (0.94)
+- The local /code-review command trades coverage for confidence by effort level: low and medium report only the findings it is most confident in, while high through max broaden coverage and may include findings the review is less sure about (0.94)
+- The security-guidance plugin reviews Claude's work at three points at different depths: a fast per-edit pattern match with no model call, an end-of-turn background model review of everything the turn changed, and a deeper agentic review on each commit or push Claude makes that reads surrounding code (0.94)
+- A git worktree is a separate working directory with its own files and branch that shares the repository's history and remote, so each Claude Code session running in one never touches another session's files (0.94)
+- A Claude Code skill is a SKILL.md file of instructions that Claude adds to its toolkit and either uses on its own when relevant or runs when the user types /skill-name (0.94)
+- The Claude Security plugin runs a multi-agent vulnerability scan of a codebase inside a Claude Code session: a team of Claude agents maps the architecture, builds a threat model, hunts for vulnerabilities, and independently reviews every finding before writing the report (0.94)
+- Command hooks run shell commands with the user's full permissions and can modify, delete, or read anything that user account can reach, so every hook command should be reviewed and tested before it is configured (0.94)
+- Without bare mode a headless print session runs the hooks in a project's .claude/settings.json and connects the servers in its .mcp.json even in a folder that was never trusted, showing no workspace trust dialog and no per-server approval prompt (0.94)
+- Every CLAUDE.md Claude Code discovers is concatenated into context rather than overriding the others, ordered from the filesystem root down to the working directory, so the instructions closest to where the session was launched are read last (0.93)
+- Slash commands control Claude Code from inside a running session, offering a quick way to switch models, manage permissions, clear context, or run a workflow (0.93)
+- When several hooks match one event they all run to completion and their outputs are combined, with PreToolUse permission decisions resolved most-restrictive-first in the order deny, defer, ask, allow (0.93)
+- Appending to Claude Code's system prompt preserves the default tool guidance, safety instructions, and coding conventions so only the difference must be supplied, whereas replacing it drops the entire default prompt and shifts responsibility for everything the task still needs onto the author (0.93)
+- The Claude Agent SDK exposes the same tools, agent loop, and context management that power Claude Code, available as a CLI for scripts and CI/CD or as Python and TypeScript packages for full programmatic control (0.93)
+- By default both the user and Claude can invoke any skill — typed directly as `/skill-name` or loaded automatically when relevant — and two frontmatter fields exist to restrict that (0.93)
+- Scheduled tasks created inside a Claude Code session are session-scoped: they stop when a new conversation starts, and only unexpired ones return on --resume or --continue (0.93)
+- Auto memory lets Claude accumulate knowledge across sessions without the user writing anything, saving four kinds of notes for itself as it works (0.93)
+- A dynamic workflow can only be resumed within the same Claude Code session; exiting Claude Code while a workflow is running means the next session starts it fresh (0.93)
+- The Claude Code GitHub Action detects how to run from the workflow: with no `prompt` input it runs interactive, waiting for the `@claude` trigger phrase in a comment, review, or new issue; with a `prompt` input it runs in automation mode without waiting for a mention, reporting to the workflow run log by default (0.93)
+- Bare mode makes a headless Claude Code run reproducible across machines by skipping auto-discovery of hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, and CLAUDE.md, and it is the recommended mode for scripted and SDK calls (0.93)
+- A Claude Code model alias points at the recommended model version for your provider and moves as that recommendation changes, so pinning a version means naming the full model name or setting the matching environment variable (0.93)
+- The /loop bundled skill re-runs a prompt on repeat for as long as the Claude Code session stays open, and both the interval and the prompt are optional (0.93)
+- Extended thinking is the reasoning Claude emits before responding, and on models with adaptive reasoning the effort level is the primary control over how much of it happens — the thinking settings only turn it on or off and control its display (0.93)
+- An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks committed in a repository run in a folder the user never trusted (0.93)
+- Starting Claude Code inside a package loads that package's CLAUDE.md alongside the repository root's, leaving sibling packages' instructions out of context (0.93)
+- The Model Context Protocol is an open source standard for AI-tool integrations, and an MCP server connected to Claude Code gives it access to external tools, databases, and APIs (0.93)
+- A hook exiting 0 reports no objection but does not approve anything: a PreToolUse hook's tool call still goes through the normal permission flow (0.93)
+- Any subdirectory can define skills scoped to its own stack, and because a skill loads only when Claude judges it relevant, one area's tooling consumes no context during another area's work (0.93)
+- Claude Code carries knowledge across sessions with two complementary memory systems, CLAUDE.md files and auto memory, both loaded at the start of every conversation and treated as context rather than enforced configuration (0.93)
+- PreToolUse hooks fire ahead of any permission-mode check, so a hook returning a deny decision blocks the tool even under bypassPermissions or --dangerously-skip-permissions (0.93)
+- Each artifact is one self-contained page that Claude Code wraps in an HTML document shell and serves under a strict Content Security Policy, which shapes what the page can do (0.93)
+- The /goal command sets a completion condition and Claude Code keeps working toward it turn after turn, starting a new turn instead of returning control whenever the condition does not yet hold (0.93)
+- Hook events fall into three cadences: once per session (SessionStart, SessionEnd), once per turn (UserPromptSubmit, Stop, StopFailure), and once per tool call inside the agentic loop (PreToolUse, PostToolUse) (0.93)
+- The local /code-review follows CLAUDE.md like any Claude Code session but does not read REVIEW.md, and a background review applies its --fix edits outside the session's checkpoints so /rewind does not undo them (0.93)
+- WebFetch runs the caller's extraction prompt over the fetched page with a small, fast model and returns that model's answer rather than the raw page, so what reaches Claude is bounded by the prompt that was asked (0.93)
+- A permission mode sets which actions Claude can take in a session without asking first, and Manual mode stops for approval before most actions that edit files, run shell commands, or reach the network (0.93)
+- Not every hook event supports blocking or steering behavior through JSON, and the events that do each use a different set of decision fields (0.93)
+- A running session's permission mode is switched with Shift+Tab in the CLI, the mode indicator in VS Code, or the mode selector in the desktop app (0.93)
+- A turn that fails on an error which will not clear until you fix it ends the active goal, with a warning naming the cause and telling you to run /goal again once it is fixed (0.93)
+- While a session is isolated in a worktree, Claude Code blocks any Edit, Write, or NotebookEdit that targets the main checkout, and any Bash, PowerShell, or Monitor command whose working directory resolves there or cannot be verified to stay outside it (0.93)
+- Claude decides when to delegate to a subagent from that subagent's description field, so a vague description is what keeps a subagent from being used (0.93)
+- When the same settings key appears in more than one place, Claude Code uses the value from the highest level that sets it and that value overrides the same key at every level below (0.93)
+- Plan mode lets Claude read files and run shell commands to explore and then write a plan, while edits to source stay blocked until the plan is approved (0.93)
+- Claude Code registers the claude-cli:// handler with macOS, Linux, and Windows on the first prompt sent in an interactive session, and starting a session without sending a prompt does not register it (0.93)
+- The model version that the `opus` and `sonnet` aliases resolve to is not fixed — it depends on which provider Claude Code is talking to (0.93)
+- When skills share a name across levels, enterprise overrides personal and personal overrides project, so a `deploy` skill in `~/.claude/skills/` wins over the project's (0.93)
+- CLAUDE.md files can live in several locations of differing scope, and they load from the broadest scope to the most specific so a project instruction appears in context after a user instruction (0.93)
+- Claude Code overrides a Stop hook once it has blocked eight consecutive times without progress, so a Stop hook must check whether it already forced a continuation (0.93)
+- Only one goal can be active per Claude Code session, and the same /goal command sets, checks, and clears it depending on the argument given (0.93)
+- Managed settings an organization deploys sit at the top of Claude Code's precedence stack, so nothing a developer sets overrides them — not even a key passed with `--settings` (0.93)
+- Claude Code reports a whole settings file as a Settings Error when its JSON or a value is rejected and offers to fix, exit, or continue without it, but downgrades individual bad entries to a Settings Warning and keeps the rest of the file in effect (0.93)
+- Deny rules cover Claude Code's built-in file tools and recognized Bash file commands given a denied path as an argument, but Claude still sees denied paths in the output of a Bash search such as `grep -r` or `find` (0.93)
+- Which effort levels exist depends on the model, and asking for a level the active model does not support runs it at the highest supported level at or below the one requested (0.93)
+- For a few security-sensitive keys Claude Code honors the stricter value from a lower scope in preference to the managed value, the one documented break in managed settings' precedence (0.93)
+- Updating an artifact means Claude edits the underlying file and publishes again to the same URL, so viewers with the page open see the revision in place (0.93)
+- Every surface that names a Claude Code tool — settings permissions, CLI flags, subagent and skill frontmatter, and hook conditions — uses the same `ToolName(specifier)` rule format, with the specifier's shape set by the tool and shared across several tools (0.93)
+- Permission modes only set the baseline that allow, ask, and deny rules layer on top of: deny rules block in every mode including `bypassPermissions`, where allow rules have no effect at all (0.93)
+- An MCP server is configured at one of three scopes, and that choice controls which projects the server loads in and whether the configuration is shared with the team (0.93)
+- A prompt hook replaces the shell command with a single-turn call to a Claude model, Haiku by default, so judgment-shaped decisions can be made where a deterministic rule cannot express them (0.93)
+- Claude Code's read-only file tools such as Read, Grep, and Glob run without a permission prompt inside the working directory but still prompt for paths outside it, while Bash prompts by default yet runs a built-in set of read-only commands without prompting (0.93)
+- When the same MCP server is defined in more than one scope, Claude Code connects once using the entire entry from the highest-precedence source, and never merges fields across scopes (0.93)
+- A list-valued settings key such as `permissions.allow` set in more than one settings file is combined rather than overridden, so each file adds entries without removing another file's (0.93)
+- Some entries in Claude Code's command list are bundled skills rather than coded-in commands, and they behave like user-written skills — a prompt handed to Claude, which Claude can also invoke on its own when relevant (0.93)
+- A command, HTTP, or MCP-tool hook that hits its timeout is canceled and renders no decision, so a stalled PreToolUse hook lets the tool call continue through the normal permission flow rather than acting as a gate (0.93)
+- Without pinned model IDs, Claude Code's aliases resolve to a built-in default per third-party provider that can lag the newest Anthropic release or point at a model the user's account has not enabled (0.93)
+- A code intelligence plugin connects Claude Code to a language server so it can jump to definitions and find references directly, instead of spending many file reads and grep calls scanning the tree for a symbol (0.93)
+- The auto mode classifier approves by default local file operations in the working directory, dependency installs declared in lock files or manifests, reading `.env` and sending those credentials to their matching API, and read-only HTTP requests (0.93)
+- Claude Code reads settings from four JSON files plus managed settings an organization delivers from the claude.ai console, and the source a setting is saved in decides which people and projects it applies to (0.93)
+- SIGTERM ends a `claude -p` run with exit code 143 and leaves the in-progress turn unfinished with no result recorded, so ending the turn instead takes a SIGINT or the Agent SDK's `interrupt()` before the process is stopped (0.93)
+- Claude Code works at any repository size, but as a codebase grows its small-project defaults fill the context window with instructions and file reads unrelated to the task, costing tokens and degrading performance (0.93)
+- Context injected by a hook should be phrased as factual statements, because text framed as out-of-band system instructions can trip Claude's prompt-injection defenses and get surfaced to the user instead of read as context (0.93)
+- Auto mode replaces routine permission prompts with a separate classifier model that reviews each action and blocks anything escalating beyond the request, targeting unrecognized infrastructure, or driven by hostile content Claude read (0.93)
+- A mistyped claude subcommand does not fall through to a prompt: Claude Code suggests the closest matching subcommand and exits without starting a session (0.92)
+- When many skills are discovered, their descriptions are shortened, which can strip the keywords Claude uses to decide whether a skill applies (0.92)
+- After a typo the command menu highlights nothing and still lists the close matches, so pressing Enter submits the text as typed and reports an Unknown command error instead of running the nearest match (0.92)
+- On exiting an interactive worktree session a clean worktree from an unnamed session is removed along with its branch automatically, while a named session or a worktree holding work prompts the user to keep or remove it (0.92)
+- A subagent can spawn subagents of its own up to three layers below the main conversation by default, and at that depth limit Claude Code withholds the Agent tool so the subagent does the work itself (0.92)
+- A background Bash task started during a `claude -p` run is terminated about five seconds after Claude returns its final result and stdin closes (0.92)
+- Claude Code scans every subagent's final report before Claude reads it, because files, web pages, and command output the subagent read can carry instructions aimed at the main conversation (0.92)
+- A slash command sent while Claude is still responding is queued until the current turn finishes, though Claude Code runs a few status commands such as /status, /tasks, and /usage immediately without interrupting the response (0.92)
+- Explore and Plan are the only Claude Code subagents that start without CLAUDE.md files and git status, and no frontmatter field or setting changes which subagents skip them (0.92)
+- An MCP server can change its available tools, prompts, and resources mid-session by sending a `list_changed` notification, which Claude Code answers by refreshing that server's capabilities without a disconnect and reconnect (0.92)
+- A parent session running in bypassPermissions, acceptEdits, or auto mode takes precedence over whatever permission mode a subagent declares in its own frontmatter (0.92)
+- A few available commands are kept out of Claude Code's slash-command menu by design and a partial name never surfaces them; the command is listed only once its full name is typed, and submitting that full name runs it (0.92)
+- A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs (0.92)
+- Claude Code authenticates to cloud-based MCP servers that require it with OAuth 2.0 (0.92)
+- Goal evaluation is skipped for any turn that ends while a subagent or background shell command is still running, and resumes at the end of the next turn that finishes with no background work (0.92)
+- Session-scoped tasks fire only while Claude Code is running and idle, so closing the terminal stops them, though backgrounding the session carries /loop tasks into a background session that keeps running (0.92)
+- Passing `--worktree` or `-w` with a name starts Claude in an isolated worktree created under `.claude/worktrees/<name>/` at the repository root, on a new branch named `worktree-<name>` (0.92)
+- A cross-session message is a piece of text one Claude writes to another and never carries conversation history or files, which is why moving a whole conversation means resuming the session instead (0.92)
+- Cross-session messaging requires Claude Code v2.1.224 or later on macOS, Linux, and WSL 2 and v2.1.234 or later on native Windows, and is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry (0.92)
+- Agent teams are experimental and disabled unless CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS is set to 1; without it no team is set up, no team directories are written, and Claude spawns no teammates (0.92)
+- An agent team is several coordinated Claude Code instances in which one session acts as the team lead assigning work and synthesizing results, while teammates work independently in their own context windows and message each other directly (0.92)
+- Turning on fast mode can implicitly switch the session to an Opus model, so `/fast` refuses to toggle when that model falls outside the organization's allowed models (0.92)
+- A Claude Code worktree checks out the entire repository by default, and the `worktree.sparsePaths` setting narrows it with git sparse-checkout to only the listed directories plus root-level files (0.91)
+- Claude Code decides whether a hook's stdout is JSON or plain text purely from its first non-whitespace character: output starting with an opening brace is parsed as JSON, and anything else - including a JSON array or quoted string - is treated as plain text (0.91)
+- Hook output strings, including additionalContext, systemMessage, and plain stdout, are capped at 10,000 characters, beyond which the text is written to a file and replaced with a preview and path (0.91)
+- Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled (0.91)
+- Hooks block Claude's execution until they finish unless marked async, and an async hook can never block or steer behavior because the action it would have controlled has already completed (0.91)
+- A matcher containing regex characters is tested unanchored with JavaScript's RegExp.prototype.test, so `Edit.*` also fires for `NotebookEdit` unless the pattern is anchored with ^ and $ (0.91)
+- The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit` (0.91)
+- The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run (0.91)
+- A message to a session on the same machine travels over a per-session socket, or a named pipe on native Windows, and never through Anthropic servers, while a message to a session on another of your machines or on Claude Code on the web passes through Anthropic servers (0.91)
+- Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current session only (0.91)
+- The `crossSessionInbound` setting decides what a session does with messages arriving from your other sessions: `accept` delivers each one to Claude, `hold` shows a notice without delivering, and `refuse` drops each message (0.91)
+- A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked (0.91)
+- Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate (0.91)
+- A non-interactive run continues the most recent conversation with `--continue`, which skips background sessions, or a specific conversation with `--resume` and a session ID (0.91)
+- `Read` deny rules in `permissions.deny` stop Claude Code from opening checked-in paths such as a vendored SDK or committed generated code, which `.gitignore` alone does not cover (0.91)
+- A worktree is a fresh checkout, so gitignored files carrying local configuration are absent until a `.worktreeinclude` file in the project root lists them for copying into each new worktree (0.91)
+- `bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths (0.91)
+- JSON passed to Claude Code with `--settings` merges with the settings files at its own level: a key set there beats the same key in local, project, or user settings, and any key it omits keeps its lower-level value (0.91)
+- `acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories` (0.91)
+- A non-interactive Claude Code run selects its response shape with `--output-format`: `text` for plain text (the default), `json` for structured JSON carrying the result, session ID, and metadata, or `stream-json` for newline-delimited JSON streamed in real time (0.91)
+- Claude Code exposes four system-prompt flags — two that replace the default prompt and two that append to it, each in a literal and a file-reading form — and all four work in interactive as well as non-interactive mode (0.91)
+- In Claude Code's settings stack a project's shared `.claude/settings.json` overrides the user's `~/.claude/settings.json`, and `.claude/settings.local.json` in turn overrides the shared project file (0.91)
+- Adding the `-p` (or `--print`) flag to any `claude` command runs Claude Code non-interactively, though not every CLI option combines with it (0.91)
+- Claude Code highlights the top suggestion in the slash-command menu only when the typed letters match a command's name or alias from the start of the name or of a word within it, ignoring the ':', '_', and '-' separators (0.91)
+- The -p / --print flag is Claude Code's non-interactive entry point: it prints the response instead of opening an interactive session, and is the surface used for programmatic and SDK-style invocation (0.91)
+- `dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves (0.91)
+- The `if` field that narrows a hook to matching tool arguments is best-effort and fails open when a Bash command cannot be parsed, so hard allow-or-deny enforcement belongs in the permission system rather than a hook (0.91)
+- Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it (0.91)
+- A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away (0.91)
+- Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later (0.91)
+- With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses (0.91)
+- An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later (0.91)
+- A Claude Code session has exactly one agent team that cannot be shared across sessions, and teammates cannot spawn teammates of their own, so only the lead manages the team (0.91)
+- Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off (0.91)
+- While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work (0.91)
+- An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call (0.91)
+- claude --resume takes a session ID or name or shows an interactive picker, and when given an ID it searches the current project directory and its git worktrees first, then every other project on the machine (0.90)
+- In Claude Code's `stream-json` output every line is a JSON object representing one event, and pairing the format with `--verbose` and `--include-partial-messages` delivers tokens as they are generated (0.90)
+- Where an account supports 1M context the option shows up in the `/model` picker, and the window can also be requested by appending a `[1m]` suffix to a model alias or a full model name (0.90)
+- MCP tool output draws a warning past 10,000 tokens and is capped at 25,000 tokens by default, a ceiling raised with the `MAX_MCP_OUTPUT_TOKENS` environment variable while the warning threshold stays fixed (0.90)
+- The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it (0.90)
+- claude --continue loads the most recent conversation in the current directory but skips background sessions, sessions created with claude -p or the Agent SDK, and sessions whose first prompt was /loop; adding -p brings those excluded sessions back into scope (0.90)
+- The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff` (0.90)
+- The --bg / --background flag starts a session as a background agent and returns immediately with the session ID and management commands, and it cannot be combined with -p / --print (0.90)
+- Because Agent Skills is an open format, the same skill folder works unchanged in any compatible agent, including VS Code, Claude Code, and OpenAI Codex (0.88)
+- Persistent context is what keeps AI a force multiplier instead of a source of entropy: founders who skip specs, architectural decisions, and context files like CLAUDE.md hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision (0.84)
+- An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session (0.84)
+- Anthropic removed over 80% of Claude Code's system prompt for models like Claude Opus 5 and Claude Fable 5 with no measurable loss on its coding evaluations (0.83)
+- Two or three parallel Claude Code sessions is a sensible starting point, and the practical ceiling is how many streams one person can review properly — so sessions are added only while review is keeping up (0.83)
+- A throwaway HTML editor built for one piece of data works because it ends with an export — a copy-as-JSON or copy-as-prompt button turning what was done in the UI back into something pasteable into Claude Code — which keeps the human in the loop while tightening it (0.81)
+- Markdown became an increasingly restrictive output format as agents grew more powerful, and members of the Claude Code team now prefer HTML for outputs they read, share, and use as specs and reference files (0.81)
+- An instruction is the wrong tool for something that absolutely must not happen: under pressure, in a long session, in an ambiguous situation, or through a prompt injection in a file the task reads, the model can fail to follow a prompted rule, so a real guardrail has to be deterministic — hooks and permissions (0.81)
+- A custom output style replaces rather than extends the default system prompt, dropping Claude Code's software-engineering instructions on scoping, comments, security, and verification unless keep-coding-instructions is set — which is why append-system-prompt, being purely additive, is the safer lever (0.81)
+
+## Evidence
+
+- `clm_6282902285c5` — "Inside a loop, code review belongs to a second agent, because an agent reviewing its own output carries a bias a separate reviewer does not" · p 1.00 · active · 3 support · 0 contradict
+  - `src_d0a8a3247101` Loop engineering: Getting started with loops: "Use a second agent for code review to reduce the bias of an agent reviewing its own output."
+  - `src_521f898b9896` Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder: "Claude self-review: unchanged at 91.4%"
+  - `src_99ad4fe8f1dd` Catch security issues as Claude writes code: "The plugin does not ask the same Claude instance that wrote the code to grade itself. The per-edit check is a deterministic string match with no model involved."
+- `clm_ca5f4231dbc2` — "A hook handler can be a shell command, an HTTP endpoint, or an LLM prompt, and the same hook events fire wherever Claude Code runs - terminal sessions, IDE extensions, the Desktop app, and the web." · p 1.00 · active · 2 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Hooks are user-defined shell commands, HTTP endpoints, or LLM prompts that execute automatically at specific points in Claude Code's lifecycle."
+  - `src_3466a5945e1e` Automate actions with hooks: "Hooks are user-defined shell commands. Claude Code runs them at specific points in its lifecycle, which gives you deterministic control: certain actions always happen rather than relying on the LLM to choose to run them."
+- `clm_19117073da8e` — "Exit code 2 is the only exit code that blocks through the code alone for most hook events - without valid JSON on stdout, exit code 1 is treated as a non-blocking error and the action proceeds." · p 0.99 · active · 2 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "For most hook events, exit code 2 is the only exit code that blocks through the code alone."
+  - `src_3466a5945e1e` Automate actions with hooks: "**Exit 2**: Claude Code blocks the action. Write a reason to stderr."
+- `clm_1691eac7dbb3` — "A dynamic workflow executes a JavaScript file with a few special functions that spawn and coordinate subagents, and it can pick which model each agent uses and whether an agent runs in its own worktree, so Claude chooses the intelligence level and isolation the step needs" · p 0.99 · active · 2 support · 0 contradict
+  - `src_7415e8608f3c` A harness for every task: dynamic workflows in Claude Code: "It's particularly useful to know that dynamic workflows can decide which models an agent uses and whether subagents are run in their own worktree, allowing Claude to choose the intelligence level and isolation needed."
+  - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "A dynamic workflow is a JavaScript script that orchestrates [subagents](/docs/en/sub-agents) at scale. Claude writes the script for the task you describe, and a runtime executes it in the background while your session stays responsive."
+- `clm_3a056b12fdae` — "Effort is not just thinking time: it controls the total work Claude performs, including how many files it reads, which tools it uses, and how many task-completion steps it takes before checking in" · p 0.98 · active · 2 support · 0 contradict
+  - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "Effort encompasses more than thinking time—it controls the total work Claude performs, including files read, tools used, and task completion steps before checking in."
+  - `src_a959e4684753` Model configuration: "[Effort levels](https://platform.claude.com/docs/en/build-with-claude/effort) control adaptive reasoning, which lets the model decide whether and how much to think on each step based on task complexity."
+- `clm_b4a4dce90006` — "A subagent's instructional body never enters the parent conversation at all: it runs in its own fresh context window and the only thing returning to the main session is its final message plus metadata" · p 0.98 · active · 2 support · 0 contradict
+  - `src_93a1e6058bf1` Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents: "The subagent then runs in its own fresh context window, and the only thing that returns to your main session is the subagent's final message (often the aggregated result of many subtasks) plus metadata."
+  - `src_5671f6c73f3d` Create custom subagents: "Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions."
+- `clm_d6db5eb024a3` — "Claude Code offers seven methods for instructing behavior — CLAUDE.md files, rules, skills, subagents, hooks, output styles, and appending the system prompt — and each trades context cost against authority by controlling when an instruction loads, whether it survives compaction, and how much weight it carries" · p 0.98 · active · 2 support · 0 contradict
+  - `src_93a1e6058bf1` Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents: "Each method trades context cost against authority."
+  - `src_07950e24c4ee` Extend Claude with skills: "Create a skill when you keep pasting the same instructions, checklist, or multi-step procedure into chat, or when a section of CLAUDE.md has grown into a procedure rather than a fact."
+- `clm_69a691b0baea` — "A working prototype is not evidence of problem-solution fit — it is a pressure-testing prop for conversations with potential users, and those conversations are the real evidence" · p 0.96 · active · 2 support · 0 contradict
+  - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "A working prototype is easy to mistake as concrete evidence that you're solving a real problem, but it's not. Your prototype instead serves as a useful pressure-testing prop for conversations with potential users."
+  - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "Even before the current era of agentic coding, 42% of startups failed because they built something nobody wanted."
+- `clm_03dee19f46e9` — "A deep link is a claude-cli:// URL that opens Claude Code in a new terminal window and can carry a working directory and a prompt to pre-fill." · p 0.94 · active · 1 support · 0 contradict
+  - `src_b72a74a8d21c` Launch sessions from links: "A deep link is a `claude-cli://` URL that opens Claude Code in a new terminal window. The URL can carry a working directory and a prompt to pre-fill."
+- `clm_34b4c7629f8c` — "An artifact is a live, interactive web page that Claude Code publishes from a session to a private URL on claude.ai and updates in place as the session continues." · p 0.94 · active · 1 support · 0 contradict
+  - `src_9e45f4ba4e23` Share session output as artifacts: "An artifact is a live, interactive web page that Claude Code publishes from your session to a private URL on claude.ai. You open it in a browser, and it updates in place as the session continues."
+- `clm_639cfed3cd72` — "The local /code-review command trades coverage for confidence by effort level: low and medium report only the findings it is most confident in, while high through max broaden coverage and may include findings the review is less sure about." · p 0.94 · active · 1 support · 0 contradict
+  - `src_1d5f4c9615f1` Code Review: "Pass an [effort level](/docs/en/model-config#adjust-effort-level) to trade coverage for confidence. At `low` and `medium`, the review reports only the findings it's most confident in, so you see fewer false positives;"
+- `clm_bc2e48f39a13` — "The security-guidance plugin reviews Claude's work at three points at different depths: a fast per-edit pattern match with no model call, an end-of-turn background model review of everything the turn changed, and a deeper agentic review on each commit or push Claude makes that reads surrounding code." · p 0.94 · active · 1 support · 0 contradict
+  - `src_99ad4fe8f1dd` Catch security issues as Claude writes code: "* [On each file edit](#on-each-file-edit): a fast pattern match for risky calls, with no model call * [At the end of each turn](#at-the-end-of-each-turn): a background model review of everything that turn changed * [On each commit or push…"
+- `clm_bf04596b7d87` — "A git worktree is a separate working directory with its own files and branch that shares the repository's history and remote, so each Claude Code session running in one never touches another session's files." · p 0.94 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "A [git worktree](https://git-scm.com/docs/git-worktree) is a separate working directory with its own files and branch, sharing the same repository history and remote as your main checkout."
+- `clm_02e514dade50` — "A Claude Code skill is a SKILL.md file of instructions that Claude adds to its toolkit and either uses on its own when relevant or runs when the user types /skill-name." · p 0.94 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "Skills extend what Claude can do. Create a `SKILL.md` file with instructions, and Claude adds it to its toolkit. Claude uses skills when relevant, or you can invoke one directly with `/skill-name`."
+- `clm_3c7492d09031` — "The Claude Security plugin runs a multi-agent vulnerability scan of a codebase inside a Claude Code session: a team of Claude agents maps the architecture, builds a threat model, hunts for vulnerabilities, and independently reviews every finding before writing the report." · p 0.94 · active · 1 support · 0 contradict
+  - `src_2eb7a799d8a7` Scan your codebase for vulnerabilities: "The Claude Security plugin runs a multi-agent vulnerability scan of your codebase inside a Claude Code session."
+- `clm_71a4b67427f6` — "Command hooks run shell commands with the user's full permissions and can modify, delete, or read anything that user account can reach, so every hook command should be reviewed and tested before it is configured." · p 0.94 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Command hooks execute shell commands with your full user permissions. They can modify, delete, or access any files your user account can access. Review and test all hook commands before adding them to your configuration."
+- `clm_8a5ac3a8a835` — "Without bare mode a headless print session runs the hooks in a project's .claude/settings.json and connects the servers in its .mcp.json even in a folder that was never trusted, showing no workspace trust dialog and no per-server approval prompt." · p 0.94 · active · 1 support · 0 contradict · when: in headless print mode without --bare
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Without `--bare`, a `-p` session runs the hooks in a project's `.claude/settings.json` and connects the servers in its `.mcp.json`, even in a folder you've never trusted."
+- `clm_00214cae00e1` — "Every CLAUDE.md Claude Code discovers is concatenated into context rather than overriding the others, ordered from the filesystem root down to the working directory, so the instructions closest to where the session was launched are read last." · p 0.93 · active · 1 support · 0 contradict
+  - `src_e698013f1182` How Claude remembers your project: "All discovered files are concatenated into context rather than overriding each other. Across the directory tree, content is ordered from the filesystem root down to your working directory."
+- `clm_16151e65ea2f` — "Slash commands control Claude Code from inside a running session, offering a quick way to switch models, manage permissions, clear context, or run a workflow." · p 0.93 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "Commands control Claude Code from inside a session. They provide a quick way to switch models, manage permissions, clear context, run a workflow, and more."
+- `clm_805bbec6fa51` — "When several hooks match one event they all run to completion and their outputs are combined, with PreToolUse permission decisions resolved most-restrictive-first in the order deny, defer, ask, allow." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "After all matching hooks finish, Claude Code combines their outputs. For `PreToolUse` permission decisions, the most restrictive answer applies, in the order `deny`, `defer`, `ask`, `allow`."
+- `clm_8d072866bebe` — "Appending to Claude Code's system prompt preserves the default tool guidance, safety instructions, and coding conventions so only the difference must be supplied, whereas replacing it drops the entire default prompt and shifts responsibility for everything the task still needs onto the author." · p 0.93 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "Appending preserves the default tool guidance, safety instructions, and coding conventions, so you only supply what differs."
+- `clm_917de29f9f33` — "The Claude Agent SDK exposes the same tools, agent loop, and context management that power Claude Code, available as a CLI for scripts and CI/CD or as Python and TypeScript packages for full programmatic control." · p 0.93 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "The [Agent SDK](/docs/en/agent-sdk/overview) gives you the same tools, agent loop, and context management that power Claude Code."
+- `clm_9bc86c7e0f02` — "By default both the user and Claude can invoke any skill — typed directly as `/skill-name` or loaded automatically when relevant — and two frontmatter fields exist to restrict that." · p 0.93 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "By default, both you and Claude can invoke any skill. You can type `/skill-name` to invoke it directly, and Claude can load it automatically when relevant to your conversation. Two frontmatter fields let you restrict this:"
+- `clm_bd185ee1d648` — "Scheduled tasks created inside a Claude Code session are session-scoped: they stop when a new conversation starts, and only unexpired ones return on --resume or --continue." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1aeabecafdc5` Run prompts on a schedule: "Tasks are session-scoped: they live in the current conversation and stop when you start a new one."
+- `clm_be29c94c742f` — "Auto memory lets Claude accumulate knowledge across sessions without the user writing anything, saving four kinds of notes for itself as it works." · p 0.93 · active · 1 support · 0 contradict
+  - `src_e698013f1182` How Claude remembers your project: "Auto memory lets Claude accumulate knowledge across sessions without you writing anything. As it works, Claude saves four kinds of notes for itself."
+- `clm_edfd83ab9d0b` — "A dynamic workflow can only be resumed within the same Claude Code session; exiting Claude Code while a workflow is running means the next session starts it fresh." · p 0.93 · active · 1 support · 0 contradict
+  - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "Resume works within the same Claude Code session. If you exit Claude Code while a workflow is running, the next session starts the workflow fresh."
+- `clm_fe663417d914` — "The Claude Code GitHub Action detects how to run from the workflow: with no `prompt` input it runs interactive, waiting for the `@claude` trigger phrase in a comment, review, or new issue; with a `prompt` input it runs in automation mode without waiting for a mention, reporting to the workflow run log by default." · p 0.93 · active · 1 support · 0 contradict
+  - `src_7962dafdd21b` Claude Code GitHub Actions: "* **Interactive mode**: when the workflow provides no `prompt` input, Claude waits for the trigger phrase, `@claude` by default, in an issue or pull request comment, in a pull request review, or in the body or title of a newly opened…"
+- `clm_0659b458e4aa` — "Bare mode makes a headless Claude Code run reproducible across machines by skipping auto-discovery of hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, and CLAUDE.md, and it is the recommended mode for scripted and SDK calls." · p 0.93 · active · 1 support · 0 contradict · when: in headless print mode
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Add `--bare` to reduce startup time by skipping auto-discovery of hooks, skills, custom commands, [subagents](/docs/en/sub-agents), plugins, MCP servers, auto memory, and CLAUDE.md."
+- `clm_199a3ad4af87` — "A Claude Code model alias points at the recommended model version for your provider and moves as that recommendation changes, so pinning a version means naming the full model name or setting the matching environment variable." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "Aliases point to the recommended version for your provider and update over time."
+- `clm_3e4818ada12a` — "The /loop bundled skill re-runs a prompt on repeat for as long as the Claude Code session stays open, and both the interval and the prompt are optional." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1aeabecafdc5` Run prompts on a schedule: "The `/loop` [bundled skill](/docs/en/commands) is the quickest way to run a prompt on repeat while the session stays open. Both the interval and the prompt are optional, and what you provide determines how the loop behaves."
+- `clm_6dfe4cd8cabb` — "Extended thinking is the reasoning Claude emits before responding, and on models with adaptive reasoning the effort level is the primary control over how much of it happens — the thinking settings only turn it on or off and control its display." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "Extended thinking is the reasoning Claude emits before responding. On models that support [adaptive reasoning](#adjust-effort-level), the effort level is the primary control for how much thinking happens;"
+- `clm_794ee065e6ca` — "An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks committed in a repository run in a folder the user never trusted." · p 0.93 · active · 1 support · 0 contradict · when: for hooks defined in settings files
+  - `src_af0a3c9de51d` Hooks reference: "* **Interactive session**: Claude Code holds back hooks from every settings file, including your own `~/.claude/settings.json`, until you accept the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust)…"
+- `clm_7e83c9cc911e` — "Starting Claude Code inside a package loads that package's CLAUDE.md alongside the repository root's, leaving sibling packages' instructions out of context." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "When you start Claude from `packages/api/`, it loads both `packages/api/CLAUDE.md` and the root `CLAUDE.md`. Claude sees the local instructions alongside the repository-wide rules, with no instructions from `packages/web/` in context."
+- `clm_8c4373808e22` — "The Model Context Protocol is an open source standard for AI-tool integrations, and an MCP server connected to Claude Code gives it access to external tools, databases, and APIs." · p 0.93 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Claude Code can connect to hundreds of external tools and data sources through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction), an open source standard for AI-tool integrations."
+- `clm_9f8da267ecf6` — "A hook exiting 0 reports no objection but does not approve anything: a PreToolUse hook's tool call still goes through the normal permission flow." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "**Exit 0**: the hook reports no objection through its exit code. For a `PreToolUse` hook this doesn't approve the tool call: the normal [permission flow](/docs/en/permissions) still applies."
+- `clm_b7ca365c6ed5` — "Any subdirectory can define skills scoped to its own stack, and because a skill loads only when Claude judges it relevant, one area's tooling consumes no context during another area's work." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "Any subdirectory can define [skills](/docs/en/skills) scoped to its own stack. A skill loads on demand when Claude determines it's relevant, so API-specific tooling doesn't consume context during frontend work."
+- `clm_b83cb09bdf7b` — "Claude Code carries knowledge across sessions with two complementary memory systems, CLAUDE.md files and auto memory, both loaded at the start of every conversation and treated as context rather than enforced configuration." · p 0.93 · active · 1 support · 0 contradict
+  - `src_e698013f1182` How Claude remembers your project: "Claude Code has two complementary memory systems. Both are loaded at the start of every conversation. Claude treats them as context, not enforced configuration."
+- `clm_c6f907387ca6` — "PreToolUse hooks fire ahead of any permission-mode check, so a hook returning a deny decision blocks the tool even under bypassPermissions or --dangerously-skip-permissions." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "`PreToolUse` hooks fire before any permission-mode check, in every [permission mode](/docs/en/permission-modes), including `dontAsk`."
+- `clm_dc0ebbb9a51b` — "Each artifact is one self-contained page that Claude Code wraps in an HTML document shell and serves under a strict Content Security Policy, which shapes what the page can do." · p 0.93 · active · 1 support · 0 contradict
+  - `src_9e45f4ba4e23` Share session output as artifacts: "Each artifact is one self-contained page. Claude Code wraps the file you publish in an HTML document shell and serves it under a strict Content Security Policy (CSP), which shapes what the page can do."
+- `clm_ddd5deba5af8` — "The /goal command sets a completion condition and Claude Code keeps working toward it turn after turn, starting a new turn instead of returning control whenever the condition does not yet hold." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5229aa475d30` Keep Claude working toward a goal: "The `/goal` command sets a completion condition and Claude keeps working toward it without you prompting each step. After each turn, a small fast model checks whether the condition holds."
+- `clm_e888d6f6645f` — "Hook events fall into three cadences: once per session (SessionStart, SessionEnd), once per turn (UserPromptSubmit, Stop, StopFailure), and once per tool call inside the agentic loop (PreToolUse, PostToolUse)." · p 0.93 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Events fall into three cadences: * once per session: `SessionStart` and `SessionEnd` * once per turn: `UserPromptSubmit`, `Stop`, and `StopFailure` * on every tool call inside the agentic loop: `PreToolUse` and `PostToolUse`, except…"
+- `clm_a02b62bcf985` — "The local /code-review follows CLAUDE.md like any Claude Code session but does not read REVIEW.md, and a background review applies its --fix edits outside the session's checkpoints so /rewind does not undo them." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1d5f4c9615f1` Code Review: "The review follows your `CLAUDE.md` like any Claude Code session, but it doesn't read [`REVIEW.md`](#review-md)."
+- `clm_0b4f7948e088` — "WebFetch runs the caller's extraction prompt over the fetched page with a small, fast model and returns that model's answer rather than the raw page, so what reaches Claude is bounded by the prompt that was asked." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab9f8f38615f` Tools reference: "WebFetch takes a URL and a prompt describing what to extract. It fetches the page, converts the response to Markdown when the server returns HTML, and runs the prompt against the content using a small, fast model."
+- `clm_0db4ee93154e` — "A permission mode sets which actions Claude can take in a session without asking first, and Manual mode stops for approval before most actions that edit files, run shell commands, or reach the network." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "A permission mode sets which actions Claude can take in a session without asking you first. In Manual mode, Claude Code stops and asks you before most actions that edit files, run shell commands, or reach the network."
+- `clm_1b386e4233f4` — "Not every hook event supports blocking or steering behavior through JSON, and the events that do each use a different set of decision fields." · p 0.93 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Not every event supports blocking or controlling behavior through JSON. The events that do each use a different set of fields to express that decision."
+- `clm_1dae05957203` — "A running session's permission mode is switched with Shift+Tab in the CLI, the mode indicator in VS Code, or the mode selector in the desktop app." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "Control whether Claude asks before acting. Switch permission modes with Shift+Tab in the CLI, the mode indicator in VS Code, or the mode selector in Desktop."
+- `clm_3072c56e3d0e` — "A turn that fails on an error which will not clear until you fix it ends the active goal, with a warning naming the cause and telling you to run /goal again once it is fixed." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5229aa475d30` Keep Claude working toward a goal: "If a turn fails on an error that won't clear until you fix it, Claude Code clears the goal and prints a warning naming the cause."
+- `clm_65a77d75d064` — "While a session is isolated in a worktree, Claude Code blocks any Edit, Write, or NotebookEdit that targets the main checkout, and any Bash, PowerShell, or Monitor command whose working directory resolves there or cannot be verified to stay outside it." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "* **File edits**: Claude Code blocks an `Edit`, `Write`, or `NotebookEdit` that targets a path in the main checkout."
+- `clm_66b7f6ded709` — "Claude decides when to delegate to a subagent from that subagent's description field, so a vague description is what keeps a subagent from being used." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5671f6c73f3d` Create custom subagents: "Claude uses each subagent's description to decide when to delegate tasks. When you create a subagent, write a clear description so Claude knows when to use it."
+- `clm_785d6c7de321` — "When the same settings key appears in more than one place, Claude Code uses the value from the highest level that sets it and that value overrides the same key at every level below." · p 0.93 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "When the same key appears in more than one place, Claude Code uses the value from the highest level that sets it. The stack below shows the levels, highest on top; a key at a higher level overrides the same key anywhere below it."
+- `clm_826adcc8fb72` — "Plan mode lets Claude read files and run shell commands to explore and then write a plan, while edits to source stay blocked until the plan is approved." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "Plan mode tells Claude to research and propose changes without making them. Claude reads files, runs shell commands to explore, and writes a plan, but does not edit your source."
+- `clm_8da3fbe3b018` — "Claude Code registers the claude-cli:// handler with macOS, Linux, and Windows on the first prompt sent in an interactive session, and starting a session without sending a prompt does not register it." · p 0.93 · active · 1 support · 0 contradict · when: on macOS, Linux, and Windows
+  - `src_b72a74a8d21c` Launch sessions from links: "Claude Code registers the `claude-cli://` handler with your operating system on macOS, Linux, and Windows when you send your first prompt of an interactive session."
+- `clm_9094953b81df` — "The model version that the `opus` and `sonnet` aliases resolve to is not fixed — it depends on which provider Claude Code is talking to." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "The version that the `opus` and `sonnet` aliases resolve to depends on the provider:"
+- `clm_971e9091b930` — "When skills share a name across levels, enterprise overrides personal and personal overrides project, so a `deploy` skill in `~/.claude/skills/` wins over the project's." · p 0.93 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "* Across levels, enterprise overrides personal, and personal overrides project. * For example, with a `deploy` skill in both `~/.claude/skills/` and your project's `.claude/skills/`, `/deploy` runs the personal one."
+- `clm_9a6a56d1d7eb` — "CLAUDE.md files can live in several locations of differing scope, and they load from the broadest scope to the most specific so a project instruction appears in context after a user instruction." · p 0.93 · active · 1 support · 0 contradict
+  - `src_e698013f1182` How Claude remembers your project: "CLAUDE.md files can live in several locations, each with a different scope. The table below lists them in load order, from broadest scope to most specific, so a project instruction appears in context after a user instruction."
+- `clm_a0b4cf68c8c2` — "Claude Code overrides a Stop hook once it has blocked eight consecutive times without progress, so a Stop hook must check whether it already forced a continuation." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "Claude Code overrides a Stop hook after it blocks eight times in a row without progress. Your hook script needs to check whether it already triggered a continuation."
+- `clm_a9f8de81c140` — "Only one goal can be active per Claude Code session, and the same /goal command sets, checks, and clears it depending on the argument given." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5229aa475d30` Keep Claude working toward a goal: "One goal can be active per session. The same command sets, checks, and clears it depending on the argument."
+- `clm_b7452ba63021` — "Managed settings an organization deploys sit at the top of Claude Code's precedence stack, so nothing a developer sets overrides them — not even a key passed with `--settings`." · p 0.93 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "**Managed settings**: settings your organization deploys, by a `managed-settings.json` file, an MDM policy, or [server-managed settings](/docs/en/server-managed-settings) from the claude.ai console."
+- `clm_da9d8c58cc46` — "Claude Code reports a whole settings file as a Settings Error when its JSON or a value is rejected and offers to fix, exit, or continue without it, but downgrades individual bad entries to a Settings Warning and keeps the rest of the file in effect." · p 0.93 · active · 1 support · 0 contradict · when: at the start of an interactive session
+  - `src_44aa3ffce603` Claude Code settings: "**Settings Error**: a user, project, or local file has invalid JSON or a value the schema rejects."
+- `clm_df3973d5ddfb` — "Deny rules cover Claude Code's built-in file tools and recognized Bash file commands given a denied path as an argument, but Claude still sees denied paths in the output of a Bash search such as `grep -r` or `find`." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "Deny rules cover Claude's built-in file tools and recognized Bash file commands, including `cat`, `head`, `grep`, and `find`, when a denied path is passed as an argument."
+- `clm_e24b51402fe1` — "Which effort levels exist depends on the model, and asking for a level the active model does not support runs it at the highest supported level at or below the one requested." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "If you set a level the active model does not support, Claude Code falls back to the highest supported level at or below the one you set. For example, `xhigh` runs as `high` on Opus 4.6."
+- `clm_eaeabd09442d` — "For a few security-sensitive keys Claude Code honors the stricter value from a lower scope in preference to the managed value, the one documented break in managed settings' precedence." · p 0.93 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "For a few security-sensitive keys, Claude Code honors a stricter value from a lower level over a managed value; [Exceptions to managed settings precedence](#exceptions-to-managed-settings-precedence) lists them."
+- `clm_ed1642c941f5` — "Updating an artifact means Claude edits the underlying file and publishes again to the same URL, so viewers with the page open see the revision in place." · p 0.93 · active · 1 support · 0 contradict
+  - `src_9e45f4ba4e23` Share session output as artifacts: "Ask Claude to revise the page, or let a long-running task republish as it makes progress. Claude edits the underlying file and publishes again to the same URL."
+- `clm_fa5f76bf370c` — "Every surface that names a Claude Code tool — settings permissions, CLI flags, subagent and skill frontmatter, and hook conditions — uses the same `ToolName(specifier)` rule format, with the specifier's shape set by the tool and shared across several tools." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab9f8f38615f` Tools reference: "All of these accept the same rule format, `ToolName(specifier)`. The specifier depends on the tool, and several tools share a format:"
+- `clm_1cbbd4529c24` — "Permission modes only set the baseline that allow, ask, and deny rules layer on top of: deny rules block in every mode including `bypassPermissions`, where allow rules have no effect at all." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "Modes set the baseline. Layer [permission rules](/docs/en/permissions#manage-permissions) on top to pre-approve or block specific tools. Deny rules block in every mode, including `bypassPermissions`."
+- `clm_1dc5534f1f11` — "An MCP server is configured at one of three scopes, and that choice controls which projects the server loads in and whether the configuration is shared with the team." · p 0.93 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "MCP servers can be configured at three scopes. The scope you choose controls which projects the server loads in and whether the configuration is shared with your team."
+- `clm_2629d09b0686` — "A prompt hook replaces the shell command with a single-turn call to a Claude model, Haiku by default, so judgment-shaped decisions can be made where a deterministic rule cannot express them." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "For decisions that require judgment rather than deterministic rules, use `type: "prompt"` hooks."
+- `clm_4a55a86ff637` — "Claude Code's read-only file tools such as Read, Grep, and Glob run without a permission prompt inside the working directory but still prompt for paths outside it, while Bash prompts by default yet runs a built-in set of read-only commands without prompting." · p 0.93 · active · 1 support · 0 contradict · when: in Manual permission mode
+  - `src_ab9f8f38615f` Tools reference: "The `Permission required` column shows whether the tool prompts in [Manual mode](/docs/en/permission-modes) for paths inside the working directory."
+- `clm_4d483e15f7f2` — "When the same MCP server is defined in more than one scope, Claude Code connects once using the entire entry from the highest-precedence source, and never merges fields across scopes." · p 0.93 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "When the same server is defined in more than one place, Claude Code connects to it once, using the definition from the highest-precedence source. The entire server entry from that source is used; fields are not merged across scopes."
+- `clm_6ce4b501b320` — "A list-valued settings key such as `permissions.allow` set in more than one settings file is combined rather than overridden, so each file adds entries without removing another file's." · p 0.93 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "When you set the same list key, such as `permissions.allow`, in more than one file, Claude Code combines the lists instead of picking one, so each file can add entries without removing another file's."
+- `clm_742b530ea197` — "Some entries in Claude Code's command list are bundled skills rather than coded-in commands, and they behave like user-written skills — a prompt handed to Claude, which Claude can also invoke on its own when relevant." · p 0.93 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "**[Skill](/docs/en/skills#bundled-skills)**: a bundled skill. It works like skills you write yourself: a prompt handed to Claude, which Claude can also invoke automatically when relevant."
+- `clm_a000143bb6c6` — "A command, HTTP, or MCP-tool hook that hits its timeout is canceled and renders no decision, so a stalled PreToolUse hook lets the tool call continue through the normal permission flow rather than acting as a gate." · p 0.93 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "* A timed-out `command`, `http`, or `mcp_tool` hook doesn't block the tool call. The call continues through the normal [permission flow](/docs/en/permissions), so don't count on a stalled hook to act as a gate."
+- `clm_a6e2e30ec7ba` — "Without pinned model IDs, Claude Code's aliases resolve to a built-in default per third-party provider that can lag the newest Anthropic release or point at a model the user's account has not enabled." · p 0.93 · active · 1 support · 0 contradict · when: on Amazon Bedrock, Google Cloud's Agent Platform, Microsoft Foundry, and Claude Platform on AWS
+  - `src_a959e4684753` Model configuration: "Without pinning, Claude Code uses model aliases such as `fable`, `opus`, `sonnet`, and `haiku` that resolve to a built-in default model ID for each provider."
+- `clm_a7d0154e1554` — "A code intelligence plugin connects Claude Code to a language server so it can jump to definitions and find references directly, instead of spending many file reads and grep calls scanning the tree for a symbol." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "In a large codebase, finding where a symbol is defined or used can cost many file reads and grep calls."
+- `clm_b0a4eda36461` — "The auto mode classifier approves by default local file operations in the working directory, dependency installs declared in lock files or manifests, reading `.env` and sending those credentials to their matching API, and read-only HTTP requests." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "**Allowed by default**: * Local file operations in your working directory * Installing dependencies declared in your lock files or manifests * Reading `.env` and sending credentials to their matching API * Read-only HTTP requests"
+- `clm_ba8a7aa03de1` — "Claude Code reads settings from four JSON files plus managed settings an organization delivers from the claude.ai console, and the source a setting is saved in decides which people and projects it applies to." · p 0.93 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "Claude Code reads settings from four files, and an organization can also deliver managed settings from the claude.ai console."
+- `clm_c7efa28cfcfb` — "SIGTERM ends a `claude -p` run with exit code 143 and leaves the in-progress turn unfinished with no result recorded, so ending the turn instead takes a SIGINT or the Agent SDK's `interrupt()` before the process is stopped." · p 0.93 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "If you stop a `claude -p` run with SIGTERM, for example with `kill` or from a process supervisor, Claude Code exits with code 143. Claude Code leaves the turn that was in progress unfinished and records no result for it."
+- `clm_cbe1bfbfb2c0` — "Claude Code works at any repository size, but as a codebase grows its small-project defaults fill the context window with instructions and file reads unrelated to the task, costing tokens and degrading performance." · p 0.93 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "A large codebase can be one repository with millions of lines or a monorepo with many packages."
+- `clm_fcd14cd753ef` — "Context injected by a hook should be phrased as factual statements, because text framed as out-of-band system instructions can trip Claude's prompt-injection defenses and get surfaced to the user instead of read as context." · p 0.93 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Write the text as factual statements rather than imperative system instructions. Phrasing such as "The deployment target is production" or "This repo uses `bun test`" reads as project information."
+- `clm_614484c4baab` — "Auto mode replaces routine permission prompts with a separate classifier model that reviews each action and blocks anything escalating beyond the request, targeting unrecognized infrastructure, or driven by hostile content Claude read." · p 0.93 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "Auto mode lets Claude execute without routine permission prompts."
+- `clm_5170f00ac6f2` — "A mistyped claude subcommand does not fall through to a prompt: Claude Code suggests the closest matching subcommand and exits without starting a session." · p 0.92 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "If you mistype a subcommand, Claude Code suggests the closest match and exits without starting a session. For example, `claude udpate` prints `Did you mean claude update?`."
+- `clm_11a662f3b659` — "When many skills are discovered, their descriptions are shortened, which can strip the keywords Claude uses to decide whether a skill applies." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "Names always load, but [descriptions are shortened when there are many](/docs/en/skills#skill-descriptions-are-cut-short), which can strip the keywords Claude uses to decide whether a skill applies."
+- `clm_256e3568a77d` — "After a typo the command menu highlights nothing and still lists the close matches, so pressing Enter submits the text as typed and reports an Unknown command error instead of running the nearest match." · p 0.92 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "**After a typo**: Claude Code highlights nothing. The close matches stay listed, and you can pick one with `Tab` or the arrow keys, but `Enter` submits your text as typed and reports [Unknown command](/docs/en/errors#unknown-command)."
+- `clm_51eafce71275` — "On exiting an interactive worktree session a clean worktree from an unnamed session is removed along with its branch automatically, while a named session or a worktree holding work prompts the user to keep or remove it." · p 0.92 · active · 1 support · 0 contradict · when: for interactive sessions
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "* **The worktree is clean**: for an unnamed session, Claude removes the worktree and its branch automatically."
+- `clm_95dd4d28d6cd` — "A subagent can spawn subagents of its own up to three layers below the main conversation by default, and at that depth limit Claude Code withholds the Agent tool so the subagent does the work itself." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5671f6c73f3d` Create custom subagents: "By default, a subagent can spawn subagents of its own, up to three layers below the main conversation."
+- `clm_c8e724381e5f` — "A background Bash task started during a `claude -p` run is terminated about five seconds after Claude returns its final result and stdin closes." · p 0.92 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "If Claude starts a [background Bash task](/docs/en/tools-reference#bash-tool-behavior) during a `claude -p` run, for example a dev server or a watch build, that shell is terminated about five seconds after Claude has returned its final…"
+- `clm_e0310c5f4dec` — "Claude Code scans every subagent's final report before Claude reads it, because files, web pages, and command output the subagent read can carry instructions aimed at the main conversation." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5671f6c73f3d` Create custom subagents: "Claude Code scans each subagent's final report before Claude reads it. A subagent may have read files, web pages, or command output you never reviewed, and text from those sources can carry instructions aimed at the main conversation."
+- `clm_f54dd327d44e` — "A slash command sent while Claude is still responding is queued until the current turn finishes, though Claude Code runs a few status commands such as /status, /tasks, and /usage immediately without interrupting the response." · p 0.92 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "If you send a command while Claude is responding, Claude Code queues it and runs it after the current turn finishes. Claude Code runs some commands immediately without interrupting the response, such as `/status`, `/tasks`, and `/usage`."
+- `clm_198fc635f5f4` — "Explore and Plan are the only Claude Code subagents that start without CLAUDE.md files and git status, and no frontmatter field or setting changes which subagents skip them." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5671f6c73f3d` Create custom subagents: "Explore and Plan are the only subagents that omit CLAUDE.md and git status. There is no frontmatter field or per-agent setting to change which agents skip them."
+- `clm_5bd3b13812ff` — "An MCP server can change its available tools, prompts, and resources mid-session by sending a `list_changed` notification, which Claude Code answers by refreshing that server's capabilities without a disconnect and reconnect." · p 0.92 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Claude Code supports MCP `list_changed` notifications, allowing MCP servers to dynamically update their available tools, prompts, and resources without requiring you to disconnect and reconnect."
+- `clm_64b87a2b64e4` — "A parent session running in bypassPermissions, acceptEdits, or auto mode takes precedence over whatever permission mode a subagent declares in its own frontmatter." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5671f6c73f3d` Create custom subagents: "If the parent uses `bypassPermissions` or `acceptEdits`, this takes precedence and can't be overridden."
+- `clm_714f78c08bf2` — "A few available commands are kept out of Claude Code's slash-command menu by design and a partial name never surfaces them; the command is listed only once its full name is typed, and submitting that full name runs it." · p 0.92 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "**Hidden commands**: Claude Code keeps a few available commands, such as `/heapdump`, out of the menu by design."
+- `clm_77037ce59207` — "A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs." · p 0.92 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes)."
+- `clm_a93159a85dff` — "Claude Code authenticates to cloud-based MCP servers that require it with OAuth 2.0." · p 0.92 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Many cloud-based MCP servers require authentication. Claude Code supports OAuth 2.0 for secure connections."
+- `clm_c54b34646d07` — "Goal evaluation is skipped for any turn that ends while a subagent or background shell command is still running, and resumes at the end of the next turn that finishes with no background work." · p 0.92 · active · 1 support · 0 contradict
+  - `src_5229aa475d30` Keep Claude working toward a goal: "If a subagent or a background shell command is still running when a turn ends, Claude Code skips the evaluation for that turn. It evaluates at the end of the next turn that finishes with no background work running."
+- `clm_d3c8688a9a26` — "Session-scoped tasks fire only while Claude Code is running and idle, so closing the terminal stops them, though backgrounding the session carries /loop tasks into a background session that keeps running." · p 0.92 · active · 1 support · 0 contradict
+  - `src_1aeabecafdc5` Run prompts on a schedule: "Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing."
+- `clm_08f7ec090a90` — "Passing `--worktree` or `-w` with a name starts Claude in an isolated worktree created under `.claude/worktrees/<name>/` at the repository root, on a new branch named `worktree-<name>`." · p 0.92 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "Pass `--worktree` or `-w` with a name to create an isolated worktree and start Claude in it. By default, the worktree is created under `.claude/worktrees/<name>/` at your repository root, on a new branch named `worktree-<name>`"
+- `clm_a8d109a3feff` — "A cross-session message is a piece of text one Claude writes to another and never carries conversation history or files, which is why moving a whole conversation means resuming the session instead." · p 0.92 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "A message is a piece of text one Claude writes to another, never conversation history or files. To move a whole conversation or its context, [resume the session](/docs/en/sessions#resume-a-session) instead."
+- `clm_b590ceffeda7` — "Cross-session messaging requires Claude Code v2.1.224 or later on macOS, Linux, and WSL 2 and v2.1.234 or later on native Windows, and is not available on Amazon Bedrock, Claude Platform on AWS, Google Cloud's Agent Platform, or Microsoft Foundry." · p 0.92 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "Cross-session messaging requires Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, and v2.1.234 or later on native Windows."
+- `clm_dd6d8444326e` — "Agent teams are experimental and disabled unless CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS is set to 1; without it no team is set up, no team directories are written, and Claude spawns no teammates." · p 0.92 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Agent teams are experimental and disabled by default. Enable them by setting `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in your [settings.json](/docs/en/settings) or environment."
+- `clm_13e5b40d313a` — "An agent team is several coordinated Claude Code instances in which one session acts as the team lead assigning work and synthesizing results, while teammates work independently in their own context windows and message each other directly." · p 0.92 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Agent teams let you coordinate multiple Claude Code instances working together. One session acts as the team lead, coordinating work, assigning tasks, and synthesizing results."
+- `clm_4c418d487b7e` — "Turning on fast mode can implicitly switch the session to an Opus model, so `/fast` refuses to toggle when that model falls outside the organization's allowed models." · p 0.92 · active · 1 support · 0 contradict · when: when an availableModels allowlist is set in managed or policy settings
+  - `src_a959e4684753` Model configuration: "`/fast` refuses to toggle when it would implicitly switch to an Opus model outside the list, with the message "is not in your organization's allowed models""
+- `clm_0b4380115a9f` — "A Claude Code worktree checks out the entire repository by default, and the `worktree.sparsePaths` setting narrows it with git sparse-checkout to only the listed directories plus root-level files." · p 0.91 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "The `--worktree` flag starts a session in a new git worktree so changes stay isolated from your main checkout. By default it checks out the entire repository."
+- `clm_1e096059acb6` — "Claude Code decides whether a hook's stdout is JSON or plain text purely from its first non-whitespace character: output starting with an opening brace is parsed as JSON, and anything else - including a JSON array or quoted string - is treated as plain text." · p 0.91 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Whether Claude Code reads your stdout as [JSON output](#json-output) or as plain text depends on its first character, ignoring leading whitespace: * **Starts with `{`**: Claude Code parses it as JSON."
+- `clm_c95deb689a75` — "Hook output strings, including additionalContext, systemMessage, and plain stdout, are capped at 10,000 characters, beyond which the text is written to a file and replaced with a preview and path." · p 0.91 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "Hook output strings, including `additionalContext`, `systemMessage`, and plain stdout, are capped at 10,000 characters."
+- `clm_d0b564243947` — "Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled." · p 0.91 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "| Personal | `~/.claude/skills/<skill-name>/SKILL.md` | All your projects | | Project | `.claude/skills/<skill-name>/SKILL.md` | This project only | | Plugin | `<plugin>/skills/<skill-name>/SKILL.md` | Where plugin is enabled |"
+- `clm_591380d3c963` — "Hooks block Claude's execution until they finish unless marked async, and an async hook can never block or steer behavior because the action it would have controlled has already completed." · p 0.91 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "By default, hooks block Claude's execution until they complete. For long-running tasks like deployments, test suites, or external API calls, set `"async": true` to run the hook in the background while Claude continues working."
+- `clm_890b846d4a42` — "A matcher containing regex characters is tested unanchored with JavaScript's RegExp.prototype.test, so `Edit.*` also fires for `NotebookEdit` unless the pattern is anchored with ^ and $." · p 0.91 · active · 1 support · 0 contradict
+  - `src_af0a3c9de51d` Hooks reference: "A matcher on the regular-expression path is tested with JavaScript's `RegExp.prototype.test`, which succeeds on a match anywhere in the value. `Edit.*` matches both `Edit` and `NotebookEdit`;"
+- `clm_ad6abaac0af5` — "The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit`." · p 0.91 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "The model Claude Code uses for all [subagents](/docs/en/sub-agents#choose-a-model), [agent teams](/docs/en/agent-teams), and agents in a [workflow](/docs/en/workflows)."
+- `clm_e3e1d00b42dd` — "The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run." · p 0.91 · active · 1 support · 0 contradict
+  - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "| Up to 16 concurrent agents, fewer when Claude Code has fewer CPUs available, including inside a CPU-limited container | Bounds local resource use | | In a fan-out, agents that share the first agent's prompt-cache prefix start up to 5…"
+- `clm_936676a8d258` — "A message to a session on the same machine travels over a per-session socket, or a named pipe on native Windows, and never through Anthropic servers, while a message to a session on another of your machines or on Claude Code on the web passes through Anthropic servers." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "| Where the other session runs | How the message travels | | :------------------------------------------------------ |…"
+- `clm_c7fff347847f` — "Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current session only." · p 0.91 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "As of v2.1.153, `/model` saves your choice as the default for new sessions by writing the `model` field in your user settings. In the picker: * `Enter`: switch model and save as your default * `s`: switch model for this session only"
+- `clm_e4b002d151ce` — "The `crossSessionInbound` setting decides what a session does with messages arriving from your other sessions: `accept` delivers each one to Claude, `hold` shows a notice without delivering, and `refuse` drops each message." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "Set [`crossSessionInbound`](/docs/en/settings-reference#crosssessioninbound) to choose what a session does with messages arriving from your other sessions: | Value | Behavior | | :------- |…"
+- `clm_06937874202e` — "A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "* **It can't approve anything**: a message from another session never counts as your consent, so it can't answer a pending permission prompt on your behalf."
+- `clm_34217cbae0d3` — "Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you."
+- `clm_1654b0d3617a` — "A non-interactive run continues the most recent conversation with `--continue`, which skips background sessions, or a specific conversation with `--resume` and a session ID." · p 0.91 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Use `--continue` to continue the most recent conversation, or `--resume` with a session ID to continue a specific conversation. `--continue` skips [background sessions](/docs/en/sessions#resume-a-session)."
+- `clm_22b2026c78fb` — "`Read` deny rules in `permissions.deny` stop Claude Code from opening checked-in paths such as a vendored SDK or committed generated code, which `.gitignore` alone does not cover." · p 0.91 · active · 1 support · 0 contradict
+  - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "For paths that are checked in, such as a vendored SDK or committed generated code, add `Read` deny rules in `permissions.deny` to block Claude from opening those files."
+- `clm_27ed2b92268c` — "A worktree is a fresh checkout, so gitignored files carrying local configuration are absent until a `.worktreeinclude` file in the project root lists them for copying into each new worktree." · p 0.91 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "A worktree is a fresh checkout, so untracked files like `.env` or `.env.local` from your main repository are not present. To copy them automatically when Claude creates a worktree, add a `.worktreeinclude` file to your project root."
+- `clm_29d91a7cbb32` — "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths." · p 0.91 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to [protected paths](#protected-paths)."
+- `clm_3cd9cf0ce96b` — "JSON passed to Claude Code with `--settings` merges with the settings files at its own level: a key set there beats the same key in local, project, or user settings, and any key it omits keeps its lower-level value." · p 0.91 · active · 1 support · 0 contradict · when: for one session started from the terminal
+  - `src_44aa3ffce603` Claude Code settings: "Claude Code merges JSON you pass with `--settings <file-or-json>` with your settings files by the same rules as the other levels: it takes a key you set here over the same key in local, project, or user settings, and keeps the lower-level…"
+- `clm_3dcf6b089b87` — "`acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories`." · p 0.91 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`."
+- `clm_5e882ac2e1b6` — "A non-interactive Claude Code run selects its response shape with `--output-format`: `text` for plain text (the default), `json` for structured JSON carrying the result, session ID, and metadata, or `stream-json` for newline-delimited JSON streamed in real time." · p 0.91 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Use `--output-format` to control how responses are returned: * `text` (default): plain text output * `json`: structured JSON with result, session ID, and metadata * `stream-json`: newline-delimited JSON for real-time streaming"
+- `clm_e12133e66288` — "Claude Code exposes four system-prompt flags — two that replace the default prompt and two that append to it, each in a literal and a file-reading form — and all four work in interactive as well as non-interactive mode." · p 0.91 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "Claude Code provides four flags for customizing the system prompt. All four work in both interactive and non-interactive modes."
+- `clm_e21271f2bfed` — "In Claude Code's settings stack a project's shared `.claude/settings.json` overrides the user's `~/.claude/settings.json`, and `.claude/settings.local.json` in turn overrides the shared project file." · p 0.91 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "Your team's `.claude/settings.json` sets it to `true`. Claude Code uses the project value because shared project sits above user, so you see tips in that project and nowhere else."
+- `clm_e261e230a5a7` — "Adding the `-p` (or `--print`) flag to any `claude` command runs Claude Code non-interactively, though not every CLI option combines with it." · p 0.91 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Add the `-p` (or `--print`) flag to any `claude` command to run it non-interactively. Not every [CLI option](/docs/en/cli-reference) combines with `-p`."
+- `clm_f39d19cef3a9` — "Claude Code highlights the top suggestion in the slash-command menu only when the typed letters match a command's name or alias from the start of the name or of a word within it, ignoring the ':', '_', and '-' separators." · p 0.91 · active · 1 support · 0 contradict
+  - `src_63b61512d6ab` Commands: "**Highlighting**: Claude Code highlights the top suggestion only when the letters after the `/` match a command's name or alias, from the start of the name or from a word within it, ignoring the `:`, `_`, and `-` separators."
+- `clm_935a50944ab0` — "The -p / --print flag is Claude Code's non-interactive entry point: it prints the response instead of opening an interactive session, and is the surface used for programmatic and SDK-style invocation." · p 0.91 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "| `--print`, `-p` | Print response without interactive mode (see [Agent SDK documentation](/docs/en/agent-sdk/overview) for programmatic usage details) |"
+- `clm_9d7ccdfee9ae` — "`dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves." · p 0.91 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you."
+- `clm_cdb802990e15` — "The `if` field that narrows a hook to matching tool arguments is best-effort and fails open when a Bash command cannot be parsed, so hard allow-or-deny enforcement belongs in the permission system rather than a hook." · p 0.91 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "The filter also fails open, running your hook regardless of pattern, when the Bash command can't be parsed."
+- `clm_fa3bd1f7b469` — "Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it." · p 0.91 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "When Claude enters a path outside the repository's `.claude/worktrees/` directory, Claude Code asks for your approval first, because the move takes the session's working directory, write access, and project configuration such as…"
+- `clm_a9afd6afe40a` — "A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away." · p 0.91 · active · 1 support · 0 contradict
+  - `src_44aa3ffce603` Claude Code settings: "**The key waits for trust.** `permissions.allow` rules, `permissions.additionalDirectories`, `extraKnownMarketplaces`, and most [`env`](/docs/en/settings-reference#env) values apply only after each teammate [trusts the…"
+- `clm_5e59824148fe` — "Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later." · p 0.91 · active · 1 support · 0 contradict · when: on Team and Enterprise plans
+  - `src_9e45f4ba4e23` Share session output as artifacts: "When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them."
+- `clm_55681f67bc76` — "With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "* **The receiving session prompts for permissions**: Claude Code delivers each message. It holds one for your approval only when the sending session identifies itself as bypassing permission prompts."
+- `clm_6d413ce21aa5` — "An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later." · p 0.91 · active · 1 support · 0 contradict
+  - `src_9e45f4ba4e23` Share session output as artifacts: "An artifact can call [MCP connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) each time someone views it, so the page shows current data rather than a snapshot from the session that built it."
+- `clm_e283c9c6832b` — "A Claude Code session has exactly one agent team that cannot be shared across sessions, and teammates cannot spawn teammates of their own, so only the lead manages the team." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "* **One team per session**: a session has exactly one team, scoped to that session. You can't create additional named teams or share a team across sessions. * **No nested teams**: teammates cannot spawn their own teammates."
+- `clm_e5824e43202d` — "Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+  - `src_10e9043d62f0` Message your other Claude Code sessions: "With this set, Claude Code asks for your approval before Claude's message to a session beyond this machine leaves, even in `bypassPermissions` mode, which skips ordinary permission prompts."
+- `clm_f636b711007c` — "While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Claude launches a teammate when it calls the [Agent tool](/docs/en/tools-reference) with a [`name`](/docs/en/sub-agents#subagent-names) while agent teams are enabled, and Claude Code doesn't ask you to confirm."
+- `clm_cdc37e66617c` — "An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call." · p 0.91 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "When verification requires inspecting files or running commands, use `type: "agent"` hooks."
+- `clm_a1a7d67456ed` — "claude --resume takes a session ID or name or shows an interactive picker, and when given an ID it searches the current project directory and its git worktrees first, then every other project on the machine." · p 0.90 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "| `--resume`, `-r` | Resume a specific session by ID or name, or show an interactive picker to choose a session. The picker and name search include sessions that added this directory with `/add-dir`."
+- `clm_ed6e352a269a` — "In Claude Code's `stream-json` output every line is a JSON object representing one event, and pairing the format with `--verbose` and `--include-partial-messages` delivers tokens as they are generated." · p 0.90 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "Use `--output-format stream-json` with `--verbose` and `--include-partial-messages` to receive tokens as they're generated. Each line is a JSON object representing an event:"
+- `clm_14f5761c068a` — "Where an account supports 1M context the option shows up in the `/model` picker, and the window can also be requested by appending a `[1m]` suffix to a model alias or a full model name." · p 0.90 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "If your account supports 1M context, the option appears in the `/model` picker in the latest versions of Claude Code. If you don't see it, try restarting your session."
+- `clm_3e6077428de5` — "MCP tool output draws a warning past 10,000 tokens and is capped at 25,000 tokens by default, a ceiling raised with the `MAX_MCP_OUTPUT_TOKENS` environment variable while the warning threshold stays fixed." · p 0.90 · active · 1 support · 0 contradict
+  - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Claude Code displays a warning when MCP tool output exceeds 10,000 tokens and limits output to 25,000 tokens by default. To raise the limit, set the `MAX_MCP_OUTPUT_TOKENS` environment variable (for example, `MAX_MCP_OUTPUT_TOKENS=50000`);"
+- `clm_849bb2be606c` — "The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it." · p 0.90 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "The `system/init` event reports session metadata including the model, tools, MCP servers, and loaded plugins. It is the first event in the stream unless startup events precede it:"
+- `clm_87f54b7b4618` — "claude --continue loads the most recent conversation in the current directory but skips background sessions, sessions created with claude -p or the Agent SDK, and sessions whose first prompt was /loop; adding -p brings those excluded sessions back into scope." · p 0.90 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "| `--continue`, `-c` | Load the most recent conversation in the current directory, skipping [background sessions, sessions created with `claude -p` or the Agent SDK, and sessions whose first prompt was…"
+- `clm_ce1b361863a3` — "The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff`." · p 0.90 · active · 1 support · 0 contradict
+  - `src_d5ec157b2e7b` Run Claude Code programmatically: "The `--allowedTools` flag uses [permission rule syntax](/docs/en/settings-reference#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`."
+- `clm_fa3825370f1f` — "The --bg / --background flag starts a session as a background agent and returns immediately with the session ID and management commands, and it cannot be combined with -p / --print." · p 0.90 · active · 1 support · 0 contradict
+  - `src_716248fd9713` CLI reference: "| `--bg`, `--background` | Start the session as a [background agent](/docs/en/agent-view) and return immediately. Prints the session ID and management commands."
+- `clm_175ad8d5489e` — "Because Agent Skills is an open format, the same skill folder works unchanged in any compatible agent, including VS Code, Claude Code, and OpenAI Codex." · p 0.88 · active · 1 support · 0 contradict
+  - `src_cc19a042a4fe` Quickstart: "This tutorial uses VS Code, but Agent Skills are an open format. The same skill works in any compatible agent, including Claude Code and OpenAI Codex."
+- `clm_023cf54f8d66` — "Persistent context is what keeps AI a force multiplier instead of a source of entropy: founders who skip specs, architectural decisions, and context files like CLAUDE.md hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision" · p 0.84 · active · 1 support · 0 contradict
+  - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "Founders who skip specs, architectural decisions, and context files (like CLAUDE.md) hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision."
+- `clm_5dcc0f9cf720` — "An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session." · p 0.84 · active · 1 support · 0 contradict
+  - `src_6932f817f8b4` How to add skills support to your agent: "Instead of injecting skill instructions into the main conversation, the skill is run in a **separate subagent session**."
+- `clm_059a28935b6c` — "Anthropic removed over 80% of Claude Code's system prompt for models like Claude Opus 5 and Claude Fable 5 with no measurable loss on its coding evaluations" · p 0.83 · active · 1 support · 0 contradict
+  - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "We removed over 80% of Claude Code's system prompt for models like Claude Opus 5 and Claude Fable 5 with no measurable loss on our coding evaluations."
+- `clm_b8c4a4ce61d2` — "Two or three parallel Claude Code sessions is a sensible starting point, and the practical ceiling is how many streams one person can review properly — so sessions are added only while review is keeping up" · p 0.83 · active · 1 support · 0 contradict
+  - `src_c65435745c66` The AI-Native SDLC playbook: "Two or three sessions is a sensible starting point. The practical ceiling is how many streams one person can review properly, so add sessions only while review is keeping up."
+- `clm_47a3686ce837` — "A throwaway HTML editor built for one piece of data works because it ends with an export — a copy-as-JSON or copy-as-prompt button turning what was done in the UI back into something pasteable into Claude Code — which keeps the human in the loop while tightening it" · p 0.81 · active · 1 support · 0 contradict
+  - `src_ee5ae103a89f` Using Claude Code: The unreasonable effectiveness of HTML: "You stay in the loop, but the loop gets much tighter."
+- `clm_708e814f952c` — "Markdown became an increasingly restrictive output format as agents grew more powerful, and members of the Claude Code team now prefer HTML for outputs they read, share, and use as specs and reference files" · p 0.81 · active · 1 support · 0 contradict
+  - `src_ee5ae103a89f` Using Claude Code: The unreasonable effectiveness of HTML: "Instead, I've started preferring HTML as an output format instead of Markdown and increasingly see this pattern being applied by others on the Claude Code team."
+- `clm_76793491b392` — "An instruction is the wrong tool for something that absolutely must not happen: under pressure, in a long session, in an ambiguous situation, or through a prompt injection in a file the task reads, the model can fail to follow a prompted rule, so a real guardrail has to be deterministic — hooks and permissions" · p 0.81 · active · 1 support · 0 contradict
+  - `src_93a1e6058bf1` Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents: "Claude will follow the instruction most of the time, but when under pressure, in a long session or an ambiguous situation, or due to a prompt injection in a file accessed as part of the task, the model can fail to follow a prompted rule."
+- `clm_b19037b381c9` — "A custom output style replaces rather than extends the default system prompt, dropping Claude Code's software-engineering instructions on scoping, comments, security, and verification unless keep-coding-instructions is set — which is why append-system-prompt, being purely additive, is the safer lever" · p 0.81 · active · 1 support · 0 contradict
+  - `src_93a1e6058bf1` Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents: "By default, a custom output style drops all of this and Claude Code becomes more of a general assistant than a software engineer assistant."
+
+## Timeline
+
+- 2026-08-23 new_claim `clm_69a691b0baea` (src_72a67c0111dc)
+- 2026-08-23 support_update `clm_69a691b0baea` (src_72a67c0111dc)
+- 2026-08-23 new_claim `clm_023cf54f8d66` (src_72a67c0111dc)
+- 2026-08-23 new_claim `clm_059a28935b6c` (src_8419bce2e672)
+- 2026-08-23 new_claim `clm_3a056b12fdae` (src_fbabc2423960)
+- 2026-08-23 new_claim `clm_1691eac7dbb3` (src_7415e8608f3c)
+- 2026-08-23 new_claim `clm_d6db5eb024a3` (src_93a1e6058bf1)
+- 2026-08-23 new_claim `clm_76793491b392` (src_93a1e6058bf1)
+- 2026-08-23 new_claim `clm_b4a4dce90006` (src_93a1e6058bf1)
+- 2026-08-23 new_claim `clm_b19037b381c9` (src_93a1e6058bf1)
+- 2026-08-23 new_claim `clm_6282902285c5` (src_d0a8a3247101)
+- 2026-08-23 new_claim `clm_708e814f952c` (src_ee5ae103a89f)
+- 2026-08-23 new_claim `clm_47a3686ce837` (src_ee5ae103a89f)
+- 2026-08-23 new_claim `clm_b8c4a4ce61d2` (src_c65435745c66)
+- 2026-08-23 new_claim `clm_ddd5deba5af8` (src_5229aa475d30)
+- 2026-08-23 new_claim `clm_a9f8de81c140` (src_5229aa475d30)
+- 2026-08-23 new_claim `clm_3072c56e3d0e` (src_5229aa475d30)
+- 2026-08-23 new_claim `clm_c54b34646d07` (src_5229aa475d30)
+- 2026-08-23 new_claim `clm_34b4c7629f8c` (src_9e45f4ba4e23)
+- 2026-08-23 new_claim `clm_ed1642c941f5` (src_9e45f4ba4e23)
+- 2026-08-23 new_claim `clm_dc0ebbb9a51b` (src_9e45f4ba4e23)
+- 2026-08-23 new_claim `clm_6d413ce21aa5` (src_9e45f4ba4e23)
+- 2026-08-23 new_claim `clm_5e59824148fe` (src_9e45f4ba4e23)
+- 2026-08-23 new_claim `clm_8c4373808e22` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_1dc5534f1f11` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_4d483e15f7f2` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_a93159a85dff` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_5bd3b13812ff` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_3e6077428de5` (src_9e7c0cb34402)
+- 2026-08-23 new_claim `clm_16151e65ea2f` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_f54dd327d44e` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_742b530ea197` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_f39d19cef3a9` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_256e3568a77d` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_714f78c08bf2` (src_63b61512d6ab)
+- 2026-08-23 new_claim `clm_935a50944ab0` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_5170f00ac6f2` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_87f54b7b4618` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_a1a7d67456ed` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_fa3825370f1f` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_e12133e66288` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_8d072866bebe` (src_716248fd9713)
+- 2026-08-23 new_claim `clm_a8d109a3feff` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_936676a8d258` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_e4b002d151ce` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_55681f67bc76` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_06937874202e` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_b590ceffeda7` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_e5824e43202d` (src_10e9043d62f0)
+- 2026-08-23 new_claim `clm_02e514dade50` (src_07950e24c4ee)
+- 2026-08-23 new_claim `clm_d0b564243947` (src_07950e24c4ee)
+- 2026-08-23 new_claim `clm_971e9091b930` (src_07950e24c4ee)
+- 2026-08-23 new_claim `clm_9bc86c7e0f02` (src_07950e24c4ee)
+- 2026-08-23 support_update `clm_d6db5eb024a3` (src_07950e24c4ee)
+- 2026-08-23 support_update `clm_1691eac7dbb3` (src_d6586d5c5c4f)
+- 2026-08-23 new_claim `clm_e3e1d00b42dd` (src_d6586d5c5c4f)
+- 2026-08-23 new_claim `clm_edfd83ab9d0b` (src_d6586d5c5c4f)
+- 2026-08-23 new_claim `clm_bf04596b7d87` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_08f7ec090a90` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_fa3bd1f7b469` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_65a77d75d064` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_51eafce71275` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_27ed2b92268c` (src_0979d158a4cf)
+- 2026-08-23 new_claim `clm_3e4818ada12a` (src_1aeabecafdc5)
+- 2026-08-23 new_claim `clm_bd185ee1d648` (src_1aeabecafdc5)
+- 2026-08-23 new_claim `clm_d3c8688a9a26` (src_1aeabecafdc5)
+- 2026-08-23 new_claim `clm_199a3ad4af87` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_9094953b81df` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_c7fff347847f` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_e24b51402fe1` (src_a959e4684753)
+- 2026-08-23 support_update `clm_3a056b12fdae` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_6dfe4cd8cabb` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_14f5761c068a` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_ad6abaac0af5` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_4c418d487b7e` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_a6e2e30ec7ba` (src_a959e4684753)
+- 2026-08-23 new_claim `clm_cbe1bfbfb2c0` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_7e83c9cc911e` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_22b2026c78fb` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_df3973d5ddfb` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_a7d0154e1554` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_0b4380115a9f` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_b7ca365c6ed5` (src_5ed7c226af31)
+- 2026-08-23 new_claim `clm_11a662f3b659` (src_5ed7c226af31)
+- 2026-08-23 support_update `clm_b4a4dce90006` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_66b7f6ded709` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_198fc635f5f4` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_64b87a2b64e4` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_95dd4d28d6cd` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_e0310c5f4dec` (src_5671f6c73f3d)
+- 2026-08-23 new_claim `clm_13e5b40d313a` (src_67017872e4a4)
+- 2026-08-23 new_claim `clm_dd6d8444326e` (src_67017872e4a4)
+- 2026-08-23 new_claim `clm_f636b711007c` (src_67017872e4a4)
+- 2026-08-23 new_claim `clm_34217cbae0d3` (src_67017872e4a4)
+- 2026-08-23 new_claim `clm_e283c9c6832b` (src_67017872e4a4)
+- 2026-08-23 new_claim `clm_ca5f4231dbc2` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_e888d6f6645f` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_19117073da8e` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_1e096059acb6` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_1b386e4233f4` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_c95deb689a75` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_fcd14cd753ef` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_71a4b67427f6` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_794ee065e6ca` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_591380d3c963` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_a000143bb6c6` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_890b846d4a42` (src_af0a3c9de51d)
+- 2026-08-23 new_claim `clm_4a55a86ff637` (src_ab9f8f38615f)
+- 2026-08-23 new_claim `clm_fa5f76bf370c` (src_ab9f8f38615f)
+- 2026-08-23 new_claim `clm_0b4f7948e088` (src_ab9f8f38615f)
+- 2026-08-23 new_claim `clm_b83cb09bdf7b` (src_e698013f1182)
+- 2026-08-23 new_claim `clm_9a6a56d1d7eb` (src_e698013f1182)
+- 2026-08-23 new_claim `clm_00214cae00e1` (src_e698013f1182)
+- 2026-08-23 new_claim `clm_be29c94c742f` (src_e698013f1182)
+- 2026-08-23 support_update `clm_ca5f4231dbc2` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_9f8da267ecf6` (src_3466a5945e1e)
+- 2026-08-23 support_update `clm_19117073da8e` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_805bbec6fa51` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_c6f907387ca6` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_a0b4cf68c8c2` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_cdb802990e15` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_2629d09b0686` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_cdc37e66617c` (src_3466a5945e1e)
+- 2026-08-23 new_claim `clm_ba8a7aa03de1` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_785d6c7de321` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_e21271f2bfed` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_3cd9cf0ce96b` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_b7452ba63021` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_eaeabd09442d` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_6ce4b501b320` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_a9afd6afe40a` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_da9d8c58cc46` (src_44aa3ffce603)
+- 2026-08-23 new_claim `clm_0db4ee93154e` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_3dcf6b089b87` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_826adcc8fb72` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_614484c4baab` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_9d7ccdfee9ae` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_29d91a7cbb32` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_1cbbd4529c24` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_b0a4eda36461` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_1dae05957203` (src_4a22e1f99f87)
+- 2026-08-23 new_claim `clm_0659b458e4aa` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_8a5ac3a8a835` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_917de29f9f33` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_e261e230a5a7` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_5e882ac2e1b6` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_ed6e352a269a` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_849bb2be606c` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_ce1b361863a3` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_77037ce59207` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_1654b0d3617a` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_c7efa28cfcfb` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_c8e724381e5f` (src_d5ec157b2e7b)
+- 2026-08-23 new_claim `clm_03dee19f46e9` (src_b72a74a8d21c)
+- 2026-08-23 new_claim `clm_8da3fbe3b018` (src_b72a74a8d21c)
+- 2026-08-25 new_claim `clm_175ad8d5489e` (src_cc19a042a4fe)
+- 2026-08-25 new_claim `clm_5dcc0f9cf720` (src_6932f817f8b4)
+- 2026-08-28 support_update `clm_6282902285c5` (src_521f898b9896)
+- 2026-08-30 new_claim `clm_bc2e48f39a13` (src_99ad4fe8f1dd)
+- 2026-08-30 support_update `clm_6282902285c5` (src_99ad4fe8f1dd)
+- 2026-08-30 new_claim `clm_3c7492d09031` (src_2eb7a799d8a7)
+- 2026-08-30 new_claim `clm_639cfed3cd72` (src_1d5f4c9615f1)
+- 2026-08-30 new_claim `clm_a02b62bcf985` (src_1d5f4c9615f1)
+- 2026-08-30 new_claim `clm_fe663417d914` (src_7962dafdd21b)
+
+## Related
+
+- ← applies_to [[permission-rule]] (0.99)
+- → uses [[schema-layer]] (0.99)
+- → uses [[subagents]] (0.99)
+- ← part_of [[artifacts]] (0.94)
+- ← part_of [[claude-security-plugin]] (0.94)
+- ← part_of [[deep-links]] (0.94)
+- ← part_of [[hooks]] (0.94)
+- ← part_of [[security-guidance-plugin]] (0.94)
+- ← part_of [[skills]] (0.94)
+- → uses [[effort-level]] (0.94)
+- ← part_of [[agent-teams]] (0.93)
+- ← part_of [[auto-memory]] (0.93)
+- … 32 more edges — `graph.py neighbors ent_claude_code`
+- [[hooks]] — 21 shared claims
+- [[permission-mode]] — 17 shared claims
+- [[subagents]] — 14 shared claims
+- [[skills]] — 10 shared claims
+- [[non-interactive-mode]] — 9 shared claims
+- [[schema-layer]] — 8 shared claims
+- [[cross-session-messaging]] — 7 shared claims
+- [[git-worktree]] — 7 shared claims
+- [[settings-file]] — 7 shared claims
+- [[mcp-server]] — 6 shared claims
+- [[permission-rule]] — 6 shared claims
+- [[agent-teams]] — 5 shared claims
+- [[artifacts]] — 5 shared claims
+- [[claude-agent-sdk]] — 4 shared claims
+- [[context-window]] — 4 shared claims
+- [[effort-level]] — 4 shared claims
+- [[model-alias]] — 4 shared claims
+- [[model-selection]] — 4 shared claims
+- [[slash-command]] — 4 shared claims
+- [[command-menu]] — 3 shared claims
+- [[dynamic-workflows]] — 3 shared claims
+- [[goal-command]] — 3 shared claims
+- [[managed-settings]] — 3 shared claims
+- [[permission-system]] — 3 shared claims
+- [[print-mode]] — 3 shared claims
+- [[workspace-trust]] — 3 shared claims
+- [[agent-loops]] — 2 shared claims
+- [[auto-memory]] — 2 shared claims
+- [[auto-mode]] — 2 shared claims
+- [[auto-mode-classifier]] — 2 shared claims
+- [[bare-mode]] — 2 shared claims
+- [[context-engineering]] — 2 shared claims
+- [[deep-links]] — 2 shared claims
+- [[html-output-format]] — 2 shared claims
+- [[loop-command]] — 2 shared claims
+- [[mcp-installation-scope]] — 2 shared claims
+- [[mcp-tool]] — 2 shared claims
+- [[monorepo]] — 2 shared claims
+- [[permission-deny-rules]] — 2 shared claims
+- [[scheduled-tasks]] — 2 shared claims
+- [[security-guidance-plugin]] — 2 shared claims
+- [[session]] — 2 shared claims
+- [[system-prompt]] — 2 shared claims
+- [[team-lead]] — 2 shared claims
+- [[agent-skills]] — 1 shared claim
+- [[agentic-coding]] — 1 shared claim
+- [[ai-native-startup]] — 1 shared claim
+- [[claude-code-github-action]] — 1 shared claim
+- [[claude-security-plugin]] — 1 shared claim
+- [[code-review]] — 1 shared claim
+- [[completion-condition]] — 1 shared claim
+- [[cross-model-review]] — 1 shared claim
+- [[goal-evaluator]] — 1 shared claim
+- [[idea-stage]] — 1 shared claim
+- [[llm-as-judge]] — 1 shared claim
+- [[mcp-connector]] — 1 shared claim
+- [[model-context-protocol]] — 1 shared claim
+- [[mvp-stage]] — 1 shared claim
+- [[oauth]] — 1 shared claim
+- [[output-styles]] — 1 shared claim
+- [[progressive-disclosure]] — 1 shared claim
+- [[review-md]] — 1 shared claim
+- [[security-review]] — 1 shared claim
+- [[skill-md]] — 1 shared claim
+- [[workflow-runtime]] — 1 shared claim
+- agent hooks (no page yet)
+- Amazon Bedrock (no page yet)
+- async hooks (no page yet)
+- background session (no page yet)
+- code intelligence plugin (no page yet)
+- Content Security Policy (no page yet)
+- extended thinking (no page yet)
+- fast mode (no page yet)
+- language server (no page yet)
+- matcher (no page yet)
+- problem-solution fit (no page yet)
+- prompt hooks (no page yet)
+- WebFetch tool (no page yet)
+- working directory (no page yet)

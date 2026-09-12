@@ -1,0 +1,82 @@
+[
+  {
+    "query": "i keep re-explaining the same friday release checklist every week — cut the branch, run the smoke suite, update the changelog, tag it. can you make it stick so i stop pasting it?",
+    "should_trigger": true
+  },
+  {
+    "query": "make me something that turns our incident postmortems into the format the SRE team wants — timeline, contributing factors, action items with owners",
+    "should_trigger": true
+  },
+  {
+    "query": "write a SKILL.md that extracts line items out of our vendor PDFs and appends them to finance/ledger.csv",
+    "should_trigger": true
+  },
+  {
+    "query": "the pdf-tools skill in .agents/skills never gets picked up on its own, i always have to type /skill:pdf-tools. what's wrong with it?",
+    "should_trigger": true
+  },
+  {
+    "query": "should this be a prompt template or a skill? it's something i'll type myself every morning to summarize what landed overnight",
+    "should_trigger": true
+  },
+  {
+    "query": "i've got a whole ritual for onboarding a new repo — clone, bun install, wire the pre-commit hook, open the tracking issue. i want that repeatable instead of living in my head",
+    "should_trigger": true
+  },
+  {
+    "query": "our brave-search skill fires way too eagerly, it loads for anything with the word search in it. tighten up when it actually runs",
+    "should_trigger": true
+  },
+  {
+    "query": "we do the same five things every time a flaky test shows up — quarantine it, file the ticket, link the run, ping the owner, add it to the digest. can pi just know how to do that?",
+    "should_trigger": true
+  },
+  {
+    "query": "turn what we just did with the stripe webhook debugging into something reusable for next time",
+    "should_trigger": true
+  },
+  {
+    "query": "package our internal skills so the rest of the team can pi install them from the repo",
+    "should_trigger": true
+  },
+  {
+    "query": "read .agents/skills/pdf-tools/SKILL.md and use it to extract the tables from invoices/march.pdf",
+    "should_trigger": false
+  },
+  {
+    "query": "add a /review prompt template that runs git diff --cached and asks for a security pass — just the one file please",
+    "should_trigger": false
+  },
+  {
+    "query": "write an extension that adds a /notes command backed by a sqlite db, with a tool the model can call",
+    "should_trigger": false
+  },
+  {
+    "query": "pi install npm:pi-web-access is failing with a peer dependency error, can you sort it out",
+    "should_trigger": false
+  },
+  {
+    "query": "what skills are loaded right now and where did each one come from?",
+    "should_trigger": false
+  },
+  {
+    "query": "update AGENTS.md so it says we use bun instead of npm everywhere",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how progressive disclosure works in pi skills, i want to understand the system prompt cost",
+    "should_trigger": false
+  },
+  {
+    "query": "our pdf extraction script in scripts/extract.py throws on encrypted files — fix the bug",
+    "should_trigger": false
+  },
+  {
+    "query": "set up a .pi/settings.json for this project that trusts it and enables skill commands",
+    "should_trigger": false
+  },
+  {
+    "query": "grill me on the caching design for the api client before we build it",
+    "should_trigger": false
+  }
+]

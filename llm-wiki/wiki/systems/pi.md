@@ -1,0 +1,478 @@
+---
+type: system
+status: current
+created: 2026-09-11
+updated: 2026-09-11
+sources:
+  - {resource: llm-wiki/raw/docs/agent-skills/adding-skills-support.md, title: "How to add skills support to your agent", id: src_6932f817f8b4}
+  - {resource: llm-wiki/raw/docs/agent-skills/home.md, title: "Agent Skills Overview", id: src_9b4d3b3d8635}
+  - {resource: llm-wiki/raw/docs/agent-skills/specification.md, title: "Specification", id: src_7bd75101edfa}
+  - {resource: llm-wiki/raw/docs/pi/compaction.md, title: "Compaction & Branch Summarization", id: src_f3c56d2c0088}
+  - {resource: llm-wiki/raw/docs/pi/containerization.md, title: "Containerization", id: src_02faa5c62172}
+  - {resource: llm-wiki/raw/docs/pi/environment-variables.md, title: "Environment Variables", id: src_7f85c02fc39f}
+  - {resource: llm-wiki/raw/docs/pi/extensions.md, title: "Extensions", id: src_a49af96a95e8}
+  - {resource: llm-wiki/raw/docs/pi/json.md, title: "JSON Event Stream Mode", id: src_559bd402b02f}
+  - {resource: llm-wiki/raw/docs/pi/keybindings.md, title: "Keybindings", id: src_59b8fc9e355e}
+  - {resource: llm-wiki/raw/docs/pi/packages.md, title: "Pi Packages", id: src_1589290f55f3}
+  - {resource: llm-wiki/raw/docs/pi/prompt-templates.md, title: "Prompt Templates", id: src_0bc77feb25be}
+  - {resource: llm-wiki/raw/docs/pi/rpc.md, title: "RPC Mode", id: src_3c01fb9c03bd}
+  - {resource: llm-wiki/raw/docs/pi/sdk.md, title: "SDK", id: src_0954e1c03a59}
+  - {resource: llm-wiki/raw/docs/pi/security.md, title: "Security", id: src_38afec4a51af}
+  - {resource: llm-wiki/raw/docs/pi/session-format.md, title: "Session File Format", id: src_92c377275d79}
+  - {resource: llm-wiki/raw/docs/pi/sessions.md, title: "Sessions", id: src_6888abe7e7b7}
+  - {resource: llm-wiki/raw/docs/pi/settings.md, title: "Settings", id: src_7dd0e1ac57d3}
+  - {resource: llm-wiki/raw/docs/pi/skills.md, title: "Skills", id: src_51c275d28919}
+  - {resource: llm-wiki/raw/docs/pi/themes.md, title: "Themes", id: src_d432de1cd9da}
+  - {resource: llm-wiki/raw/docs/pi/tui.md, title: "TUI Components", id: src_1d072e1d683a}
+  - {resource: llm-wiki/raw/docs/pi/usage.md, title: "Using Pi", id: src_ab670f25c35e}
+generated: {by: process:llm-wiki-render, at: 2026-09-11}
+entity_ids: [ent_pi]
+claim_ids: [clm_90a71be135d8, clm_810e9ca8ea5b, clm_3869fb899ba0, clm_3e71ac2b4ab0, clm_ed2073143ece, clm_11c6703901c8, clm_246cd8a77124, clm_86f2c89fbcb1, clm_a26c56900670, clm_a9cd0f68d4eb, clm_ad0fdc5c03ce, clm_f36a84a463a4, clm_fafe9fb8b66e, clm_09bf6ccb11c0, clm_0fc576bb4bbe, clm_1ca09b98434f, clm_29042914eda1, clm_2dfafb1d2b1d, clm_2fe3fab7d249, clm_8737c7ca6b63, clm_918dd20a3e91, clm_bf4a18007e2f, clm_ca4184507217, clm_cfd347ecc508, clm_d2bc28df6adf, clm_11421224af57, clm_424056cf5ae9, clm_8d8d4c1628d8, clm_cfe96221e72b, clm_e0c84f167157, clm_5ca433e00ea6, clm_0c8568fc38b5, clm_101c1d9e86b6, clm_3a1463613521, clm_570f712c6a4f, clm_70cca73a77f7, clm_7a3f0a042a7d, clm_80cbc04f7602, clm_91780f43c09d, clm_985fa12b1b2a, clm_b1ea0a490acc, clm_b36b56efd6d5, clm_b89352b18fc5, clm_bf595ae0cb35, clm_c85b20ce8899, clm_e8293864a15e, clm_f74708e2c8eb, clm_fc7bcaeb694d, clm_ffe883da9a45, clm_07c0f6c720a3, clm_149a0483eb0e, clm_16beff4fdac1, clm_1d62f096ecfe, clm_2cb47310aec4, clm_39ba7e3822d8, clm_3e99f9d5f50a, clm_6a82f1ec6eda, clm_71a19f64f88b, clm_74ad73ec8056, clm_8a1d3d106aae, clm_be8b43ff7593, clm_d417dcb427ab, clm_db99fcce3d9f, clm_e28274bf7967, clm_64156597f767, clm_6950c62639be, clm_e467f67072a9, clm_699f2ae955ac, clm_cf1d2e62d060, clm_088ce0e77862, clm_17270ad4afd2, clm_1cdc0a6c5ecf, clm_368deae620d9, clm_503d19530fc4, clm_5080bebfc64b, clm_657f7801cf02, clm_695fbe157cd4, clm_9415967f93e0, clm_956634f81fad, clm_986b656d48da, clm_cda7cb4e957d, clm_d65893ecf0db, clm_108f88ad9156, clm_1b9e0668b95f, clm_5174112e71a2, clm_8dd60325cd78, clm_a52988da66af, clm_d1b8f5a83af4, clm_ec17dbea2a46, clm_b167fbc5a6f4, clm_c65d0e1b83ce, clm_00bb29da7aa9, clm_ed8fac585242]
+confidence: 0.93
+stale_after: 2027-01-26
+last_rendered: 2026-09-11T20:02:51Z
+review_required: false
+---
+
+# Pi
+
+> **In here:** In Pi's JSON stream the message_end event carries the final authoritative message, so a consumer need not reassemble deltas to get the settled text · 93 claims, confidence 0.93.
+
+## Current understanding
+
+- Agents load skills through progressive disclosure in three stages: discovery loads only each skill's name and description at startup, activation reads the full SKILL.md when a task matches the description, and execution follows the instructions and optionally loads bundled code or referenced files (0.99)
+- Clients should parse skills leniently for cross-client compatibility — warning but still loading on a name mismatch or over-length name, skipping only on a missing description or wholly unparseable YAML, and retrying common malformed YAML such as unquoted values containing colons (0.99)
+- Pi's SDK gives programmatic access to the agent for embedding it in other applications, building custom interfaces, or wiring it into automated workflows (0.94)
+- A Pi session file is JSONL where each line is a typed JSON object, and entries form a tree through id and parentId so branching happens in place rather than by creating new files (0.94)
+- Pi configures from JSON settings files in which project settings override global ones (0.94)
+- Pi's RPC mode runs the agent headlessly behind a JSON protocol over stdin and stdout, the embedding path for other applications, IDEs, and custom UIs (0.94)
+- A Pi extension is a TypeScript module that subscribes to lifecycle events, registers LLM-callable custom tools, and adds commands (0.94)
+- A Pi prompt template's filename is its command name, so review.md is invoked as /review (0.94)
+- A Pi package bundles extensions, skills, prompt templates, and themes for sharing over npm or git, declaring its resources under the pi key of package.json or through conventional directories (0.94)
+- Pi's project trust decides only whether project-local settings, resources, packages, and extensions are loaded; it is not a sandbox and places no limit on what tools may do once a session is running (0.94)
+- Pi ships no built-in sandbox: its built-in tools read, write, edit, and run shell commands with the permissions of the pi process, and extensions are TypeScript modules running at those same permissions (0.94)
+- Pi's design keeps the agent core small and pushes workflow-specific behavior out into extensions, skills, prompt templates, and packages (0.94)
+- A Pi theme is a JSON file defining the colors of the TUI (0.94)
+- Node's readline is not protocol-compliant for Pi's RPC mode because it also splits on U+2028 and U+2029, which are legal inside JSON strings (0.93)
+- Pi sets AI_AGENT=pi as a generic marker and PI_CODING_AGENT=true as a Pi-specific one, both inherited by child processes so tooling can tell it launched them (0.93)
+- A Pi session is a tree whose every entry carries an id and parentId with the current position as the active leaf, so /tree can jump back to any earlier point and continue from there inside the same file (0.93)
+- Pi treats prompt injection from repository files, comments, documentation, context files, or build output as expected local-agent risk that it cannot reliably prevent (0.93)
+- Every Pi keyboard shortcut is rebindable through ~/.pi/agent/keybindings.json, and an action may carry one key or an array of them (0.93)
+- Pi's RPC mode uses strict JSONL framing with LF as the only record delimiter, so clients split on newline alone and merely tolerate a trailing carriage return (0.93)
+- Every line a Pi TUI component returns from render() must fit within the width parameter it was given (0.93)
+- Isolating Pi takes one of two shapes: run the whole pi process inside an isolated environment, or run pi on the host and route tool execution into one (0.93)
+- Pi session files carry a version in the header and older ones migrate automatically to the current version, v3, when loaded (0.93)
+- Pi auto-saves every session to ~/.pi/agent/sessions/ organized by working directory, one JSONL file per session holding a tree structure (0.93)
+- Pi's --mode json writes every session event as JSON lines on stdout, the integration surface for other tools and custom UIs (0.93)
+- Pi's built-in tool set is read, bash, powershell on Windows, edit, write, grep, find, and ls (0.93)
+- Pi packages run with full system access — extensions execute arbitrary code and skills can direct the model to run executables — so third-party package source should be reviewed before installing (0.93)
+- Pi never cuts compaction at a tool result, because a tool result must stay with the tool call that produced it (0.93)
+- Pi auto-compacts once context tokens exceed the context window minus reserveTokens, which defaults to 16384 tokens held back for the model's response (0.93)
+- Pi extensions run with the user's full system permissions and can execute arbitrary code, so only trusted sources should be installed (0.93)
+- Pi extensions and custom tools can draw their own TUI components to build interactive interfaces inside the agent (0.93)
+- Pi deliberately ships without built-in MCP, sub-agents, permission popups, plan mode, to-dos, or background bash, leaving those to extensions, packages, or external tools such as containers and tmux (0.93)
+- Pi lets the user submit while the agent works: Enter queues a steering message delivered once the current assistant turn finishes its tool calls, and Alt+Enter queues a follow-up delivered after all work completes (0.93)
+- A directory's AGENTS.override.md makes Pi load it in place of that directory's AGENTS.md or CLAUDE.md, while context files from other directories still layer normally (0.93)
+- Pi does not walk subdirectories when discovering prompt templates in a prompts/ directory; nested templates must be added explicitly through settings or a package manifest (0.93)
+- A Pi extension factory may run in an invocation that never starts a session, so background resources — processes, sockets, watchers, timers — must be deferred to session_start or the handler that needs them (0.93)
+- Only extensions placed in Pi's auto-discovered locations can be hot-reloaded with /reload; a -e path is for quick tests (0.93)
+- On its first run Pi detects the terminal background and defaults the theme to dark or light accordingly (0.93)
+- A Pi prompt template's argument-hint frontmatter field shows expected arguments in autocomplete, angle brackets marking required arguments and square brackets optional ones (0.93)
+- Pi replaces its default system prompt from a SYSTEM.md placed per-project or globally, and appends to it instead with APPEND_SYSTEM.md in either location (0.93)
+- Pi extensions execute wherever the pi process itself runs, so under a host-side tool-routing extension every other custom extension tool still runs on the host unless it delegates its own operations (0.93)
+- Git-sourced Pi packages pin to a tag or commit, and pi update reconciles an existing clone to the configured ref without ever advancing it to a newer one (0.93)
+- Pi's TUI appends a full SGR and OSC 8 reset to each rendered line, so styles never carry across lines and multi-line styled text must reapply them per line (0.93)
+- Pi omits an in-process sandbox deliberately, on the reasoning that a partial one reads as a security boundary while still depending on the host shell, filesystem, package managers, credentials, and extension code, so real isolation has to come from the OS or a virtualization boundary (0.93)
+- Pi injects the PI_* session variables only into the LLM-callable bash and powershell tools, never into a user's own ! or !! commands (0.93)
+- Relative resource paths in a Pi settings file resolve against that file's own directory — ~/.pi/agent for global settings and .pi for project settings — with absolute paths and ~ also accepted (0.93)
+- Pi renders themes in 24-bit RGB and falls back to the nearest approximation on terminals that only support 256 colors (0.93)
+- Pi prompt templates take shell-style argument substitution, including a default form where ${1:-default} falls back when the first argument is absent or empty (0.93)
+- In Pi, /tree keeps alternative branches together in one session file while /fork and /clone each split the work into a separate session file (0.93)
+- Pi picks its compaction cut point by walking backwards from the newest message accumulating token estimates until keepRecentTokens, 20k by default, is covered (0.93)
+- A Pi extension can intercept compaction through the session_before_compact event to cancel it outright or supply its own summary (0.93)
+- Pi's RPC mode carries extension dialogs as a request/response sub-protocol: a dialog method emits an extension_ui_request on stdout and blocks until the client returns a matching extension_ui_response on stdin (0.93)
+- Pi's runtime API is the layer for replacing the active session and rebuilding cwd-bound state, and it is the same one the built-in interactive, print, and RPC modes run on (0.93)
+- createAgentSession() draws extensions, skills, prompt templates, themes, and context files from a ResourceLoader, defaulting to DefaultResourceLoader with standard discovery when none is supplied (0.93)
+- Pi's JSON mode emits message_update records as deltas only, dropping the cumulative message field and the partial snapshot so stream size stays linear in the output (0.93)
+- Pi resolves the PI_* session variables when each shell command starts, so switching model or reasoning level reaches the next shell command without restarting Pi (0.93)
+- Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely (0.93)
+- A theme change makes Pi's TUI call invalidate() on every component to drop cached renders, so a component that does not implement it correctly will not pick the new theme up (0.93)
+- Pi truncates tool results to 2000 characters when serializing a conversation for summarization, since tool output is typically the largest contributor to context size (0.93)
+- The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on (0.93)
+- A Pi CustomEntry persists extension state in the session file without taking part in the LLM context (0.93)
+- A Pi compaction entry must carry firstKeptEntryId, naming the oldest entry retained: rebuilding context swaps the summarized entries for the summary and keeps everything from that entry onward (0.93)
+- Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com (0.93)
+- Pi accepts registerTool calls after startup as well as at load, refreshing the new tool into the same session so the LLM can call it without a /reload (0.93)
+- Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository (0.93)
+- A Pi CustomMessageEntry is the extension-injected counterpart that does enter the LLM context, unlike a CustomEntry (0.93)
+- A Pi extension's tool_call handler can block a tool call by returning block with an optional reason and terminate flag, and can patch arguments by mutating event.input in place (0.93)
+- In Pi's RPC mode ctx.hasUI is true because dialogs work over the sub-protocol, so an extension must guard genuinely terminal-bound features on ctx.mode === "tui" rather than on hasUI (0.93)
+- When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found (0.92)
+- The required name field is capped at 64 characters, allows only lowercase letters, numbers and hyphens, may not start or end with a hyphen or contain consecutive hyphens, and must match the parent directory name (0.92)
+- The top-level usage field in Pi's JSON stream carries the latest cumulative provider-reported usage and can stay at zero when a provider reports usage only at completion (0.92)
+- Setting PI_OFFLINE turns off every startup network operation in Pi, covering update checks, package updates, and install/update telemetry together (0.92)
+- Pi advises leaving retry.provider.maxRetries at 0, because provider-level retries can swallow out-of-usage-limit errors before Pi sees them and block the agent until the provider quota resets (0.92)
+- When one Pi turn is itself larger than keepRecentTokens the cut point lands mid-turn at an assistant message, and Pi then merges a history summary with a turn-prefix summary (0.92)
+- Pi's enableInstallTelemetry governs the anonymous install/update ping and provider attribution headers only; opting out leaves version-check requests running, which PI_SKIP_VERSION_CHECK or offline mode disables separately (0.92)
+- Pi migrates pre-namespaced keybinding ids such as cursorUp or expandTools to their namespaced equivalents automatically at startup (0.92)
+- Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them (0.92)
+- In Pi's SDK preflightResult fires before prompt() resolves and reports acceptance only; prompt() resolves after the whole accepted run including retries, and post-acceptance failures surface through the event and message stream instead (0.92)
+- Pi's resource arrays in settings take glob patterns plus explicit overrides: !pattern excludes, +path force-includes an exact path, and -path force-excludes one (0.92)
+- Pi directs the agent to read PI_PROVIDER and PI_MODEL to answer which model is running rather than infer it from the system prompt (0.92)
+- In Pi's fullscreen TUI mode the transcript bindings outrank the editor's, so bare navigation keys drive the transcript while their ctrl variants stay with the editor; outside fullscreen both drive the editor (0.92)
+- Pi's super-modifier bindings need a terminal that reports the modifier separately, typically via the Kitty keyboard protocol, and may simply not fire elsewhere (0.92)
+- Pi issues compaction and branch-summary requests on fresh routing session IDs and, where the provider supports it, disables prompt-cache writes because these one-off prompts are unlikely to be reused (0.92)
+- When /tree leaves one branch for another, Pi can summarize the abandoned branch and attach that summary at the new position, carrying the context forward without replaying the whole branch (0.92)
+- Pi's guidance is to reuse the built-in SelectList, SettingsList, and BorderedLoader components, which cover about 90% of extension UI cases, rather than rebuild them (0.92)
+- When one Pi package is listed in both global and project settings the project entry wins, except that an entry marked autoload false applies as a delta over the global one instead (0.92)
+- The Gondolin extension keeps pi on the host while mounting the host working directory at /workspace inside a Linux micro-VM and overriding the read, write, edit, bash, grep, find, and ls tools to run there (0.92)
+- Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container (0.92)
+- Pi offers RPC mode over the CLI as the subprocess-based integration path for callers who do not want to build against the SDK (0.92)
+- Pi appends a custom tool's promptGuidelines bullets flat into the shared Guidelines section with no tool-name prefix, so each bullet must name its own tool rather than say "this tool" (0.92)
+- Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it (0.92)
+- In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter (0.92)
+- In Pi's JSON stream the message_end event carries the final authoritative message, so a consumer need not reassemble deltas to get the settled text (0.92)
+- A Pi theme carries a separate editor border color per thinking level, giving the current level a visual hierarchy from subtle to prominent (0.92)
+
+## Evidence
+
+- `clm_90a71be135d8` — "Agents load skills through progressive disclosure in three stages: discovery loads only each skill's name and description at startup, activation reads the full SKILL.md when a task matches the description, and execution follows the instructions and optionally loads bundled code or referenced files." · p 0.99 · active · 2 support · 0 contradict
+  - `src_9b4d3b3d8635` Agent Skills Overview: "1. **Discovery**: At startup, agents load only the name and description of each available skill, just enough to know when it might be relevant."
+  - `src_51c275d28919` Skills: "This is progressive disclosure: only descriptions are always in context, full instructions load on-demand."
+- `clm_810e9ca8ea5b` — "Clients should parse skills leniently for cross-client compatibility — warning but still loading on a name mismatch or over-length name, skipping only on a missing description or wholly unparseable YAML, and retrying common malformed YAML such as unquoted values containing colons." · p 0.99 · active · 2 support · 0 contradict
+  - `src_6932f817f8b4` How to add skills support to your agent: "Skill files authored for other clients may contain technically invalid YAML that their parsers happen to accept. The most common issue is unquoted values containing colons:"
+  - `src_51c275d28919` Skills: "Pi implements the [Agent Skills standard](https://agentskills.io/specification), warning about most violations but remaining lenient."
+- `clm_3869fb899ba0` — "Pi's SDK gives programmatic access to the agent for embedding it in other applications, building custom interfaces, or wiring it into automated workflows." · p 0.94 · active · 1 support · 0 contradict
+  - `src_0954e1c03a59` SDK: "The SDK provides programmatic access to pi's agent capabilities. Use it to embed pi in other applications, build custom interfaces, or integrate with automated workflows."
+- `clm_3e71ac2b4ab0` — "A Pi session file is JSONL where each line is a typed JSON object, and entries form a tree through id and parentId so branching happens in place rather than by creating new files." · p 0.94 · active · 1 support · 0 contradict
+  - `src_92c377275d79` Session File Format: "Sessions are stored as JSONL (JSON Lines) files. Each line is a JSON object with a `type` field. Session entries form a tree structure via `id`/`parentId` fields, enabling in-place branching without creating new files."
+- `clm_ed2073143ece` — "Pi configures from JSON settings files in which project settings override global ones." · p 0.94 · active · 1 support · 0 contradict
+  - `src_7dd0e1ac57d3` Settings: "Pi uses JSON settings files with project settings overriding global settings."
+- `clm_11c6703901c8` — "Pi's RPC mode runs the agent headlessly behind a JSON protocol over stdin and stdout, the embedding path for other applications, IDEs, and custom UIs." · p 0.94 · active · 1 support · 0 contradict
+  - `src_3c01fb9c03bd` RPC Mode: "RPC mode enables headless operation of the coding agent via a JSON protocol over stdin/stdout. This is useful for embedding the agent in other applications, IDEs, or custom UIs."
+- `clm_246cd8a77124` — "A Pi extension is a TypeScript module that subscribes to lifecycle events, registers LLM-callable custom tools, and adds commands." · p 0.94 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "Extensions are TypeScript modules that extend pi's behavior. They can subscribe to lifecycle events, register custom tools callable by the LLM, add commands, and more."
+- `clm_86f2c89fbcb1` — "A Pi prompt template's filename is its command name, so review.md is invoked as /review." · p 0.94 · active · 1 support · 0 contradict
+  - `src_0bc77feb25be` Prompt Templates: "The filename becomes the command name. `review.md` becomes `/review`."
+- `clm_a26c56900670` — "A Pi package bundles extensions, skills, prompt templates, and themes for sharing over npm or git, declaring its resources under the pi key of package.json or through conventional directories." · p 0.94 · active · 1 support · 0 contradict
+  - `src_1589290f55f3` Pi Packages: "Pi packages bundle extensions, skills, prompt templates, and themes so you can share them through npm or git. A package can declare resources in `package.json` under the `pi` key, or use conventional directories."
+- `clm_a9cd0f68d4eb` — "Pi's project trust decides only whether project-local settings, resources, packages, and extensions are loaded; it is not a sandbox and places no limit on what tools may do once a session is running." · p 0.94 · active · 1 support · 0 contradict
+  - `src_38afec4a51af` Security: "Project trust controls whether pi loads project-local settings, resources, packages, and extensions. It is not a sandbox and it does not restrict what the model can ask tools to do after you start working in a directory."
+- `clm_ad0fdc5c03ce` — "Pi ships no built-in sandbox: its built-in tools read, write, edit, and run shell commands with the permissions of the pi process, and extensions are TypeScript modules running at those same permissions." · p 0.94 · active · 1 support · 0 contradict
+  - `src_38afec4a51af` Security: "Pi does not include a built-in sandbox. Built-in tools can read files, write files, edit files, and run shell commands with the permissions of the pi process. Extensions are TypeScript modules that run with the same permissions."
+- `clm_f36a84a463a4` — "Pi's design keeps the agent core small and pushes workflow-specific behavior out into extensions, skills, prompt templates, and packages." · p 0.94 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "Pi keeps the core small and pushes workflow-specific behavior into extensions, skills, prompt templates, and packages."
+- `clm_fafe9fb8b66e` — "A Pi theme is a JSON file defining the colors of the TUI." · p 0.94 · active · 1 support · 0 contradict
+  - `src_d432de1cd9da` Themes: "Themes are JSON files that define colors for the TUI."
+- `clm_09bf6ccb11c0` — "Node's readline is not protocol-compliant for Pi's RPC mode because it also splits on U+2028 and U+2029, which are legal inside JSON strings." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3c01fb9c03bd` RPC Mode: "In particular, Node `readline` is not protocol-compliant for RPC mode because it also splits on `U+2028` and `U+2029`, which are valid inside JSON strings."
+- `clm_0fc576bb4bbe` — "Pi sets AI_AGENT=pi as a generic marker and PI_CODING_AGENT=true as a Pi-specific one, both inherited by child processes so tooling can tell it launched them." · p 0.93 · active · 1 support · 0 contradict
+  - `src_7f85c02fc39f` Environment Variables: "`AI_AGENT=pi` is a generic marker that lets tooling identify Pi as the agent that launched the process."
+- `clm_1ca09b98434f` — "A Pi session is a tree whose every entry carries an id and parentId with the current position as the active leaf, so /tree can jump back to any earlier point and continue from there inside the same file." · p 0.93 · active · 1 support · 0 contradict
+  - `src_6888abe7e7b7` Sessions: "Sessions are stored as trees. Every entry has an `id` and `parentId`, and the current position is the active leaf. `/tree` lets you jump to any previous point and continue from there without creating a new file."
+- `clm_29042914eda1` — "Pi treats prompt injection from repository files, comments, documentation, context files, or build output as expected local-agent risk that it cannot reliably prevent." · p 0.93 · active · 1 support · 0 contradict
+  - `src_38afec4a51af` Security: "Prompt injection from repository files, comments, documentation, context files, or build output is expected local-agent risk and cannot be reliably prevented by pi."
+- `clm_2dfafb1d2b1d` — "Every Pi keyboard shortcut is rebindable through ~/.pi/agent/keybindings.json, and an action may carry one key or an array of them." · p 0.93 · active · 1 support · 0 contradict
+  - `src_59b8fc9e355e` Keybindings: "All keyboard shortcuts can be customized via `~/.pi/agent/keybindings.json`. Each action can be bound to one or more keys."
+- `clm_2fe3fab7d249` — "Pi's RPC mode uses strict JSONL framing with LF as the only record delimiter, so clients split on newline alone and merely tolerate a trailing carriage return." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3c01fb9c03bd` RPC Mode: "RPC mode uses strict JSONL semantics with LF (`\n`) as the only record delimiter."
+- `clm_8737c7ca6b63` — "Every line a Pi TUI component returns from render() must fit within the width parameter it was given." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1d072e1d683a` TUI Components: "**Critical:** Each line from `render()` must not exceed the `width` parameter."
+- `clm_918dd20a3e91` — "Isolating Pi takes one of two shapes: run the whole pi process inside an isolated environment, or run pi on the host and route tool execution into one." · p 0.93 · active · 1 support · 0 contradict
+  - `src_02faa5c62172` Containerization: "There are two general options. You can either 1. run the whole `pi` process inside an isolated environment, or 2. run `pi` on the host and route tool execution into an isolated environment."
+- `clm_bf4a18007e2f` — "Pi session files carry a version in the header and older ones migrate automatically to the current version, v3, when loaded." · p 0.93 · active · 1 support · 0 contradict
+  - `src_92c377275d79` Session File Format: "Existing sessions are automatically migrated to the current version (v3) when loaded."
+- `clm_ca4184507217` — "Pi auto-saves every session to ~/.pi/agent/sessions/ organized by working directory, one JSONL file per session holding a tree structure." · p 0.93 · active · 1 support · 0 contradict
+  - `src_6888abe7e7b7` Sessions: "Sessions auto-save to `~/.pi/agent/sessions/`, organized by working directory. Each session is a JSONL file with a tree structure."
+- `clm_cfd347ecc508` — "Pi's --mode json writes every session event as JSON lines on stdout, the integration surface for other tools and custom UIs." · p 0.93 · active · 1 support · 0 contradict
+  - `src_559bd402b02f` JSON Event Stream Mode: "Outputs all session events as JSON lines to stdout. Useful for integrating pi into other tools or custom UIs."
+- `clm_d2bc28df6adf` — "Pi's built-in tool set is read, bash, powershell on Windows, edit, write, grep, find, and ls." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "Built-in tools: `read`, `bash`, `powershell` (Windows), `edit`, `write`, `grep`, `find`, `ls`."
+- `clm_11421224af57` — "Pi packages run with full system access — extensions execute arbitrary code and skills can direct the model to run executables — so third-party package source should be reviewed before installing." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1589290f55f3` Pi Packages: "Pi packages run with full system access. Extensions execute arbitrary code, and skills can instruct the model to perform any action including running executables. Review source code before installing third-party packages."
+- `clm_424056cf5ae9` — "Pi never cuts compaction at a tool result, because a tool result must stay with the tool call that produced it." · p 0.93 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "Never cut at tool results (they must stay with their tool call)."
+- `clm_8d8d4c1628d8` — "Pi auto-compacts once context tokens exceed the context window minus reserveTokens, which defaults to 16384 tokens held back for the model's response." · p 0.93 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "By default, `reserveTokens` is 16384 tokens (configurable in `~/.pi/agent/settings.json` or `<project-dir>/.pi/settings.json`). This leaves room for the LLM's response."
+- `clm_cfe96221e72b` — "Pi extensions run with the user's full system permissions and can execute arbitrary code, so only trusted sources should be installed." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "Extensions run with your full system permissions and can execute arbitrary code. Only install from sources you trust."
+- `clm_e0c84f167157` — "Pi extensions and custom tools can draw their own TUI components to build interactive interfaces inside the agent." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1d072e1d683a` TUI Components: "Extensions and custom tools can render custom TUI components for interactive user interfaces."
+- `clm_5ca433e00ea6` — "Pi deliberately ships without built-in MCP, sub-agents, permission popups, plan mode, to-dos, or background bash, leaving those to extensions, packages, or external tools such as containers and tmux." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "It intentionally does not include built-in MCP, sub-agents, permission popups, plan mode, to-dos, or background bash. You can build or install those workflows as extensions or packages, or use external tools such as containers and tmux."
+- `clm_0c8568fc38b5` — "Pi lets the user submit while the agent works: Enter queues a steering message delivered once the current assistant turn finishes its tool calls, and Alt+Enter queues a follow-up delivered after all work completes." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "**Enter** queues a steering message, delivered after the current assistant turn finishes executing its tool calls."
+- `clm_101c1d9e86b6` — "A directory's AGENTS.override.md makes Pi load it in place of that directory's AGENTS.md or CLAUDE.md, while context files from other directories still layer normally." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "If a directory contains `AGENTS.override.md`, Pi loads it instead of `AGENTS.md` or `CLAUDE.md` from that directory. Context files from other directories still layer normally."
+- `clm_3a1463613521` — "Pi does not walk subdirectories when discovering prompt templates in a prompts/ directory; nested templates must be added explicitly through settings or a package manifest." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0bc77feb25be` Prompt Templates: "Template discovery in `prompts/` is non-recursive."
+- `clm_570f712c6a4f` — "A Pi extension factory may run in an invocation that never starts a session, so background resources — processes, sockets, watchers, timers — must be deferred to session_start or the handler that needs them." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "Extension factories may run in invocations that never start a session. Do not start background resources such as processes, sockets, file watchers, or timers from the factory."
+- `clm_70cca73a77f7` — "Only extensions placed in Pi's auto-discovered locations can be hot-reloaded with /reload; a -e path is for quick tests." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "Extensions in auto-discovered locations can be hot-reloaded with `/reload`."
+- `clm_7a3f0a042a7d` — "On its first run Pi detects the terminal background and defaults the theme to dark or light accordingly." · p 0.93 · active · 1 support · 0 contradict
+  - `src_d432de1cd9da` Themes: "On first run, pi detects your terminal background and defaults to `dark` or `light`."
+- `clm_80cbc04f7602` — "A Pi prompt template's argument-hint frontmatter field shows expected arguments in autocomplete, angle brackets marking required arguments and square brackets optional ones." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0bc77feb25be` Prompt Templates: "Use `argument-hint` in frontmatter to show expected arguments in autocomplete. Use `<angle brackets>` for required arguments and `[square brackets]` for optional ones:"
+- `clm_91780f43c09d` — "Pi replaces its default system prompt from a SYSTEM.md placed per-project or globally, and appends to it instead with APPEND_SYSTEM.md in either location." · p 0.93 · active · 1 support · 0 contradict
+  - `src_ab670f25c35e` Using Pi: "Append to the default prompt without replacing it with `APPEND_SYSTEM.md` in either location."
+- `clm_985fa12b1b2a` — "Pi extensions execute wherever the pi process itself runs, so under a host-side tool-routing extension every other custom extension tool still runs on the host unless it delegates its own operations." · p 0.93 · active · 1 support · 0 contradict
+  - `src_02faa5c62172` Containerization: "Extensions run wherever the `pi` process runs. If you run host `pi` with a tool-routing extension, other custom extension tools still run on the host unless they also delegate their operations."
+- `clm_b1ea0a490acc` — "Git-sourced Pi packages pin to a tag or commit, and pi update reconciles an existing clone to the configured ref without ever advancing it to a newer one." · p 0.93 · active · 1 support · 0 contradict · when: for git package sources
+  - `src_1589290f55f3` Pi Packages: "Refs are pinned tags or commits. `pi update --extensions` and `pi update --all` do not move them to newer refs, but they do reconcile an existing clone to the configured ref."
+- `clm_b36b56efd6d5` — "Pi's TUI appends a full SGR and OSC 8 reset to each rendered line, so styles never carry across lines and multi-line styled text must reapply them per line." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1d072e1d683a` TUI Components: "The TUI appends a full SGR reset and OSC 8 reset at the end of each rendered line. Styles do not carry across lines."
+- `clm_b89352b18fc5` — "Pi omits an in-process sandbox deliberately, on the reasoning that a partial one reads as a security boundary while still depending on the host shell, filesystem, package managers, credentials, and extension code, so real isolation has to come from the OS or a virtualization boundary." · p 0.93 · active · 1 support · 0 contradict
+  - `src_38afec4a51af` Security: "A partial in-process sandbox would be easy to misunderstand as a security boundary while still depending on the host shell, filesystem, package managers, credentials, and extension code."
+- `clm_bf595ae0cb35` — "Pi injects the PI_* session variables only into the LLM-callable bash and powershell tools, never into a user's own ! or !! commands." · p 0.93 · active · 1 support · 0 contradict
+  - `src_7f85c02fc39f` Environment Variables: "These variables are injected into the LLM-callable `bash` and `powershell` tools. They are not injected into user-entered `!` or `!!` commands."
+- `clm_c85b20ce8899` — "Relative resource paths in a Pi settings file resolve against that file's own directory — ~/.pi/agent for global settings and .pi for project settings — with absolute paths and ~ also accepted." · p 0.93 · active · 1 support · 0 contradict
+  - `src_7dd0e1ac57d3` Settings: "Paths in `~/.pi/agent/settings.json` resolve relative to `~/.pi/agent`. Paths in `.pi/settings.json` resolve relative to `.pi`. Absolute paths and `~` are supported."
+- `clm_e8293864a15e` — "Pi renders themes in 24-bit RGB and falls back to the nearest approximation on terminals that only support 256 colors." · p 0.93 · active · 1 support · 0 contradict
+  - `src_d432de1cd9da` Themes: "Pi uses 24-bit RGB colors. Most modern terminals support this (iTerm2, Kitty, WezTerm, Windows Terminal, VS Code). For older terminals with only 256-color support, pi falls back to the nearest approximation."
+- `clm_f74708e2c8eb` — "Pi prompt templates take shell-style argument substitution, including a default form where ${1:-default} falls back when the first argument is absent or empty." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0bc77feb25be` Prompt Templates: "`${1:-default}` uses arg 1 when present/non-empty, otherwise `default`"
+- `clm_fc7bcaeb694d` — "In Pi, /tree keeps alternative branches together in one session file while /fork and /clone each split the work into a separate session file." · p 0.93 · active · 1 support · 0 contradict
+  - `src_6888abe7e7b7` Sessions: "Use `/tree` when you want to keep alternatives together. Use `/fork` or `/clone` when you want a separate session file."
+- `clm_ffe883da9a45` — "Pi picks its compaction cut point by walking backwards from the newest message accumulating token estimates until keepRecentTokens, 20k by default, is covered." · p 0.93 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "**Find cut point**: Walk backwards from newest message, accumulating token estimates until `keepRecentTokens` (default 20k, configurable in `~/.pi/agent/settings.json` or `<project-dir>/.pi/settings.json`) is reached"
+- `clm_07c0f6c720a3` — "A Pi extension can intercept compaction through the session_before_compact event to cancel it outright or supply its own summary." · p 0.93 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "Fired before auto-compaction or `/compact`. Can cancel or provide custom summary."
+- `clm_149a0483eb0e` — "Pi's RPC mode carries extension dialogs as a request/response sub-protocol: a dialog method emits an extension_ui_request on stdout and blocks until the client returns a matching extension_ui_response on stdin." · p 0.93 · active · 1 support · 0 contradict
+  - `src_3c01fb9c03bd` RPC Mode: "**Dialog methods** (`select`, `confirm`, `input`, `editor`): emit an `extension_ui_request` on stdout and block until the client sends back an `extension_ui_response` on stdin with the matching `id`."
+- `clm_16beff4fdac1` — "Pi's runtime API is the layer for replacing the active session and rebuilding cwd-bound state, and it is the same one the built-in interactive, print, and RPC modes run on." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0954e1c03a59` SDK: "Use the runtime API when you need to replace the active session and rebuild cwd-bound runtime state. This is the same layer used by the built-in interactive, print, and RPC modes."
+- `clm_1d62f096ecfe` — "createAgentSession() draws extensions, skills, prompt templates, themes, and context files from a ResourceLoader, defaulting to DefaultResourceLoader with standard discovery when none is supplied." · p 0.93 · active · 1 support · 0 contradict
+  - `src_0954e1c03a59` SDK: "`createAgentSession()` uses a `ResourceLoader` to supply extensions, skills, prompt templates, themes, and context files. If you do not provide one, it uses `DefaultResourceLoader` with standard discovery."
+- `clm_2cb47310aec4` — "Pi's JSON mode emits message_update records as deltas only, dropping the cumulative message field and the partial snapshot so stream size stays linear in the output." · p 0.93 · active · 1 support · 0 contradict
+  - `src_559bd402b02f` JSON Event Stream Mode: "`message_update` records are delta-only. They omit both the cumulative `message` field and `assistantMessageEvent.partial` to keep stream size linear."
+- `clm_39ba7e3822d8` — "Pi resolves the PI_* session variables when each shell command starts, so switching model or reasoning level reaches the next shell command without restarting Pi." · p 0.93 · active · 1 support · 0 contradict
+  - `src_7f85c02fc39f` Environment Variables: "The values are resolved when each command starts. Switching models or changing the reasoning level therefore affects the next shell command without restarting Pi."
+- `clm_3e99f9d5f50a` — "Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely." · p 0.93 · active · 1 support · 0 contradict
+  - `src_38afec4a51af` Security: "Context files such as `AGENTS.override.md`, `AGENTS.md`, and `CLAUDE.md` are loaded regardless of project trust unless context loading is disabled."
+- `clm_6a82f1ec6eda` — "A theme change makes Pi's TUI call invalidate() on every component to drop cached renders, so a component that does not implement it correctly will not pick the new theme up." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1d072e1d683a` TUI Components: "When the theme changes, the TUI calls `invalidate()` on all components to clear their caches. Components must properly implement `invalidate()` to ensure theme changes take effect."
+- `clm_71a19f64f88b` — "Pi truncates tool results to 2000 characters when serializing a conversation for summarization, since tool output is typically the largest contributor to context size." · p 0.93 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "Tool results are truncated to 2000 characters during serialization."
+- `clm_74ad73ec8056` — "The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "A user/global or CLI extension that returns `"yes"` or `"no"` owns the decision; the first yes/no decision wins and suppresses the built-in trust prompt."
+- `clm_8a1d3d106aae` — "A Pi CustomEntry persists extension state in the session file without taking part in the LLM context." · p 0.93 · active · 1 support · 0 contradict
+  - `src_92c377275d79` Session File Format: "Extension state persistence. Does NOT participate in LLM context."
+- `clm_be8b43ff7593` — "A Pi compaction entry must carry firstKeptEntryId, naming the oldest entry retained: rebuilding context swaps the summarized entries for the summary and keeps everything from that entry onward." · p 0.93 · active · 1 support · 0 contradict
+  - `src_92c377275d79` Session File Format: "`firstKeptEntryId` is required. It identifies the first entry retained from before the compaction entry. When rebuilding context, Pi replaces older summarized entries with the compaction summary and keeps the range beginning at this entry."
+- `clm_d417dcb427ab` — "Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com." · p 0.93 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
+  - `src_02faa5c62172` Containerization: "Unlike the Plain Docker pattern above, the provider credential is not passed into the container. The sandbox receives a sentinel value instead, and the `sbx` proxy substitutes the real credential on egress to `api.anthropic.com`."
+- `clm_db99fcce3d9f` — "Pi accepts registerTool calls after startup as well as at load, refreshing the new tool into the same session so the LLM can call it without a /reload." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "`pi.registerTool()` works both during extension load and after startup. You can call it inside `session_start`, command handlers, or other event handlers."
+- `clm_e28274bf7967` — "Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository." · p 0.93 · active · 1 support · 0 contradict
+  - `src_1589290f55f3` Pi Packages: "Project settings can be shared with your team, and pi installs any missing packages automatically on startup after the project is trusted."
+- `clm_64156597f767` — "A Pi CustomMessageEntry is the extension-injected counterpart that does enter the LLM context, unlike a CustomEntry." · p 0.93 · active · 1 support · 0 contradict
+  - `src_92c377275d79` Session File Format: "Extension-injected messages that DO participate in LLM context."
+- `clm_6950c62639be` — "A Pi extension's tool_call handler can block a tool call by returning block with an optional reason and terminate flag, and can patch arguments by mutating event.input in place." · p 0.93 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "Return values from `tool_call` control blocking via `{ block: true, reason?: string, terminate?: boolean }`"
+- `clm_e467f67072a9` — "In Pi's RPC mode ctx.hasUI is true because dialogs work over the sub-protocol, so an extension must guard genuinely terminal-bound features on ctx.mode === "tui" rather than on hasUI." · p 0.93 · active · 1 support · 0 contradict · when: in RPC mode
+  - `src_3c01fb9c03bd` RPC Mode: "Note: `ctx.mode` is `"rpc"` and `ctx.hasUI` is `true` in RPC mode because the dialog and fire-and-forget methods are functional via the extension UI sub-protocol."
+- `clm_699f2ae955ac` — "When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found." · p 0.92 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "Name collisions (same name from different locations) warn and keep the first skill found."
+- `clm_cf1d2e62d060` — "The required name field is capped at 64 characters, allows only lowercase letters, numbers and hyphens, may not start or end with a hyphen or contain consecutive hyphens, and must match the parent directory name." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7bd75101edfa` Specification: "Max 64 characters. Lowercase letters, numbers, and hyphens only. Must not start or end with a hyphen."
+  - exception — when always: Pi is a documented exception to the name-matches-parent-directory rule: it lets a skill's name differ from its directory, holding that requirement suboptimal for skill directories shared across agent harnesses (`obs_80a9d4120894`)
+- `clm_088ce0e77862` — "The top-level usage field in Pi's JSON stream carries the latest cumulative provider-reported usage and can stay at zero when a provider reports usage only at completion." · p 0.92 · active · 1 support · 0 contradict
+  - `src_559bd402b02f` JSON Event Stream Mode: "The top-level `usage` field contains the latest cumulative provider-reported usage and may remain zero when a provider only reports usage at completion."
+- `clm_17270ad4afd2` — "Setting PI_OFFLINE turns off every startup network operation in Pi, covering update checks, package updates, and install/update telemetry together." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7f85c02fc39f` Environment Variables: "Disable startup network operations, including update checks, package updates, and install/update telemetry"
+- `clm_1cdc0a6c5ecf` — "Pi advises leaving retry.provider.maxRetries at 0, because provider-level retries can swallow out-of-usage-limit errors before Pi sees them and block the agent until the provider quota resets." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7dd0e1ac57d3` Settings: "Keep `retry.provider.maxRetries` at `0` unless provider-level retries are explicitly needed."
+- `clm_368deae620d9` — "When one Pi turn is itself larger than keepRecentTokens the cut point lands mid-turn at an assistant message, and Pi then merges a history summary with a turn-prefix summary." · p 0.92 · active · 1 support · 0 contradict · when: when a single turn exceeds keepRecentTokens
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "When a single turn exceeds `keepRecentTokens`, the cut point lands mid-turn at an assistant message."
+- `clm_503d19530fc4` — "Pi's enableInstallTelemetry governs the anonymous install/update ping and provider attribution headers only; opting out leaves version-check requests running, which PI_SKIP_VERSION_CHECK or offline mode disables separately." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7dd0e1ac57d3` Settings: "`enableInstallTelemetry` controls the anonymous install/update ping to `https://pi.dev/api/report-install` and Pi attribution headers for OpenRouter, NVIDIA NIM, and Cloudflare provider requests. Opting out disables both."
+- `clm_5080bebfc64b` — "Pi migrates pre-namespaced keybinding ids such as cursorUp or expandTools to their namespaced equivalents automatically at startup." · p 0.92 · active · 1 support · 0 contradict
+  - `src_59b8fc9e355e` Keybindings: "Older configs using pre-namespaced ids such as `cursorUp` or `expandTools` are migrated automatically to the namespaced ids on startup."
+- `clm_657f7801cf02` — "Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them." · p 0.92 · active · 1 support · 0 contradict · when: in non-interactive modes (-p, --mode json, --mode rpc)
+  - `src_38afec4a51af` Security: "Non-interactive modes (`-p`, `--mode json`, and `--mode rpc`) do not show a trust prompt. Without an applicable saved trust decision, `defaultProjectTrust: "ask"` and `"never"` ignore such resources, while `"always"` trusts them."
+- `clm_695fbe157cd4` — "In Pi's SDK preflightResult fires before prompt() resolves and reports acceptance only; prompt() resolves after the whole accepted run including retries, and post-acceptance failures surface through the event and message stream instead." · p 0.92 · active · 1 support · 0 contradict
+  - `src_0954e1c03a59` SDK: "It fires before `prompt()` resolves. `prompt()` still resolves only after the full accepted run finishes, including retries."
+- `clm_9415967f93e0` — "Pi's resource arrays in settings take glob patterns plus explicit overrides: !pattern excludes, +path force-includes an exact path, and -path force-excludes one." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7dd0e1ac57d3` Settings: "Arrays support glob patterns and exclusions. Use `!pattern` to exclude. Use `+path` to force-include an exact path and `-path` to force-exclude an exact path."
+- `clm_956634f81fad` — "Pi directs the agent to read PI_PROVIDER and PI_MODEL to answer which model is running rather than infer it from the system prompt." · p 0.92 · active · 1 support · 0 contradict
+  - `src_7f85c02fc39f` Environment Variables: "When asked which model or provider is running, inspect these variables instead of inferring the answer from the system prompt:"
+- `clm_986b656d48da` — "In Pi's fullscreen TUI mode the transcript bindings outrank the editor's, so bare navigation keys drive the transcript while their ctrl variants stay with the editor; outside fullscreen both drive the editor." · p 0.92 · active · 1 support · 0 contradict · when: in fullscreen TUI mode (--tui-mode fullscreen)
+  - `src_59b8fc9e355e` Keybindings: "Fullscreen transcript bindings take precedence over editor bindings. The default unmodified navigation keys therefore control the transcript in fullscreen mode, while their `ctrl` variants continue to control the editor."
+- `clm_cda7cb4e957d` — "Pi's super-modifier bindings need a terminal that reports the modifier separately, typically via the Kitty keyboard protocol, and may simply not fire elsewhere." · p 0.92 · active · 1 support · 0 contradict
+  - `src_59b8fc9e355e` Keybindings: "`super` bindings require a terminal that reports the modifier separately, typically through the Kitty keyboard protocol. They may not work in terminals without that support."
+- `clm_d65893ecf0db` — "Pi issues compaction and branch-summary requests on fresh routing session IDs and, where the provider supports it, disables prompt-cache writes because these one-off prompts are unlikely to be reused." · p 0.92 · active · 1 support · 0 contradict
+  - `src_f3c56d2c0088` Compaction & Branch Summarization: "Compaction and branch-summary requests use fresh routing session IDs and, where supported by the provider, disable prompt-cache writes because these one-off prompts are unlikely to be reused."
+- `clm_108f88ad9156` — "When /tree leaves one branch for another, Pi can summarize the abandoned branch and attach that summary at the new position, carrying the context forward without replaying the whole branch." · p 0.92 · active · 1 support · 0 contradict
+  - `src_6888abe7e7b7` Sessions: "When `/tree` switches away from one branch to another, pi can summarize the abandoned branch and attach that summary at the new position. This preserves important context from the path you left without replaying the whole branch."
+- `clm_1b9e0668b95f` — "Pi's guidance is to reuse the built-in SelectList, SettingsList, and BorderedLoader components, which cover about 90% of extension UI cases, rather than rebuild them." · p 0.92 · active · 1 support · 0 contradict
+  - `src_1d072e1d683a` TUI Components: "`SelectList`, `SettingsList`, `BorderedLoader` cover 90% of cases. Don't rebuild them."
+- `clm_5174112e71a2` — "When one Pi package is listed in both global and project settings the project entry wins, except that an entry marked autoload false applies as a delta over the global one instead." · p 0.92 · active · 1 support · 0 contradict
+  - `src_1589290f55f3` Pi Packages: "If the same package appears in both, the project entry wins unless the project entry has `autoload: false`, in which case it is applied as a delta over the global entry."
+- `clm_8dd60325cd78` — "The Gondolin extension keeps pi on the host while mounting the host working directory at /workspace inside a Linux micro-VM and overriding the read, write, edit, bash, grep, find, and ls tools to run there." · p 0.92 · active · 1 support · 0 contradict · when: under the Gondolin micro-VM pattern
+  - `src_02faa5c62172` Containerization: "The extension mounts the host cwd at `/workspace` in the VM and overrides `read`, `write`, `edit`, `bash`, `grep`, `find`, and `ls`."
+- `clm_a52988da66af` — "Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container." · p 0.92 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
+  - `src_02faa5c62172` Containerization: "Do not authenticate from inside the sandbox: `/login` there writes a real token into the container and defeats the proxy model."
+- `clm_d1b8f5a83af4` — "Pi offers RPC mode over the CLI as the subprocess-based integration path for callers who do not want to build against the SDK." · p 0.92 · active · 1 support · 0 contradict
+  - `src_0954e1c03a59` SDK: "For subprocess-based integration without building with the SDK, use the CLI directly:"
+- `clm_ec17dbea2a46` — "Pi appends a custom tool's promptGuidelines bullets flat into the shared Guidelines section with no tool-name prefix, so each bullet must name its own tool rather than say "this tool"." · p 0.92 · active · 1 support · 0 contradict
+  - `src_a49af96a95e8` Extensions: "`promptGuidelines` bullets are appended flat to the `Guidelines` section with no tool name prefix. Each guideline must name the tool it refers to — avoid "Use this tool when..." because the LLM cannot tell which tool "this" means."
+- `clm_b167fbc5a6f4` — "Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it." · p 0.92 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "When a task matches, the agent uses `read`, or `bash` when `read` is unavailable, to load the full SKILL.md (models don't always do this; use prompting or `/skill:name` to force it)"
+- `clm_c65d0e1b83ce` — "In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter." · p 0.92 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "In `~/.agents/skills/` and project `.agents/skills/`, root `.md` files are ignored, but nested `.md` files in grouping folders are discovered when they declare skill frontmatter"
+- `clm_00bb29da7aa9` — "In Pi's JSON stream the message_end event carries the final authoritative message, so a consumer need not reassemble deltas to get the settled text." · p 0.92 · active · 1 support · 0 contradict
+  - `src_559bd402b02f` JSON Event Stream Mode: "`message_end` contains the final authoritative message."
+- `clm_ed8fac585242` — "A Pi theme carries a separate editor border color per thinking level, giving the current level a visual hierarchy from subtle to prominent." · p 0.92 · active · 1 support · 0 contradict
+  - `src_d432de1cd9da` Themes: "Editor border colors indicating thinking level (visual hierarchy from subtle to prominent):"
+
+## Timeline
+
+- 2026-08-25 new_claim `clm_90a71be135d8` (src_9b4d3b3d8635)
+- 2026-08-25 new_claim `clm_cf1d2e62d060` (src_7bd75101edfa)
+- 2026-08-25 new_claim `clm_810e9ca8ea5b` (src_6932f817f8b4)
+- 2026-09-11 new_claim `clm_a9cd0f68d4eb` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_ad0fdc5c03ce` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_b89352b18fc5` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_29042914eda1` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_657f7801cf02` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_3e99f9d5f50a` (src_38afec4a51af)
+- 2026-09-11 new_claim `clm_918dd20a3e91` (src_02faa5c62172)
+- 2026-09-11 new_claim `clm_985fa12b1b2a` (src_02faa5c62172)
+- 2026-09-11 new_claim `clm_8dd60325cd78` (src_02faa5c62172)
+- 2026-09-11 new_claim `clm_d417dcb427ab` (src_02faa5c62172)
+- 2026-09-11 new_claim `clm_a52988da66af` (src_02faa5c62172)
+- 2026-09-11 new_claim `clm_ca4184507217` (src_6888abe7e7b7)
+- 2026-09-11 new_claim `clm_1ca09b98434f` (src_6888abe7e7b7)
+- 2026-09-11 new_claim `clm_fc7bcaeb694d` (src_6888abe7e7b7)
+- 2026-09-11 new_claim `clm_108f88ad9156` (src_6888abe7e7b7)
+- 2026-09-11 new_claim `clm_86f2c89fbcb1` (src_0bc77feb25be)
+- 2026-09-11 new_claim `clm_f74708e2c8eb` (src_0bc77feb25be)
+- 2026-09-11 new_claim `clm_80cbc04f7602` (src_0bc77feb25be)
+- 2026-09-11 new_claim `clm_3a1463613521` (src_0bc77feb25be)
+- 2026-09-11 new_claim `clm_cfd347ecc508` (src_559bd402b02f)
+- 2026-09-11 new_claim `clm_2cb47310aec4` (src_559bd402b02f)
+- 2026-09-11 new_claim `clm_088ce0e77862` (src_559bd402b02f)
+- 2026-09-11 new_claim `clm_00bb29da7aa9` (src_559bd402b02f)
+- 2026-09-11 new_claim `clm_2dfafb1d2b1d` (src_59b8fc9e355e)
+- 2026-09-11 new_claim `clm_986b656d48da` (src_59b8fc9e355e)
+- 2026-09-11 new_claim `clm_cda7cb4e957d` (src_59b8fc9e355e)
+- 2026-09-11 new_claim `clm_5080bebfc64b` (src_59b8fc9e355e)
+- 2026-09-11 new_claim `clm_f36a84a463a4` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_5ca433e00ea6` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_0c8568fc38b5` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_101c1d9e86b6` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_91780f43c09d` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_d2bc28df6adf` (src_ab670f25c35e)
+- 2026-09-11 new_claim `clm_ed2073143ece` (src_7dd0e1ac57d3)
+- 2026-09-11 new_claim `clm_c85b20ce8899` (src_7dd0e1ac57d3)
+- 2026-09-11 new_claim `clm_9415967f93e0` (src_7dd0e1ac57d3)
+- 2026-09-11 new_claim `clm_1cdc0a6c5ecf` (src_7dd0e1ac57d3)
+- 2026-09-11 new_claim `clm_503d19530fc4` (src_7dd0e1ac57d3)
+- 2026-09-11 new_claim `clm_8d8d4c1628d8` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_ffe883da9a45` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_424056cf5ae9` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_368deae620d9` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_71a19f64f88b` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_07c0f6c720a3` (src_f3c56d2c0088)
+- 2026-09-11 new_claim `clm_d65893ecf0db` (src_f3c56d2c0088)
+- 2026-09-11 exception_addition `clm_cf1d2e62d060` (src_51c275d28919)
+- 2026-09-11 support_update `clm_810e9ca8ea5b` (src_51c275d28919)
+- 2026-09-11 support_update `clm_90a71be135d8` (src_51c275d28919)
+- 2026-09-11 new_claim `clm_c65d0e1b83ce` (src_51c275d28919)
+- 2026-09-11 new_claim `clm_b167fbc5a6f4` (src_51c275d28919)
+- 2026-09-11 new_claim `clm_699f2ae955ac` (src_51c275d28919)
+- 2026-09-11 new_claim `clm_fafe9fb8b66e` (src_d432de1cd9da)
+- 2026-09-11 new_claim `clm_e8293864a15e` (src_d432de1cd9da)
+- 2026-09-11 new_claim `clm_7a3f0a042a7d` (src_d432de1cd9da)
+- 2026-09-11 new_claim `clm_ed8fac585242` (src_d432de1cd9da)
+- 2026-09-11 new_claim `clm_a26c56900670` (src_1589290f55f3)
+- 2026-09-11 new_claim `clm_11421224af57` (src_1589290f55f3)
+- 2026-09-11 new_claim `clm_b1ea0a490acc` (src_1589290f55f3)
+- 2026-09-11 new_claim `clm_e28274bf7967` (src_1589290f55f3)
+- 2026-09-11 new_claim `clm_5174112e71a2` (src_1589290f55f3)
+- 2026-09-11 new_claim `clm_0fc576bb4bbe` (src_7f85c02fc39f)
+- 2026-09-11 new_claim `clm_39ba7e3822d8` (src_7f85c02fc39f)
+- 2026-09-11 new_claim `clm_956634f81fad` (src_7f85c02fc39f)
+- 2026-09-11 new_claim `clm_bf595ae0cb35` (src_7f85c02fc39f)
+- 2026-09-11 new_claim `clm_17270ad4afd2` (src_7f85c02fc39f)
+- 2026-09-11 new_claim `clm_3e71ac2b4ab0` (src_92c377275d79)
+- 2026-09-11 new_claim `clm_bf4a18007e2f` (src_92c377275d79)
+- 2026-09-11 new_claim `clm_8a1d3d106aae` (src_92c377275d79)
+- 2026-09-11 new_claim `clm_64156597f767` (src_92c377275d79)
+- 2026-09-11 new_claim `clm_be8b43ff7593` (src_92c377275d79)
+- 2026-09-11 new_claim `clm_e0c84f167157` (src_1d072e1d683a)
+- 2026-09-11 new_claim `clm_8737c7ca6b63` (src_1d072e1d683a)
+- 2026-09-11 new_claim `clm_b36b56efd6d5` (src_1d072e1d683a)
+- 2026-09-11 new_claim `clm_6a82f1ec6eda` (src_1d072e1d683a)
+- 2026-09-11 new_claim `clm_1b9e0668b95f` (src_1d072e1d683a)
+- 2026-09-11 new_claim `clm_246cd8a77124` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_cfe96221e72b` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_70cca73a77f7` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_6950c62639be` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_570f712c6a4f` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_74ad73ec8056` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_db99fcce3d9f` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_ec17dbea2a46` (src_a49af96a95e8)
+- 2026-09-11 new_claim `clm_3869fb899ba0` (src_0954e1c03a59)
+- 2026-09-11 new_claim `clm_1d62f096ecfe` (src_0954e1c03a59)
+- 2026-09-11 new_claim `clm_16beff4fdac1` (src_0954e1c03a59)
+- 2026-09-11 new_claim `clm_695fbe157cd4` (src_0954e1c03a59)
+- 2026-09-11 new_claim `clm_d1b8f5a83af4` (src_0954e1c03a59)
+- 2026-09-11 new_claim `clm_11c6703901c8` (src_3c01fb9c03bd)
+- 2026-09-11 new_claim `clm_2fe3fab7d249` (src_3c01fb9c03bd)
+- 2026-09-11 new_claim `clm_09bf6ccb11c0` (src_3c01fb9c03bd)
+- 2026-09-11 new_claim `clm_149a0483eb0e` (src_3c01fb9c03bd)
+- 2026-09-11 new_claim `clm_e467f67072a9` (src_3c01fb9c03bd)
+
+## Related
+
+- → produces [[session]] (1.00)
+- ← part_of [[pi-extension]] (0.99)
+- → uses [[agent-memory]] (0.99)
+- ← extends [[pi-extension]] (0.94)
+- ← part_of [[pi-package]] (0.94)
+- ← part_of [[pi-sdk]] (0.94)
+- → produces [[rpc-mode]] (0.94)
+- → uses [[pi-extension]] (0.94)
+- → uses [[settings-file]] (0.94)
+- → uses [[workspace-trust]] (0.94)
+- → produces [[json-event-stream-mode]] (0.93)
+- → related_to [[model-context-protocol]] (0.93)
+- … 17 more edges — `graph.py neighbors ent_pi`
+- [[pi-extension]] — 22 shared claims
+- [[session]] — 11 shared claims
+- [[compaction]] — 8 shared claims
+- [[sandbox]] — 8 shared claims
+- [[tui]] — 8 shared claims
+- [[settings-file]] — 7 shared claims
+- [[rpc-mode]] — 6 shared claims
+- [[pi-package]] — 5 shared claims
+- [[pi-sdk]] — 5 shared claims
+- [[prompt-template]] — 5 shared claims
+- [[theme]] — 5 shared claims
+- [[workspace-trust]] — 5 shared claims
+- [[json-event-stream-mode]] — 4 shared claims
+- [[keybindings]] — 4 shared claims
+- [[skills]] — 4 shared claims
+- [[tool-use]] — 4 shared claims
+- [[bash-tool]] — 3 shared claims
+- [[context-window]] — 3 shared claims
+- [[skill-md]] — 3 shared claims
+- [[system-prompt]] — 3 shared claims
+- [[agent-memory]] — 2 shared claims
+- [[agent-skills]] — 2 shared claims
+- [[docker-sandboxes]] — 2 shared claims
+- [[tool-results]] — 2 shared claims
+- [[adaptive-thinking]] — 1 shared claim
+- [[agents-skills]] — 1 shared claim
+- [[model-context-protocol]] — 1 shared claim
+- [[non-interactive-mode]] — 1 shared claim
+- [[permission-system]] — 1 shared claim
+- [[progressive-disclosure]] — 1 shared claim
+- [[prompt-injection]] — 1 shared claim
+- [[skill-description]] — 1 shared claim
+- [[slash-command]] — 1 shared claim
+- [[streaming]] — 1 shared claim
+- [[subagents]] — 1 shared claim
+- Gondolin (no page yet)

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claim",
+  "description": "A unit of belief (housamkak v3 §6.3) — one line of llm-wiki/states/claims.jsonl, a materialized view rebuilt from the ledgers and never hand-edited. A claim is identified by claim_key plus conditions: several claims may share a key over time (supersession) or at once (scope split). probability and log_odds are the updater's log-odds-v2 arithmetic replayed over the transitions — recorded evidence weights and recorded decay factors, never recomputed; status follows the thresholds in the state rule. candidate is the note's 'uncertain'; stale and archived are written by decay_update rows and revived by support; rejected is human-only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_id",
+    "claim_key",
+    "current_text",
+    "probability",
+    "log_odds",
+    "status",
+    "scope",
+    "conditions",
+    "exceptions",
+    "entity_ids",
+    "source_ids",
+    "supporting_observations",
+    "contradicting_observations",
+    "supersedes",
+    "superseded_by",
+    "siblings",
+    "first_seen",
+    "last_confirmed_at",
+    "last_decayed_at",
+    "decay_profile",
+    "source_authority_weight",
+    "needs_review"
+  ],
+  "properties": {
+    "claim_id": {
+      "description": "clm_ + 12 hex of sha256(claim_key · creating observation_id).",
+      "type": "string",
+      "pattern": "^clm_[0-9a-f]{12}$"
+    },
+    "claim_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*){1,4}$"
+    },
+    "current_text": { "type": "string", "minLength": 1 },
+    "probability": {
+      "description": "sigmoid(log_odds), rounded to 4 places.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "log_odds": { "type": "number" },
+    "status": {
+      "description": "stale: an active claim decayed below P_ACTIVE unconfirmed; archived: belief decayed below P_ARCHIVE — still matchable, so new support revives rather than forks it, but it counts for no page.",
+      "enum": ["candidate", "active", "disputed", "superseded", "stale", "archived", "rejected"]
+    },
+    "scope": { "enum": ["private", "shared"] },
+    "conditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "exceptions": {
+      "description": "§8.6 — a general rule plus its exceptions, each tied to the observation that created it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["condition", "effect", "evidence"],
+        "properties": {
+          "condition": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "effect": { "type": "string", "minLength": 1 },
+          "evidence": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+        }
+      }
+    },
+    "entity_ids": {
+      "description": "Entities the claim names — the join to the pages that render it.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$" }
+    },
+    "source_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^src_[0-9a-f]{12}$" }
+    },
+    "supporting_observations": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+    },
+    "contradicting_observations": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+    },
+    "supersedes": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" }
+    },
+    "superseded_by": { "type": ["string", "null"], "pattern": "^clm_[0-9a-f]{12}$" },
+    "siblings": {
+      "description": "Claims sharing this key under disjoint conditions (§8.5 scope split).",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" }
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "last_confirmed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "last_decayed_at": {
+      "description": "Timestamp of the newest decay_update row folded into this claim; null until the first. Decay elapses from max(last_confirmed_at, last_decayed_at).",
+      "type": ["string", "null"],
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "decay_profile": {
+      "description": "§8.8 vocabulary, derived at fold: the newest supporting observation's explicit decay_profile, else the channel default of the creating observation's source; selects the half-life decay applies.",
+      "enum": [
+        "architecture_decision",
+        "project_status",
+        "bug_report",
+        "user_preference",
+        "meeting_note",
+        "implementation_detail",
+        "external_fact",
+        "default"
+      ]
+    },
+    "source_authority_weight": {
+      "description": "The highest source_authority among the supporting sources — how authoritative the best evidence is.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "needs_review": {
+      "description": "True when disputed, or active with contradicting evidence a human has not yet judged. A human_override transition marks the claim reviewed, which clears the flag until a new contradiction arrives.",
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "version": "governance-v1",
+  "lock_timeout_s": 30,
+  "roles": {
+    "human": { "verbs": ["*"], "segments": ["shared"] },
+    "agent": {
+      "verbs": ["register", "apply", "decay", "rebuild", "render"],
+      "segments": ["shared"]
+    },
+    "routine": { "verbs": ["register", "decay", "rebuild", "render"], "segments": ["shared"] },
+    "process": { "verbs": ["render", "rebuild"], "segments": ["shared"] }
+  },
+  "actors": {
+    "human:ringo": "human",
+    "routine:weekly-lint": "routine",
+    "process:llm-wiki-render": "process"
+  }
+}

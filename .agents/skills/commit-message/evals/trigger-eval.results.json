@@ -1,0 +1,128 @@
+{
+  "skill": "commit-message",
+  "runs": 1,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "commit this",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "save my changes to git",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "check in what i've got so far on the retriever",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "what should the commit message say for the staged diff?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "land this fix",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "title this PR",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "write the squash merge message for branch 12-fused-search",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ok i'm done with the render.py refactor, get it into git",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "stage the docs changes and commit them",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "can you write a commit for the extension test changes? issue is #31",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "rebase my branch onto main",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "cut a new branch for the retriever work",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "push my branch to origin",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "write the PR description with a summary and a test plan",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "tag v0.2.0 on main",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "generate the changelog for this release from the git history",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "why did the last commit fail CI?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "git log the last 10 commits and tell me what changed in llm-wiki",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "add a pre-commit hook that runs ruff and prettier on staged files",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "delete the local branches that are already merged",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    }
+  ]
+}

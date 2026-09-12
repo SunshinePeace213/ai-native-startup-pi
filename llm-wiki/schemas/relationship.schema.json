@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Relationship",
+  "description": "A typed edge between two entities (housamkak v3 §6.5) — one line of llm-wiki/states/relationships.jsonl, a view aggregated from the observations that assert it. predicate is canonical — the observation's word mapped through PREDICATE_CANON at view build, unknown legacy words falling to related_to — and relationship_id = rel_ + 12 hex of sha256(subject_entity · canonical predicate · object_entity · qualifiers), so two legacy spellings of one edge fold into one row. status is stance-aware: active while any of its claims is candidate, active, stale, or archived; disputed when every asserting observation has stance contradicts, or when its claims are all disputed; superseded when all its claims are frozen — superseded, rejected, or both, since this enum has no rejected. scripts/llm-wiki/graph.py walks these edges read-only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "relationship_id",
+    "subject_entity",
+    "predicate",
+    "object_entity",
+    "qualifiers",
+    "probability",
+    "status",
+    "supporting_observations",
+    "contradicting_observations",
+    "claim_ids",
+    "first_seen",
+    "last_seen"
+  ],
+  "properties": {
+    "relationship_id": { "type": "string", "pattern": "^rel_[0-9a-f]{12}$" },
+    "subject_entity": { "type": "string", "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$" },
+    "predicate": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "object_entity": { "type": "string", "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$" },
+    "qualifiers": { "type": "object", "additionalProperties": { "type": "string" } },
+    "probability": { "type": "number", "minimum": 0, "maximum": 1 },
+    "status": { "enum": ["active", "disputed", "superseded"] },
+    "supporting_observations": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+    },
+    "contradicting_observations": {
+      "description": "The observations that assert this edge with stance contradicts; they subtract their weight from probability instead of adding it.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" }
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}

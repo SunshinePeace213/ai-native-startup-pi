@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Observation",
+  "description": "What the extractor believes one source says (housamkak v3 §6.2, §13.1) — one line of llm-wiki/states/observations/<source_id>.jsonl. A noisy semantic measurement, never truth, so it is fully attributed: source, verbatim evidence span, extractor and prompt version, confidence. The extractor writes the record without observation_id and extracted_at; apply mints both (observation_id = obs_ + 12 hex of sha256(source_id · claim_key · stance · evidence_span), plus the override when present), so re-extracting an unchanged source reproduces the same ids and apply is a no-op. A human files the same record with extractor.model human:<name>; only such a record may carry override. Under extract-v2 the record may carry decay_profile, and every relationships[].predicate is one of the twelve canonical predicates — enforced on extract-v2 and manual records; extract-v1 rows stay valid as written and map to the canonical set at view build.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observation_id",
+    "source_id",
+    "extracted_at",
+    "extractor",
+    "claim_key",
+    "claim_text",
+    "stance",
+    "confidence",
+    "evidence_span",
+    "entities",
+    "relationships",
+    "conditions",
+    "privacy"
+  ],
+  "properties": {
+    "observation_id": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" },
+    "source_id": { "type": "string", "pattern": "^src_[0-9a-f]{12}$" },
+    "extracted_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "extractor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "prompt_version"],
+      "properties": {
+        "model": {
+          "description": "The model id that extracted, or human:<name> for a hand-written observation.",
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_version": {
+          "description": "The extraction contract the record was written under — extract-v2 today (extract-v1 rows stay valid); manual for humans.",
+          "type": "string",
+          "pattern": "^(extract-v[0-9]+|manual)$"
+        }
+      }
+    },
+    "claim_key": {
+      "description": "Dotted lowercase path naming the question the claim answers, most general segment first: <domain>.<subject>.<aspect>, 2–5 segments. Exact-match joins evidence across sources.",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*){1,4}$"
+    },
+    "claim_text": { "type": "string", "minLength": 1 },
+    "stance": {
+      "description": "§13.1 vocabulary — how this observation bears on the claim its key names.",
+      "enum": [
+        "supports",
+        "contradicts",
+        "supersedes",
+        "modifies",
+        "creates_exception",
+        "defines",
+        "new_claim"
+      ]
+    },
+    "confidence": {
+      "description": "The extractor's semantic confidence that the source really says this, 0–1.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "evidence_span": {
+      "description": "Verbatim text from the archive. validate checks it appears there, whitespace-normalized.",
+      "type": "string",
+      "minLength": 1
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "type": {
+            "description": "The wiki's page types — an entity of this type renders under the matching shelf.",
+            "enum": ["concept", "project", "person", "decision", "system", "workflow", "question"]
+          },
+          "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["subject", "predicate", "object"],
+        "properties": {
+          "subject": {
+            "description": "An entity name listed in entities.",
+            "type": "string",
+            "minLength": 1
+          },
+          "predicate": {
+            "description": "One of the twelve canonical predicates on extract-v2 and manual records; extract-v1 rows may carry any word, mapped to the canonical set at view build.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "examples": [
+              "part_of",
+              "uses",
+              "depends_on",
+              "produces",
+              "extends",
+              "replaces",
+              "contradicts",
+              "authored",
+              "owns",
+              "applies_to",
+              "cites",
+              "related_to"
+            ]
+          },
+          "object": {
+            "description": "An entity name listed in entities.",
+            "type": "string",
+            "minLength": 1
+          },
+          "qualifier": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "conditions": {
+      "description": "When the claim holds — scope, audience, time. Two claims under one key with disjoint conditions are siblings, not contradictions.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "decay_profile": {
+      "description": "§8.8 — the extractor's judgment of how fast this claim ages. Optional: the engine derives the channel default when absent, and the newest explicit profile among a claim's supporting observations wins.",
+      "enum": [
+        "architecture_decision",
+        "project_status",
+        "bug_report",
+        "user_preference",
+        "meeting_note",
+        "implementation_detail",
+        "external_fact",
+        "default"
+      ]
+    },
+    "valid_from": {
+      "type": ["string", "null"],
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "valid_until": {
+      "type": ["string", "null"],
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "privacy": {
+      "description": "The note's vocabulary. The layer is fully tracked: the shared segment accepts only public and internal, the private segment also accepts private, and secret is refused in both.",
+      "enum": ["public", "internal", "private", "secret"]
+    },
+    "run_id": {
+      "description": "The run that appended this row (spec.md `### Ledger rows`) — run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes · views_before), the same id stamped on the row's states/audit_log.jsonl entry. Optional: absent on every row from Phases 1–5, present on every row Phase 6 on appends.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    },
+    "override": {
+      "description": "Human review (§12.6): set a claim's status directly. Valid only on a human:<name> record; lands as a human_override transition.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": { "enum": ["active", "rejected", "superseded", "archived"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "required": ["override"] },
+      "then": {
+        "properties": {
+          "extractor": {
+            "properties": { "model": { "pattern": "^human:[a-z0-9-]+$" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["extractor"],
+        "properties": {
+          "extractor": {
+            "required": ["prompt_version"],
+            "properties": { "prompt_version": { "enum": ["extract-v2", "manual"] } }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "relationships": {
+            "items": {
+              "properties": {
+                "predicate": {
+                  "enum": [
+                    "part_of",
+                    "uses",
+                    "depends_on",
+                    "produces",
+                    "extends",
+                    "replaces",
+                    "contradicts",
+                    "authored",
+                    "owns",
+                    "applies_to",
+                    "cites",
+                    "related_to"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

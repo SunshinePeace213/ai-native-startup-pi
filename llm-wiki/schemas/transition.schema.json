@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transition",
+  "description": "One auditable change to a claim's belief (housamkak v3 §6.6, §8.1) — one line of llm-wiki/states/transitions.jsonl, the append-only ledger of what changed and why. transition_id = tr_ + 12 hex of sha256(observation_id · operation · claim_id), or of sha256(claim_id · decay_update · timestamp) for a decay_update row, which no observation drives. weights is the §7.4 breakdown the updater computed: the inputs to the move travel beside the move, so anyone disputing a probability can see which input to dispute; a decay_update row carries weights null and a decay object in its place. The engine (actor llm-wiki-state/1.1) emits new_claim, support_update, contradiction_update, scope_split, exception_addition, supersession, decay_update, and human_override; promotion, archival, and rejection are reserved for later phases.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transition_id",
+    "timestamp",
+    "operation",
+    "claim_id",
+    "claim_key",
+    "observation_id",
+    "related_claim_id",
+    "before",
+    "after",
+    "weights",
+    "reason",
+    "actor",
+    "review_required"
+  ],
+  "properties": {
+    "transition_id": { "type": "string", "pattern": "^tr_[0-9a-f]{12}$" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "operation": {
+      "enum": [
+        "new_claim",
+        "support_update",
+        "contradiction_update",
+        "scope_split",
+        "exception_addition",
+        "supersession",
+        "decay_update",
+        "promotion",
+        "archival",
+        "rejection",
+        "human_override"
+      ]
+    },
+    "claim_id": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" },
+    "claim_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*){1,4}$"
+    },
+    "observation_id": {
+      "description": "The observation that caused the move; null for operations no observation drives (decay, archival).",
+      "type": ["string", "null"],
+      "pattern": "^obs_[0-9a-f]{12}$"
+    },
+    "related_claim_id": {
+      "description": "The other claim in a two-claim operation: the superseded claim on a supersession, the sibling on a scope split.",
+      "type": ["string", "null"],
+      "pattern": "^clm_[0-9a-f]{12}$"
+    },
+    "before": {
+      "description": "null on new_claim.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["probability", "status", "text"],
+      "properties": {
+        "probability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "status": {
+          "enum": ["candidate", "active", "disputed", "superseded", "stale", "archived", "rejected"]
+        },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "after": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["probability", "status", "text"],
+      "properties": {
+        "probability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "status": {
+          "enum": ["candidate", "active", "disputed", "superseded", "stale", "archived", "rejected"]
+        },
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "weights": {
+      "description": "§7.4 — the confidence dimensions behind the move. null when the operation moved no number (exception_addition, human_override).",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": [
+        "semantic_confidence",
+        "source_authority",
+        "recency_weight",
+        "extraction_quality",
+        "observation_strength",
+        "evidence_weight"
+      ],
+      "properties": {
+        "semantic_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source_authority": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recency_weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "extraction_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+        "observation_strength": {
+          "description": "The product of the four dimensions, clamped.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_weight": {
+          "description": "The signed log-odds move: +ln((1+s)/(1−s)) for support, negative for contradiction.",
+          "type": "number"
+        }
+      }
+    },
+    "decay": {
+      "description": "Present only on a decay_update row: the elapsed time, the profile's half-life, the factor 0.5^(elapsed/half_life) applied to log_odds, and the log-odds before and after. fold sets log_odds to log_odds_after and never recomputes the factor.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["elapsed_days", "half_life_days", "factor", "log_odds_before", "log_odds_after"],
+      "properties": {
+        "elapsed_days": { "type": "number", "minimum": 0 },
+        "half_life_days": { "type": "number", "exclusiveMinimum": 0 },
+        "factor": { "type": "number", "minimum": 0, "maximum": 1 },
+        "log_odds_before": { "type": "number" },
+        "log_odds_after": { "type": "number" }
+      }
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "actor": {
+      "description": "llm-wiki-state/<version> for the updater, human:<name> for an override.",
+      "type": "string",
+      "pattern": "^(llm-wiki-state/[0-9]+\\.[0-9]+|human:[a-z0-9-]+)$"
+    },
+    "review_required": { "type": "boolean" },
+    "run_id": {
+      "description": "The run that appended this row (spec.md `### Ledger rows`) — run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes · views_before), the same id stamped on the row's states/audit_log.jsonl entry. Optional: absent on every row from Phases 1–5, present on every row Phase 6 on appends.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Merge",
+  "description": "A human merge of two entities (housamkak v3 §12.6) — one line of llm-wiki/states/merges.jsonl, an append-only ledger written only by the engine's merge verb. merge_id = mrg_ + 12 hex of sha256(from_entity · into_entity). On replay, after alias folding and in ledger order, every mention of from_entity resolves to into_entity, from's name and aliases join into's aliases, and into.merged_from lists from; a chain A→B, B→C resolves A to C. Nothing merges on similarity — graph check proposes, a human disposes. This row is never rewritten: `unmerge <merge_id>` undoes the merge's run through a states/retractions.jsonl row that the replay honors, not by editing or removing this line.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["merge_id", "from_entity", "into_entity", "by", "reason", "timestamp"],
+  "properties": {
+    "merge_id": {
+      "type": "string",
+      "pattern": "^mrg_[0-9a-f]{12}$"
+    },
+    "from_entity": {
+      "description": "The entity folded away.",
+      "type": "string",
+      "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$"
+    },
+    "into_entity": {
+      "description": "The surviving entity; must not itself have been merged away.",
+      "type": "string",
+      "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$"
+    },
+    "by": {
+      "description": "The human who judged the pair the same thing.",
+      "type": "string",
+      "pattern": "^human:[a-z0-9-]+$"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "run_id": {
+      "description": "The run that appended this row (spec.md `### Ledger rows`) — run_ + 12 hex of sha256(actor · verb · timestamp · the input hashes · views_before), the same id stamped on the row's states/audit_log.jsonl entry. Optional: absent on every row from Phases 1–5, present on every row Phase 6 on appends.",
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{12}$"
+    }
+  }
+}

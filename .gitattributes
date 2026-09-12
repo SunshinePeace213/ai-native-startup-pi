@@ -1,0 +1,14 @@
+# llm-wiki ledgers merge by union: two branches' appends both survive a merge, and
+# `rebuild` (pinned by a drift test) is what makes the views agree afterward. Views
+# (claims.jsonl, entities.jsonl, relationships.jsonl, unresolved_conflicts.jsonl,
+# snapshot.json) and rendered pages take the plain three-way merge — no line for them.
+# Gitattributes has no brace expansion, so every path is spelled out.
+#
+llm-wiki/states/sources.jsonl merge=union
+llm-wiki/states/transitions.jsonl merge=union
+llm-wiki/states/merges.jsonl merge=union
+llm-wiki/states/audit_log.jsonl merge=union
+llm-wiki/states/retractions.jsonl merge=union
+llm-wiki/states/observations/*.jsonl merge=union
+llm-wiki/states/inbox/*.jsonl merge=union
+

@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fusion Config",
+  "description": "The RRF fusion and rerank configuration for scripts/llm-wiki/retrieve.py (housamkak v3 §10.3) — the one tracked file under llm-wiki/retrieval/, naming where each stream's index lives, the RRF k and pool sizes, the per-intent stream weights, the rerank weights, and the per-status factors.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "k",
+    "pool",
+    "per_page_cap",
+    "seed_hits",
+    "max_fanout",
+    "min_hits",
+    "span_slack",
+    "max_tokens",
+    "evidence_per_claim",
+    "timeout_s",
+    "collections",
+    "streams",
+    "intents",
+    "rerank",
+    "status_factor",
+    "floor"
+  ],
+  "properties": {
+    "version": { "type": "string", "pattern": "^fusion-v[0-9]+$" },
+    "k": { "type": "integer", "minimum": 1 },
+    "pool": { "type": "integer", "minimum": 1 },
+    "per_page_cap": { "type": "integer", "minimum": 1 },
+    "seed_hits": { "type": "integer", "minimum": 0 },
+    "max_fanout": { "type": "integer", "minimum": 1 },
+    "min_hits": { "type": "integer", "minimum": 0 },
+    "span_slack": {
+      "description": "Lines of slack on each side of a raw hit's chunk window, so an evidence span straddling the boundary still maps to its observation.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "max_tokens": { "type": "integer", "minimum": 1 },
+    "evidence_per_claim": { "type": "integer", "minimum": 0 },
+    "timeout_s": { "type": "number", "exclusiveMinimum": 0 },
+    "collections": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bm25", "vec"],
+      "properties": {
+        "bm25": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "vec": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "private": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bm25", "vec"],
+          "properties": {
+            "bm25": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "vec": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    },
+    "streams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bm25", "vec", "graph", "state"],
+      "properties": {
+        "bm25": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index"],
+          "properties": { "index": { "type": "string" }, "via": { "type": "string" } }
+        },
+        "vec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index"],
+          "properties": { "index": { "type": "string" }, "via": { "type": "string" } }
+        },
+        "graph": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index"],
+          "properties": { "index": { "type": "string" }, "via": { "type": "string" } }
+        },
+        "state": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["index"],
+          "properties": { "index": { "type": "string" }, "via": { "type": "string" } }
+        }
+      }
+    },
+    "intents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factual", "structural", "historical", "exploratory"],
+      "properties": {
+        "factual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["weights", "hops", "history"],
+          "properties": {
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bm25", "vec", "graph", "state"],
+              "properties": {
+                "bm25": { "type": "number", "minimum": 0 },
+                "vec": { "type": "number", "minimum": 0 },
+                "graph": { "type": "number", "minimum": 0 },
+                "state": { "type": "number", "minimum": 0 }
+              }
+            },
+            "hops": { "type": "integer", "minimum": 0 },
+            "history": { "type": "boolean" }
+          }
+        },
+        "structural": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["weights", "hops", "history"],
+          "properties": {
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bm25", "vec", "graph", "state"],
+              "properties": {
+                "bm25": { "type": "number", "minimum": 0 },
+                "vec": { "type": "number", "minimum": 0 },
+                "graph": { "type": "number", "minimum": 0 },
+                "state": { "type": "number", "minimum": 0 }
+              }
+            },
+            "hops": { "type": "integer", "minimum": 0 },
+            "history": { "type": "boolean" }
+          }
+        },
+        "historical": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["weights", "hops", "history"],
+          "properties": {
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bm25", "vec", "graph", "state"],
+              "properties": {
+                "bm25": { "type": "number", "minimum": 0 },
+                "vec": { "type": "number", "minimum": 0 },
+                "graph": { "type": "number", "minimum": 0 },
+                "state": { "type": "number", "minimum": 0 }
+              }
+            },
+            "hops": { "type": "integer", "minimum": 0 },
+            "history": { "type": "boolean" }
+          }
+        },
+        "exploratory": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["weights", "hops", "history"],
+          "properties": {
+            "weights": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["bm25", "vec", "graph", "state"],
+              "properties": {
+                "bm25": { "type": "number", "minimum": 0 },
+                "vec": { "type": "number", "minimum": 0 },
+                "graph": { "type": "number", "minimum": 0 },
+                "state": { "type": "number", "minimum": 0 }
+              }
+            },
+            "hops": { "type": "integer", "minimum": 0 },
+            "history": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "rerank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["probability", "authority", "recency", "support", "support_cap"],
+      "properties": {
+        "probability": { "type": "number", "minimum": 0 },
+        "authority": { "type": "number", "minimum": 0 },
+        "recency": { "type": "number", "minimum": 0 },
+        "support": { "type": "number", "minimum": 0 },
+        "support_cap": {
+          "description": "Supporting observations past this count add nothing to the support term.",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "floor": {
+      "description": "The fused aggregates eval enforces — a run below either exits non-zero.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mrr", "recall"],
+      "properties": {
+        "mrr": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recall": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "status_factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default", "historical"],
+      "properties": {
+        "default": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate",
+            "active",
+            "disputed",
+            "stale",
+            "archived",
+            "superseded",
+            "rejected"
+          ],
+          "properties": {
+            "candidate": { "type": "number", "minimum": 0 },
+            "active": { "type": "number", "minimum": 0 },
+            "disputed": { "type": "number", "minimum": 0 },
+            "stale": { "type": "number", "minimum": 0 },
+            "archived": { "type": "number", "minimum": 0 },
+            "superseded": { "type": "number", "minimum": 0 },
+            "rejected": { "type": "number", "minimum": 0 }
+          }
+        },
+        "historical": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate",
+            "active",
+            "disputed",
+            "stale",
+            "archived",
+            "superseded",
+            "rejected"
+          ],
+          "properties": {
+            "candidate": { "type": "number", "minimum": 0 },
+            "active": { "type": "number", "minimum": 0 },
+            "disputed": { "type": "number", "minimum": 0 },
+            "stale": { "type": "number", "minimum": 0 },
+            "archived": { "type": "number", "minimum": 0 },
+            "superseded": { "type": "number", "minimum": 0 },
+            "rejected": { "type": "number", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "skill_name": "commit-message",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "commit this",
+      "setup": "scratch repo on branch 42-retry-fetch with a staged one-line bug fix in src/fetch.py",
+      "expected_output": "One commit whose subject is `🐛 fix(src): ...` or similar, footer `Refs #42`, no trailers.",
+      "assertions": [
+        "Subject starts with a literal emoji from the table whose type matches it (🐛 fix or ✨ feat) followed by `(<scope>)`",
+        "Subject is ≤72 characters, lowercase type/scope, no trailing period",
+        "Last line is exactly `Refs #42`",
+        "No Signed-off-by or Co-Authored-By trailer"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "save my changes to git — this is a quick doc tweak i'm doing outside the sdlc chain",
+      "setup": "scratch repo on branch main with a staged edit to README.md",
+      "expected_output": "One commit `📝 docs(readme): ...` with no Refs footer and no question about an issue.",
+      "assertions": [
+        "Subject starts with 📝 docs(",
+        "No `Refs` footer is present",
+        "No trailer is present"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "what should the PR title be for this branch?",
+      "setup": "scratch repo on branch 7-add-cache with two commits adding a cache module",
+      "expected_output": "A single subject line `✨ feat(cache): ...` with no footer.",
+      "assertions": [
+        "Output is one line in `<emoji> <type>(<scope>): <description>` form",
+        "No `Refs #7` in the title itself",
+        "No :shortcode: emoji"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"by": "human:ringo", "from_entity": "ent_claim_status", "into_entity": "ent_claim", "merge_id": "mrg_9c4f3c39b2bb", "reason": "a claim's status is a property of the claim, not a separate concept", "timestamp": "2026-08-21T18:20:12Z"}

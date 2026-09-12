@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Governance",
+  "description": "The tracked access-control policy at llm-wiki/governance.json (housamkak v3 §18, spec.md `### Policy`) — maps the four roles human, agent, routine, and process to the write verbs each may run and the segments each may run them in, and maps concrete actor ids to a role for the cases where the actor's own prefix is not the final word. version is pinned governance-v1 so a future policy shape bumps the const and this schema together; lock_timeout_s bounds how long a write verb polls states/.lock before refusing. Validating a candidate policy against this schema is the check that every role names only real verbs and segments, that all four roles are present, and that every actor id both matches the engine's actor vocabulary and resolves to a real role — the same shape the engine's policy check reads at every write.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "lock_timeout_s", "roles", "actors"],
+  "properties": {
+    "version": { "const": "governance-v1" },
+    "lock_timeout_s": {
+      "description": "How long a write verb polls states/.lock before exiting 3 and naming the holder.",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["human", "agent", "routine", "process"],
+      "properties": {
+        "human": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verbs", "segments"],
+          "properties": {
+            "verbs": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "register",
+                  "apply",
+                  "decay",
+                  "merge",
+                  "unmerge",
+                  "undo",
+                  "redo",
+                  "promote",
+                  "rebuild",
+                  "render",
+                  "*"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "segments": {
+              "type": "array",
+              "items": { "enum": ["shared", "private"] },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verbs", "segments"],
+          "properties": {
+            "verbs": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "register",
+                  "apply",
+                  "decay",
+                  "merge",
+                  "unmerge",
+                  "undo",
+                  "redo",
+                  "promote",
+                  "rebuild",
+                  "render",
+                  "*"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "segments": {
+              "type": "array",
+              "items": { "enum": ["shared", "private"] },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        },
+        "routine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verbs", "segments"],
+          "properties": {
+            "verbs": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "register",
+                  "apply",
+                  "decay",
+                  "merge",
+                  "unmerge",
+                  "undo",
+                  "redo",
+                  "promote",
+                  "rebuild",
+                  "render",
+                  "*"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "segments": {
+              "type": "array",
+              "items": { "enum": ["shared", "private"] },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        },
+        "process": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verbs", "segments"],
+          "properties": {
+            "verbs": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "register",
+                  "apply",
+                  "decay",
+                  "merge",
+                  "unmerge",
+                  "undo",
+                  "redo",
+                  "promote",
+                  "rebuild",
+                  "render",
+                  "*"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "segments": {
+              "type": "array",
+              "items": { "enum": ["shared", "private"] },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        }
+      }
+    },
+    "actors": {
+      "description": "Concrete actor ids mapped to a role; an actor absent here falls back to its own prefix as its role.",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(human|agent|routine|process):[a-z0-9][a-z0-9._-]*$": {
+          "enum": ["human", "agent", "routine", "process"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "skill": "meta-agent",
+  "runs": 1,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "make me an agent that audits our sql migrations for destructive statements and reports back, i want to delegate that every time",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "build a reviewer that only looks at accessibility in our react components and runs on its own",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i keep asking scout to map the auth flow the same way each time. turn that into something i can hand off",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the reviewer subagent keeps wandering into refactoring instead of just reporting findings. tighten it up",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "our custom security-audit agent comes back really shallow, barely reads any files. what should i change in its file?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "pi never picks my docs-writer agent even when i ask for documentation, i always have to name it. fix that",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "write a .pi/agents file for a changelog drafter that reads the git log and produces a keepachangelog section",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "should this be a subagent or a skill? it's a long research task that would flood my main context",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "give the worker agent access to web_search and make it run in the background by default",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "i want a second-opinion agent that only reads and never edits, and escalates instead of guessing",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "use reviewer to review this diff for correctness and tests",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "run parallel reviewers: one for correctness, one for tests, one for complexity",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "ask oracle for a second opinion on my current plan before we build",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "show me the available subagents and which ones are running",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "subagent"
+    },
+    {
+      "query": "write a SKILL.md that extracts line items from vendor PDFs into finance/ledger.csv",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the pdf-tools skill never loads on its own, i always type /skill:pdf-tools. what's wrong?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "pi install npm:pi-subagents is failing with a peer dependency error",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "explain how forked context differs from fresh context for subagents",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "run a review loop on this change with a max of 3 rounds",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "set subagents.defaultModel to sonnet in the project settings",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    }
+  ]
+}

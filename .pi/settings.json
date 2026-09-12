@@ -1,0 +1,8 @@
+{
+  "subagents": {
+    "agentOverrides": {
+      "llm-wiki-librarian": { "model": "anthropic/claude-sonnet-5" },
+      "source-archiver": { "model": "anthropic/claude-sonnet-5" }
+    }
+  }
+}

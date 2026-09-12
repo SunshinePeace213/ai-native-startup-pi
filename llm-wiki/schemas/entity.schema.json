@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Entity",
+  "description": "A named thing the claims are about (housamkak v3 §6.4) — one line of llm-wiki/states/entities.jsonl, a view aggregated from every observation that names it. entity_id is the normalized name (lowercase, runs of non-alphanumerics to _); a mention resolves to the first-seen entity whose name or alias it matches, and merges.jsonl rows fold one entity into another on replay. type is one of the wiki's page types: an entity with enough live claims renders as the page wiki/<shelf>/<slug>.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "entity_id",
+    "name",
+    "type",
+    "aliases",
+    "merged_from",
+    "attributes",
+    "confidence",
+    "source_observations",
+    "claim_ids",
+    "page",
+    "first_seen",
+    "last_seen"
+  ],
+  "properties": {
+    "entity_id": { "type": "string", "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "type": {
+      "enum": ["concept", "project", "person", "decision", "system", "workflow", "question"]
+    },
+    "aliases": {
+      "description": "Every other spelling seen for the entity — its own mentions' aliases plus the names and aliases of entities merged into it — in first-seen order.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "merged_from": {
+      "description": "Entity ids folded into this one by merges.jsonl rows, in ledger order; empty for most entities.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^ent_[a-z0-9]+(_[a-z0-9]+)*$" }
+    },
+    "attributes": {
+      "description": "Free key/value facts about the entity, e.g. vendor or category.",
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "confidence": {
+      "description": "Belief that the entity is real and correctly identified — log-odds accumulated over every observation naming it, as a probability.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "source_observations": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^obs_[0-9a-f]{12}$" }
+    },
+    "claim_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^clm_[0-9a-f]{12}$" }
+    },
+    "page": {
+      "description": "Repo-relative path of the rendered page — under llm-wiki/private/wiki/<shelf>/ for a private-segment entity, llm-wiki/wiki/<shelf>/ for a shared one — or null when the entity is below the page threshold.",
+      "type": ["string", "null"],
+      "pattern": "^llm-wiki/(private/)?wiki/(concepts|projects|people|decisions|systems|workflows|questions)/[^\\s]+\\.md$"
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    }
+  }
+}

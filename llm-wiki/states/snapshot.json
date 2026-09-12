@@ -1,0 +1,24 @@
+{
+  "arithmetic": "log-odds-v2",
+  "as_of": "2026-09-11T20:02:50Z",
+  "counts": {
+    "claims": 723,
+    "claims_by_status": {
+      "active": 722,
+      "superseded": 1
+    },
+    "entities": 238,
+    "merges": 1,
+    "observations": 780,
+    "pages": 186,
+    "relationships": 507,
+    "sources": 95,
+    "transitions": 884,
+    "unresolved_conflicts": 0
+  },
+  "runs": {
+    "live": 138,
+    "retracted": 14
+  },
+  "segment": "shared"
+}
