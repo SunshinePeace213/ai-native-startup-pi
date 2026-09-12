@@ -373,3 +373,6 @@ dist
 # =============================================================================
 llm-wiki/.obsidian/workspace*
 llm-wiki/**/states/.lock
+
+# scratch an eval or review session leaves behind
+.tmp/

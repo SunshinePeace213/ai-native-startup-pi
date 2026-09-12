@@ -1,0 +1,47 @@
+{
+  "skill_name": "model-selection",
+  "note": "Assertions are drafts until the first with/without run has been read; drop any that pass in both configurations.",
+  "contract": [
+    "M1 every stamp names a model id as pi --list-models prints it and an effort, and cites the roster row it matched",
+    "M2 an orchestrator or judgment task defaults to opus, a delegated scoped task to sonnet; fable is never stamped on a subagent",
+    "M3 a failure is diagnosed before escalation: didn't-know raises the model, didn't-try raises the effort, and the same tier is never retried",
+    "M4 no stamp goes below the provider default to save tokens; haiku is never given an effort; terra is never stamped",
+    "M5 the stamp is written where it binds — .pi/settings.json agentOverrides, a plan row, or a --model flag — never into a template or an agent file"
+  ],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm writing the plan for the retrieval-floor fix. Three tasks: (a) read the 34 eval cases and the two failing families and write up what's wrong, (b) tune fusion_config.json weights and re-run the eval until it clears the floor, (c) a summary comment on each case explaining its family. Stamp who runs each and at what effort.",
+      "expected_output": "Three stamps: (a) opus:high (judgment/consolidation), (b) sonnet:high or opus:high (scoped implementation that must run unattended and verify — never below medium), (c) luna:medium or haiku (utility summaries). Each cites its roster row.",
+      "assertions": [
+        "M1 each of the three tasks gets a provider/id model and an effort",
+        "M2 task (a) is stamped opus or higher, not sonnet or luna",
+        "M4 task (b) is not stamped below medium, since it runs unattended and verifies",
+        "M4 task (c) is stamped luna or haiku, and if haiku, carries no effort",
+        "M1 at least one stamp names the roster row or footnoted claim it rests on"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "the source-archiver subagent on sonnet keeps stopping after the first image and reporting the archive as done, even though the page has six. It has the whole page in context. What do I change?",
+      "expected_output": "Diagnosed as didn't-try (bailed mid-task with adequate context) → raise effort, not model: sonnet at high (thinking: high on the agent, or the settings override), not a jump to opus. Names where the change is written (.pi/settings.json or the agent's thinking field).",
+      "assertions": [
+        "M3 names the failure as an effort failure (bailed / didn't try) rather than a knowledge failure",
+        "M3 raises the effort rather than switching to opus or fable as the first move",
+        "M5 says where the change is written, naming .pi/settings.json or the agent frontmatter thinking field",
+        "M3 does not propose re-running the same tier unchanged"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "the eval graders are getting expensive. can we run the librarian on terra, or haiku at low effort?",
+      "expected_output": "Refuses both as written: terra is dominated (roster: not on the roster, cites the AA claim); haiku has no effort parameter so 'haiku at low' sets nothing. Offers luna at medium for the code-gradable assertions and keeps sonnet for the librarian's judgment, or splits grader from subject.",
+      "assertions": [
+        "M4 rejects terra and gives the domination reason",
+        "M4 states that haiku has no effort setting",
+        "M1 proposes luna with a model id and an effort as the cheap option",
+        "M2 does not move the librarian's retrieval judgment itself to luna or haiku"
+      ]
+    }
+  ]
+}

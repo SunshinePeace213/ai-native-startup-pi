@@ -22,4 +22,5 @@
 
 - **Skills**: the llm-wiki verbs are `.agents/skills/llm-wiki-*`; authoring a skill runs through `skill-creator`, a subagent through `meta-agent`.
 - **Subagents**: `.pi/agents/` holds `llm-wiki-librarian` (retrieval, read-only) and `source-archiver` (one URL to one raw archive); skills launch them foreground with `subagent({ agent, task, async: false })` and read the result inline. Model choice lives in `.pi/settings.json`, never in an agent file.
+- **Models**: the `model-selection` skill stamps every model and effort from its roster — opus for orchestrators and judgment, sonnet for delegated work, luna for utility tasks, astra/fable by escalation; a miss raises the model when it didn't *know* and the effort when it didn't *try*, never the same tier twice.
 - **Extension**: `.pi/extensions/llm-wiki/` is the one project extension — session queue, prompt grounding, the write guard, the unregistered-archive reminder; it never writes under `llm-wiki/` and never calls a model. `bun test tests/pi/llm-wiki` covers its four hooks and the engine bridge.

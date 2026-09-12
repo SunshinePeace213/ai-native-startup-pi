@@ -1,0 +1,128 @@
+{
+  "skill": "model-selection",
+  "runs": 3,
+  "recall": 0.9,
+  "false_fire": 0.1,
+  "queries": [
+    {
+      "query": "which model should the source-archiver subagent run on? it's just fetching pages and writing markdown",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "is sonnet enough for the llm-wiki-librarian or does retrieval need opus?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "this eval loop is getting expensive \u2014 can a cheaper model grade the assertions?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the reviewer failed the guard.ts fix twice. redo it on something better",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what effort should the crystallize skill run at when it's unattended overnight?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the subagent bailed halfway through the migration and said it was done. why, and what do I change?",
+      "should_trigger": true,
+      "trigger_rate": 0.3333333333333333,
+      "first_tool": "read"
+    },
+    {
+      "query": "set a model for the new reviewer agent in .pi/settings.json",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "draft the plan for the retrieval floor fix \u2014 three tasks, stamp who runs each",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "can luna handle the eligibility check on the ingest queue instead of haiku?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "it keeps getting the state.py undo semantics confidently wrong even with the docs in context",
+      "should_trigger": true,
+      "trigger_rate": 0.6666666666666666,
+      "first_tool": "bash"
+    },
+    {
+      "query": "write a subagent that reviews pull requests for security issues",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the llm-wiki-librarian never gets picked when I ask about pi extensions \u2014 fix its description",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "does the wiki hold anything on GPT-6 Astra pricing?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ingest https://openai.com/index/gpt-5-6/ into the wiki",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "are the tests in tests/pi/llm-wiki/grounding any good?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "commit the roster changes",
+      "should_trigger": false,
+      "trigger_rate": 0.3333333333333333,
+      "first_tool": "read"
+    },
+    {
+      "query": "the prompt for the archiver is too vague \u2014 tighten the instructions so it stops re-fetching",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "how does Pi's --model flag parse provider/id:thinking?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "grill me on whether we should support OpenAI at all",
+      "should_trigger": false,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "lint the wiki, the model pages look stale",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    }
+  ]
+}

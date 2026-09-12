@@ -1,0 +1,61 @@
+[
+  {
+    "query": "which model should the source-archiver subagent run on? it's just fetching pages and writing markdown",
+    "should_trigger": true
+  },
+  {
+    "query": "is sonnet enough for the llm-wiki-librarian or does retrieval need opus?",
+    "should_trigger": true
+  },
+  {
+    "query": "this eval loop is getting expensive — can a cheaper model grade the assertions?",
+    "should_trigger": true
+  },
+  {
+    "query": "the reviewer failed the guard.ts fix twice. redo it on something better",
+    "should_trigger": true
+  },
+  {
+    "query": "what effort should the crystallize skill run at when it's unattended overnight?",
+    "should_trigger": true
+  },
+  {
+    "query": "the subagent bailed halfway through the migration and said it was done. why, and what do I change?",
+    "should_trigger": true
+  },
+  {
+    "query": "set a model for the new reviewer agent in .pi/settings.json",
+    "should_trigger": true
+  },
+  {
+    "query": "draft the plan for the retrieval floor fix — three tasks, stamp who runs each",
+    "should_trigger": true
+  },
+  {
+    "query": "can luna handle the eligibility check on the ingest queue instead of haiku?",
+    "should_trigger": true
+  },
+  {
+    "query": "it keeps getting the state.py undo semantics confidently wrong even with the docs in context",
+    "should_trigger": true
+  },
+  {
+    "query": "write a subagent that reviews pull requests for security issues",
+    "should_trigger": false
+  },
+  {
+    "query": "the llm-wiki-librarian never gets picked when I ask about pi extensions — fix its description",
+    "should_trigger": false
+  },
+  { "query": "does the wiki hold anything on GPT-6 Astra pricing?", "should_trigger": false },
+  { "query": "ingest https://openai.com/index/gpt-5-6/ into the wiki", "should_trigger": false },
+  { "query": "are the tests in tests/pi/llm-wiki/grounding any good?", "should_trigger": false },
+  { "query": "commit the roster changes", "should_trigger": false },
+  {
+    "query": "the prompt for the archiver is too vague — tighten the instructions so it stops re-fetching",
+    "should_trigger": false
+  },
+  { "query": "how does Pi's --model flag parse provider/id:thinking?", "should_trigger": false },
+  { "query": "grill me on whether we should support OpenAI at all", "should_trigger": false },
+  { "query": "lint the wiki, the model pages look stale", "should_trigger": false }
+]

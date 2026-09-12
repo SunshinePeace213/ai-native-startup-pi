@@ -89,7 +89,9 @@ settled answers.
 - `inheritProjectContext: true` for any agent that must follow repo
   conventions; the default is off.
 - `thinking` carries effort. No `model` in the file: pin tiers in
-  `.pi/settings.json` under `agentOverrides`.
+  `.pi/settings.json` under `agentOverrides`, chosen through the
+  `model-selection` skill (sibling of this one) — its roster says which tier
+  a delegated agent gets and why.
 - The body is role sentence, working rules that are true invariants, the
   supervisor stanza only when `contact_supervisor` is in tools, and `## Output`.
   Delete the supervisor stanza otherwise.
