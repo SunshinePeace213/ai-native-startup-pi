@@ -347,9 +347,13 @@ def qmd_binary() -> str | None:
 
 def run_qmd(binary: str, args: list[str], timeout: float) -> tuple[list[dict] | None, str | None]:
     """(hits, skip reason) — qmd prints one JSON array on stdout and its progress on stderr."""
+    # The retriever is always unattended (the extension, a subagent, the eval): tell qmd
+    # so, or a local config it does not trust prints a prompt to stdout ahead of the JSON
+    # and every stream that reads it fails as "invalid JSON".
+    env = {**os.environ, "QMD_TRUST_LOCAL_CONFIG": "1"}
     try:
         done = subprocess.run(  # noqa: S603 — the binary comes from LLM_WIKI_QMD or PATH
-            [binary, *args], capture_output=True, text=True, timeout=timeout
+            [binary, *args], capture_output=True, text=True, timeout=timeout, env=env
         )
     except subprocess.TimeoutExpired:
         return None, f"timeout {timeout} s"

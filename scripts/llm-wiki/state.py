@@ -238,7 +238,14 @@ def load_state(layout: common.Layout) -> State:
     state.retracted = common.retracted_runs(layout)
     sources = common.read_source_rows(layout, state.retracted)
     state.sources = {row["source_id"]: row for row in sources}
-    observations = common.read_observations(layout, state.retracted)
+    # An observation whose registration is retracted is orphaned along with it: the
+    # archive is back in the queue, so its rows — and the transitions they drove — are
+    # skipped exactly as a retracted run's are, and no reader ever trips on them.
+    observations = [
+        row
+        for row in common.read_observations(layout, state.retracted)
+        if row["source_id"] in state.sources
+    ]
     for observation in observations:
         state.observations[observation["observation_id"]] = observation
         state.observation_order.append(observation["observation_id"])
@@ -247,6 +254,9 @@ def load_state(layout: common.Layout) -> State:
         [state.observations[o] for o in state.observation_order], state.merges
     )
     for transition in common.read_transitions(layout, state.retracted):
+        observation_id = transition.get("observation_id")
+        if observation_id is not None and observation_id not in state.observations:
+            continue
         fold(state, transition)
         state.transitions.append(transition)
     state.runs = {
@@ -2231,6 +2241,29 @@ def is_belief_run(layout: common.Layout, rows: list[tuple[str, dict]]) -> bool:
     return bool(registered & extracted)
 
 
+def orphaned_sources(
+    layout: common.Layout,
+    grouped: dict[str, list[tuple[str, dict]]],
+    retracted: set[str],
+    rows: list[tuple[str, dict]],
+) -> dict[str, str]:
+    """The sources a run's observations cite whose registration is itself retracted.
+
+    Maps each such source_id to the retracted register run, so a restore that would
+    replay observations of an unregistered archive can be refused by name.
+    """
+    cited = {row["source_id"] for ledger, row in rows if ledger == "observations"}
+    if not cited:
+        return {}
+    registered_by: dict[str, str] = {}
+    for run, run_rows in grouped.items():
+        for ledger, row in run_rows:
+            if ledger == "sources" and row["source_id"] in cited:
+                registered_by[row["source_id"]] = run
+    live = {row["source_id"] for row in common.read_source_rows(layout, retracted)}
+    return {source: registered_by.get(source, "unknown") for source in cited if source not in live}
+
+
 def run_opened_at(rows: list[tuple[str, dict]]) -> str:
     """The stamp of a run's first row — what the stack rule orders live runs by."""
     return min(row[STAMP_FIELDS[ledger]] for ledger, row in rows)
@@ -2321,8 +2354,18 @@ def cmd_redo(layout: common.Layout, args: argparse.Namespace, session: Session) 
     rows = grouped.get(target)
     if not rows:
         raise Refused(f"refused: {target} is not retractable (pre-Phase-6)", 2)
+    retracted = common.retracted_runs(layout)
+    if target in retracted:
+        missing = orphaned_sources(layout, grouped, retracted, rows)
+        if missing:
+            named = ", ".join(f"{source} (run {run})" for source, run in sorted(missing.items()))
+            raise Refused(
+                f"refused: {target} restores observations of {named} whose registration is "
+                "retracted — redo the register first",
+                2,
+            )
     run = session.start()
-    if target not in common.retracted_runs(layout):
+    if target not in retracted:
         print("unchanged")
         session.record(run)
         return 0

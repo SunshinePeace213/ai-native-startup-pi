@@ -129,6 +129,15 @@ fi
 for name in wiki raw sources; do
   qmd collection remove "$name" >/dev/null 2>&1 || true
 done
+# A collection whose path no longer exists (a checkout moved, a private segment
+# not present on this machine) makes every unattended qmd run print a trust
+# prompt to stdout ahead of its JSON. Drop those before re-adding the layer's own.
+if [ -f "$CONFIG" ]; then
+  awk '/^  [a-zA-Z0-9_-]+:$/ { name=$1; sub(":", "", name) } /^    path: / { print name, $2 }' "$CONFIG" \
+  | while read -r name path; do
+      [ -d "$path" ] || { echo "dropping collection $name: $path is gone"; qmd collection remove "$name" >/dev/null 2>&1 || true; }
+    done
+fi
 
 qmd collection add "$VAULT/wiki" --name wiki --mask "**/*.md"
 qmd collection add "$VAULT/raw"  --name raw  --mask "**/*.md"

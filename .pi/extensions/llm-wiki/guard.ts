@@ -28,9 +28,12 @@ export function denialFor(rel: string): string | null {
       "in a reviewed edit; never edit it from a session"
     );
   }
-  const parts = rel.split("/");
+  const parts = rel.split("/").filter(Boolean);
   if (parts[0] !== "llm-wiki") return null;
   const segment = parts.slice(1);
+  if (segment.length === 0) {
+    return "llm-wiki/ holds the ledgers and the rendered shelves — never remove or replace the layer as a whole";
+  }
   if (segment[0] === "states") {
     if (segment[1] === "inbox") return null;
     return (
@@ -38,13 +41,13 @@ export function denialFor(rel: string): string | null {
       "(apply · decay · merge · undo · rebuild); never edit the file"
     );
   }
-  const shelf = segment[1];
-  if (
-    segment[0] === "wiki" &&
-    shelf !== undefined &&
-    (shelf === "index.md" || SHELVES.has(shelf))
-  ) {
-    return `${rel} is written only by scripts/llm-wiki/render.py — run render; never edit the file`;
+  if (segment[0] === "wiki") {
+    const shelf = segment[1];
+    // The bare shelf root, index.md, and every shelf folder are the renderer's; log.md
+    // and any other loose file under wiki/ stay open.
+    if (shelf === undefined || shelf === "index.md" || SHELVES.has(shelf)) {
+      return `${rel} is written only by scripts/llm-wiki/render.py — run render; never edit the file`;
+    }
   }
   return null;
 }
@@ -94,7 +97,7 @@ export function protectedPath(path: string, root: string, cwd?: string): string 
 }
 
 /** Expose unquoted command boundaries so one write verb cannot borrow another's path. */
-export function spaceBoundaries(command: string): string {
+function spaceBoundaries(command: string): string {
   const out: string[] = [];
   let quote = "";
   let escaped = false;
@@ -147,7 +150,7 @@ export function spaceBoundaries(command: string): string {
 }
 
 /** POSIX-style word splitting; null when a quote never closes. */
-export function shellSplit(command: string): string[] | null {
+function shellSplit(command: string): string[] | null {
   const tokens: string[] = [];
   let current = "";
   let inToken = false;
