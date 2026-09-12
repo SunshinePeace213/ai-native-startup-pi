@@ -1,23 +1,23 @@
 {
   "arithmetic": "log-odds-v2",
-  "as_of": "2026-09-11T20:02:50Z",
+  "as_of": "2026-09-12T20:30:29Z",
   "counts": {
-    "claims": 723,
+    "claims": 767,
     "claims_by_status": {
-      "active": 722,
+      "active": 766,
       "superseded": 1
     },
-    "entities": 238,
+    "entities": 243,
     "merges": 1,
-    "observations": 780,
-    "pages": 186,
-    "relationships": 507,
-    "sources": 95,
-    "transitions": 884,
+    "observations": 824,
+    "pages": 191,
+    "relationships": 513,
+    "sources": 106,
+    "transitions": 928,
     "unresolved_conflicts": 0
   },
   "runs": {
-    "live": 138,
+    "live": 150,
     "retracted": 14
   },
   "segment": "shared"

@@ -553,3 +553,47 @@ lane: deep · observations: 5 · claims: +5 ~0 · rendered: llm-wiki/wiki/system
 ## [2026-09-12] ingest | Pi RPC Mode | llm-wiki/raw/docs/pi/rpc.md
 
 lane: deep · observations: 5 · claims: +5 ~0 · rendered: llm-wiki/wiki/systems/pi.md, llm-wiki/wiki/concepts/rpc-mode.md, llm-wiki/wiki/concepts/non-interactive-mode.md, llm-wiki/wiki/concepts/pi-extension.md, llm-wiki/wiki/concepts/tui.md
+
+## [2026-09-12] ingest | GPT-6 Astra | llm-wiki/raw/docs/openai/models-gpt-6-astra.md
+
+lane: deep · observations: 6 · claims: +6 ~0 · rendered: llm-wiki/wiki/systems/gpt-6-astra.md
+
+## [2026-09-12] ingest | GPT-5.6 Sol | llm-wiki/raw/docs/openai/models-gpt-5-6-sol.md
+
+lane: deep · observations: 4 · claims: +4 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-sol.md
+
+## [2026-09-12] ingest | GPT-5.6 Terra | llm-wiki/raw/docs/openai/models-gpt-5-6-terra.md
+
+lane: deep · observations: 2 · claims: +2 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-terra.md
+
+## [2026-09-12] ingest | GPT-5.6 Luna | llm-wiki/raw/docs/openai/models-gpt-5-6-luna.md
+
+lane: deep · observations: 2 · claims: +2 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-luna.md
+
+## [2026-09-12] ingest | Reasoning models | llm-wiki/raw/docs/openai/guides-reasoning.md
+
+lane: deep · observations: 5 · claims: +5 ~0 · rendered: llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/concepts/effort-level.md
+
+## [2026-09-12] ingest | gpt-5-6 | llm-wiki/raw/articles/openai/gpt-5-6.md
+
+lane: deep · observations: 2 · claims: +2 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-sol.md
+
+## [2026-09-12] ingest | Advancing the price-performance frontier with GPT‑5.6 | llm-wiki/raw/articles/openai/gpt-5-6-price-performance.md
+
+lane: deep · observations: 1 · claims: +1 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-luna.md, llm-wiki/wiki/systems/gpt-5-6-terra.md
+
+## [2026-09-12] ingest | Benchmarking GPT-6 Astra | llm-wiki/raw/articles/artificial-analysis/benchmarking-gpt-6-astra.md
+
+lane: deep · observations: 8 · claims: +8 ~0 · rendered: llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/projects/artificial-analysis.md, llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/claude-opus-5.md
+
+## [2026-09-12] ingest | GPT-5.6 benchmarks across Intelligence, Speed and Cost | llm-wiki/raw/articles/artificial-analysis/gpt-5-6-has-landed.md
+
+lane: deep · observations: 6 · claims: +6 ~0 · rendered: llm-wiki/wiki/systems/gpt-5-6-sol.md, llm-wiki/wiki/systems/gpt-5-6-terra.md, llm-wiki/wiki/systems/gpt-5-6-luna.md, llm-wiki/wiki/projects/artificial-analysis.md
+
+## [2026-09-12] ingest | Models overview | llm-wiki/raw/docs/anthropic/models-overview.md
+
+lane: deep · observations: 6 · claims: +6 ~0 · rendered: llm-wiki/wiki/systems/claude-haiku-4-5.md, llm-wiki/wiki/systems/claude-opus-5.md, llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/claude-sonnet-5.md
+
+## [2026-09-12] ingest | pricing | llm-wiki/raw/docs/anthropic/pricing.md
+
+lane: deep · observations: 2 · claims: +2 ~0 · rendered: llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/claude-opus-5.md

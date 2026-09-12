@@ -2,25 +2,27 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-02
+updated: 2026-09-12
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/a-field-guide-to-claude-fable-finding-your-unknowns.md, title: "A field guide to Claude Fable 5: Finding your unknowns", id: src_10f512f5f8de}
+  - {resource: llm-wiki/raw/articles/artificial-analysis/gpt-5-6-has-landed.md, title: "GPT-5.6 benchmarks across Intelligence, Speed and Cost", id: src_c49e34d6a671}
+  - {resource: llm-wiki/raw/articles/openai/gpt-5-6.md, title: "gpt-5-6", id: src_6556cffbfc4e}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5-1.md, title: "Delivering work", id: src_9f2ae1e705ce}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5.md, title: "prompting-claude-fable-5", id: src_84badaa3952a}
   - {resource: llm-wiki/raw/docs/claude-code/claude-security.md, title: "Scan your codebase for vulnerabilities", id: src_2eb7a799d8a7}
   - {resource: llm-wiki/raw/docs/claude-code/model-config.md, title: "Model configuration", id: src_a959e4684753}
-generated: {by: process:llm-wiki-render, at: 2026-09-02}
+generated: {by: process:llm-wiki-render, at: 2026-09-12}
 entity_ids: [ent_claude_fable_5]
-claim_ids: [clm_a6d1086c1ed4, clm_46759f4da549, clm_99154f0251ed, clm_d661b794ce46, clm_32f17cdfb00d, clm_8479874ac5ba, clm_b423f79733bb, clm_cb95dc403e93, clm_199eade5a5f7, clm_708185b8ba6a, clm_3b50c521dcf6, clm_c1edb617029a]
-confidence: 0.91
-stale_after: 2028-04-16
-last_rendered: 2026-09-02T10:03:36Z
+claim_ids: [clm_a6d1086c1ed4, clm_46759f4da549, clm_99154f0251ed, clm_d661b794ce46, clm_32f17cdfb00d, clm_8479874ac5ba, clm_b423f79733bb, clm_cb95dc403e93, clm_199eade5a5f7, clm_708185b8ba6a, clm_3b50c521dcf6, clm_c1edb617029a, clm_d79a4bcae597, clm_f527db1617d8, clm_34a7772523ea]
+confidence: 0.89
+stale_after: 2028-01-03
+last_rendered: 2026-09-12T20:30:33Z
 review_required: false
 ---
 
 # Claude Fable 5
 
-> **In here:** Claude Fable 5's individual requests on hard tasks can run for many minutes and autonomous runs for hours, which is one of the largest shifts teams encounter on migration: client timeouts… · 12 claims, confidence 0.91.
+> **In here:** Claude Fable 5's individual requests on hard tasks can run for many minutes and autonomous runs for hours, which is one of the largest shifts teams encounter on migration: client timeouts… · 15 claims, confidence 0.89.
 
 ## Current understanding
 
@@ -36,6 +38,9 @@ review_required: false
 - Showing Claude Fable 5 a remaining-token countdown is what most often triggers it to suggest a new session, offer to summarize and hand off, or trim its own work, so harnesses should avoid surfacing explicit context-budget counts (0.91)
 - Claude Fable is the first model where the quality of the work is bottlenecked by the human's ability to clarify its unknowns rather than by the model's capability (0.82)
 - Instructing Claude fails in both directions: too specific and it follows the instructions even where a pivot would be more appropriate, too vague and it falls back on industry best practices that may not fit the task (0.82)
+- GPT-5.6 Sol at max has the highest Presentation Elo of any model on AA-Briefcase — its PowerPoint and Excel outputs are the most visually attractive — while ranking second to Claude Fable 5 overall (0.80)
+- On Artificial Analysis Intelligence Index v4.1 GPT-5.6 Sol at max scores 59, one point below Claude Fable 5, at about one third of the cost per task ($1.04); Terra and Luna score 55 and 51 at $0.55 and $0.21 per task (0.80)
+- On Agents' Last Exam, a benchmark of long-running professional workflows across 55 fields, OpenAI reports GPT-5.6 Sol at 53.6, 13.1 points above Claude Fable 5, and 11.4 points above it even at medium effort at about a quarter of the estimated cost (0.79)
 
 ## Evidence
 
@@ -63,6 +68,12 @@ review_required: false
   - `src_10f512f5f8de` A field guide to Claude Fable 5: Finding your unknowns: "Claude Fable is the first model where I find the quality of the work is bottlenecked by my ability to clarify its unknowns."
 - `clm_c1edb617029a` — "Instructing Claude fails in both directions: too specific and it follows the instructions even where a pivot would be more appropriate, too vague and it falls back on industry best practices that may not fit the task" · p 0.82 · active · 1 support · 0 contradict
   - `src_10f512f5f8de` A field guide to Claude Fable 5: Finding your unknowns: "If you are too specific, Claude will follow your instructions even when a pivot may be more appropriate."
+- `clm_d79a4bcae597` — "GPT-5.6 Sol at max has the highest Presentation Elo of any model on AA-Briefcase — its PowerPoint and Excel outputs are the most visually attractive — while ranking second to Claude Fable 5 overall." · p 0.80 · active · 1 support · 0 contradict
+  - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "GPT-5.6 Sol (max) ranks second only to Claude Fable 5 (max) in AA-Briefcase, and has the highest Presentation Elo of any model."
+- `clm_f527db1617d8` — "On Artificial Analysis Intelligence Index v4.1 GPT-5.6 Sol at max scores 59, one point below Claude Fable 5, at about one third of the cost per task ($1.04); Terra and Luna score 55 and 51 at $0.55 and $0.21 per task." · p 0.80 · active · 1 support · 0 contradict
+  - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "GPT-5.6 Sol (max) scores 1 point below Claude Fable 5 (max) in the Artificial Analysis Intelligence Index at 59 points, at approximately one third of the cost. GPT-5.6 Terra (max) and Luna (max) score 55 and 51 respectively"
+- `clm_34a7772523ea` — "On Agents' Last Exam, a benchmark of long-running professional workflows across 55 fields, OpenAI reports GPT-5.6 Sol at 53.6, 13.1 points above Claude Fable 5, and 11.4 points above it even at medium effort at about a quarter of the estimated cost." · p 0.79 · active · 1 support · 0 contradict
+  - `src_6556cffbfc4e` gpt-5-6: "GPT‑5.6 Sol sets a new high of 53.6, eclipsing Claude Fable 5 (adaptive reasoning) by 13.1 points. Even at medium reasoning, it beats Fable 5 by 11.4 points at roughly one-quarter the estimated cost."
 
 ## Timeline
 
@@ -78,6 +89,9 @@ review_required: false
 - 2026-08-23 new_claim `clm_199eade5a5f7` (src_a959e4684753)
 - 2026-08-30 new_claim `clm_b423f79733bb` (src_2eb7a799d8a7)
 - 2026-09-02 new_claim `clm_a6d1086c1ed4` (src_9f2ae1e705ce)
+- 2026-09-12 new_claim `clm_34a7772523ea` (src_6556cffbfc4e)
+- 2026-09-12 new_claim `clm_f527db1617d8` (src_c49e34d6a671)
+- 2026-09-12 new_claim `clm_d79a4bcae597` (src_c49e34d6a671)
 
 ## Related
 
@@ -89,11 +103,15 @@ review_required: false
 - → related_to [[context-window]] (0.91)
 - ← applies_to [[unknowns]] (0.82)
 - → depends_on [[unknowns]] (0.82)
+- [[gpt-5-6-sol]] — 3 shared claims
+- [[artificial-analysis]] — 2 shared claims
 - [[context-window]] — 2 shared claims
 - [[unknowns]] — 2 shared claims
 - [[claude-fable-5-1]] — 1 shared claim
 - [[claude-security-plugin]] — 1 shared claim
 - [[claude-sonnet-5]] — 1 shared claim
 - [[effort-level]] — 1 shared claim
+- [[gpt-5-6-luna]] — 1 shared claim
+- [[gpt-5-6-terra]] — 1 shared claim
 - [[skills]] — 1 shared claim
 - [[subagents]] — 1 shared claim
