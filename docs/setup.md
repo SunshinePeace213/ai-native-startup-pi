@@ -50,6 +50,35 @@ bun install
 uv sync
 ```
 
+### TypeScript
+
+The repo runs **TypeScript 7.0.2** — the Go-native compiler — as the only
+installed `typescript`. Typing for Bun's built-ins comes from `@types/bun`,
+and `tsconfig.json` follows Bun's recommended baseline
+([bun.com/docs/typescript](https://bun.com/docs/typescript)).
+
+Two consequences are easy to trip over, so they are written down here:
+
+- **`"types": ["bun"]` is load-bearing.** From TypeScript 6 on, `types`
+  defaults to `[]` instead of pulling in every `@types/*` package. Remove that
+  line and `Bun`, `bun:test`, and `Request` all stop resolving
+  ([bun.com/docs/typescript-6](https://bun.com/docs/typescript-6)).
+- **`typescript-eslint` is deliberately not installed.** TypeScript 7 ships
+  only `lib/tsc.js`; it dropped the programmatic compiler API (`exports["."]`
+  now resolves to a version string) that typescript-eslint loads, and its peer
+  range is still `>=4.8.4 <6.1.0`
+  ([typescript-eslint#12518](https://github.com/typescript-eslint/typescript-eslint/issues/12518)).
+  ESLint 9 has no TS parser of its own, so `.ts`/`.tsx` sit outside the ESLint
+  globs and `tsc` is what checks them. Re-adding `typescript-eslint` means
+  pinning `typescript` back to 6.x.
+
+Verify both halves:
+
+```bash
+bun run typecheck   # tsc 7.0.2 --noEmit
+bun run lint        # eslint over .js/.jsx/.mjs/.cjs
+```
+
 ## 4. Trust the project
 
 Project skills (`.agents/skills/`), agents (`.pi/agents/`), settings, and the

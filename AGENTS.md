@@ -1,7 +1,8 @@
 ## Tooling & Runtime
 
 - **Python**: always `uv` (Astral UV) — `uv run`, `uv sync`, `uv add`; never raw `python` or `pip`.
-- **JavaScript/TypeScript**: always `bun`, never raw `npm` or `npx`.
+- **JavaScript/TypeScript**: always `bun` — `bun install`, `bun add`, `bun run <script>`, `bun test`; never raw `npm`, `npx`, or `node`.
+- **JS/TS checks**: `bun run typecheck` (tsc 7, the only `typescript`) covers `.ts`/`.tsx`; `bun run lint` (ESLint 9) covers `.js`/`.jsx`/`.mjs`/`.cjs` only — typescript-eslint is deliberately absent, see [docs/setup.md](docs/setup.md#typescript).
 - **Safe delete**: never `rm -rf`. Move to trash instead: `mv <target> ~/.Trash/`.
 - **Fresh clone**: [docs/setup.md](docs/setup.md) — toolchain, Pi packages, env file, dependencies, trust, search index.
 - **Done means verified**: run the checks before reporting a task complete and quote their output; a failing check is fixed in the code, never in the check.

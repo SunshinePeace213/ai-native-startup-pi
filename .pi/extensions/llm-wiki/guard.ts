@@ -38,10 +38,11 @@ export function denialFor(rel: string): string | null {
       "(apply · decay · merge · undo · rebuild); never edit the file"
     );
   }
+  const shelf = segment[1];
   if (
     segment[0] === "wiki" &&
-    segment.length >= 2 &&
-    (segment[1] === "index.md" || SHELVES.has(segment[1]))
+    shelf !== undefined &&
+    (shelf === "index.md" || SHELVES.has(shelf))
   ) {
     return `${rel} is written only by scripts/llm-wiki/render.py — run render; never edit the file`;
   }
@@ -100,6 +101,7 @@ export function spaceBoundaries(command: string): string {
   let i = 0;
   while (i < command.length) {
     const ch = command[i];
+    if (ch === undefined) break;
     if (escaped) {
       out.push(ch);
       escaped = false;
@@ -152,6 +154,7 @@ export function shellSplit(command: string): string[] | null {
   let i = 0;
   while (i < command.length) {
     const ch = command[i];
+    if (ch === undefined) break;
     if (ch === "'") {
       const end = command.indexOf("'", i + 1);
       if (end === -1) return null;
@@ -165,8 +168,10 @@ export function shellSplit(command: string): string[] | null {
       let closed = false;
       while (i < command.length) {
         const c = command[i];
-        if (c === "\\" && i + 1 < command.length && '"\\$`\n'.includes(command[i + 1])) {
-          current += command[i + 1];
+        if (c === undefined) break;
+        const escapee = command[i + 1];
+        if (c === "\\" && escapee !== undefined && '"\\$`\n'.includes(escapee)) {
+          current += escapee;
           i += 2;
           continue;
         }
@@ -208,10 +213,14 @@ export function shellSplit(command: string): string[] | null {
 }
 
 function segments(tokens: string[]): string[][] {
-  const result: string[][] = [[]];
+  const first: string[] = [];
+  const result: string[][] = [first];
+  let current = first;
   for (const token of tokens) {
-    if (BOUNDARIES.has(token)) result.push([]);
-    else result[result.length - 1].push(token);
+    if (BOUNDARIES.has(token)) {
+      current = [];
+      result.push(current);
+    } else current.push(token);
   }
   return result.filter((segment) => segment.length > 0);
 }
@@ -223,14 +232,18 @@ function redirectTargets(tokens: string[]): string[] {
     if (!match) return;
     const glued = match[2];
     if (glued) targets.push(glued);
-    else if (index + 1 < tokens.length) targets.push(tokens[index + 1]);
+    else {
+      const next = tokens[index + 1];
+      if (next !== undefined) targets.push(next);
+    }
   });
   return targets;
 }
 
 function verbTargets(tokens: string[]): string[] {
-  if (tokens.length === 0) return [];
-  const verb = basename(tokens[0]);
+  const head = tokens[0];
+  if (head === undefined) return [];
+  const verb = basename(head);
   const operands = tokens.slice(1).filter((token) => !token.startsWith("-"));
   if (verb === "cp") return operands.length >= 2 ? operands.slice(-1) : [];
   if (verb === "mv" || verb === "rm" || verb === "truncate" || verb === "tee") return operands;
