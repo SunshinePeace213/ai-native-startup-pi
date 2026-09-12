@@ -2,7 +2,7 @@
 
 The live golden set over this vault. `retrieval_cases.jsonl` holds the cases;
 `uv run scripts/llm-wiki/retrieve.py eval` runs them. The contract is
-[retrieval.md](../../.claude/rules/llm-wiki/retrieval.md).
+[retrieval.md](../../docs/llm-wiki/retrieval.md).
 
 ## Families
 

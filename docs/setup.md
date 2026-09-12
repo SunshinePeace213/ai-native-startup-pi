@@ -77,6 +77,7 @@ Verify both halves:
 ```bash
 bun run typecheck   # tsc 7.0.2 --noEmit
 bun run lint        # eslint over .js/.jsx/.mjs/.cjs
+bun test            # tests/pi — the extension hooks against a fake Pi
 ```
 
 ## 4. Trust the project
@@ -111,3 +112,13 @@ uv run scripts/llm-wiki/lint.py
 
 All four clean means the knowledge base is ready. The skills, the agents, and
 the extension that operate it are described in `AGENTS.md`.
+
+## 7. Run the suite
+
+```bash
+bun run check         # typecheck · lint · format · bun test · uv run pytest
+bun run eval:retrieval  # the retrieval golden set; needs qmd and its models
+```
+
+`uv run pytest` drives the engine on a scratch vault per test and never
+touches `llm-wiki/`. Layout and conventions: [testing.md](testing.md).

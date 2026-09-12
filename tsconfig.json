@@ -30,12 +30,18 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
+
+    // Tests import the code under test by alias, never by a ../../../.pi walk.
+    "paths": {
+      "@ext/*": ["./.pi/extensions/*"],
+      "@harness/*": ["./tests/pi/_harness/*"]
+    }
   },
 
   // Scoped to the repo's actual TypeScript. `allowJs` is on, so the Python
   // venv, the knowledge base, and the search index are excluded explicitly
   // rather than left to the default include.
-  "include": [".pi/extensions/**/*.ts"],
+  "include": [".pi/extensions/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", ".venv", "llm-wiki", ".qmd", ".ruff_cache", "dist"]
 }

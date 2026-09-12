@@ -1,0 +1,9 @@
+# Bun test configuration. https://bun.com/docs/cli/test
+#
+# Tests live under tests/ and never beside the code: Bun's scanner skips
+# dot-directories, so a test in .pi/extensions/ is only ever found by an
+# explicit ./ path. `bun test` alone covers every TS test; `bun test tests/pi/llm-wiki`
+# narrows to one extension.
+[test]
+root = "tests"
+coverageSkipTestFiles = true

@@ -18,13 +18,11 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# importlib mode: the per-layer test folders (harness-layer/, llm-wiki/) mirror module
-# names, so basenames collide across dirs and prepend mode cannot import both. The
-# hyphenated dir names rule out __init__.py packages. pythonpath keeps test_governance.py's
-# the two cross-module test imports resolving (test_governance.py -> test_state.py,
-# test_offline.py -> test_wiring.py), which importlib mode alone would break.
+# importlib mode: test folders live per layer under tests/ (tests/scripts/llm-wiki, tests/pi/...)
+# without __init__.py packages, so basenames may repeat across dirs; importlib mode keeps them
+# apart, and pythonpath lets each folder import its own conftest helpers by name.
 addopts = "-n auto --import-mode=importlib"
-pythonpath = ["tests/llm-wiki", "tests/harness-layer/hooks"]
+pythonpath = ["tests/scripts/llm-wiki"]
 timeout = 60
 
 [tool.pyright]

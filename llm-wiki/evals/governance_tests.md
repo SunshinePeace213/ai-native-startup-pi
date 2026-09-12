@@ -1,8 +1,8 @@
 # Governance Evals
 
 The five families that prove the layer is safe to write to. The contracts are
-[state.md](../../.claude/rules/llm-wiki/state.md) and
-[standards.md](../../.claude/rules/llm-wiki/standards.md).
+[state.md](../../docs/llm-wiki/state.md) and
+[standards.md](../../docs/llm-wiki/standards.md).
 
 ## Families
 
@@ -33,7 +33,7 @@ carry the same `run_id`. `audit --check` reports complete, fails on a planted
 orphan row, counts pre-Phase-6 rows as legacy, and runs inside `rebuild --check`.
 A denied verb leaves one `outcome: denied` row and nothing else.
 
-Runner: `uv run pytest tests/llm-wiki/test_governance.py -k "test_audit_"`,
+Runner: `uv run pytest tests/scripts/llm-wiki/test_ledgers.py -k "L2 or L9"`,
 plus `uv run scripts/llm-wiki/state.py audit --check` on this vault.
 
 ## Reversibility
@@ -46,7 +46,8 @@ run whose rows carry no `run_id` is refused as not retractable. `promote`
 produces a shared vault byte-identical to the one an in-shared ingest builds and
 retracts the private runs that built the source.
 
-Runner: `uv run pytest tests/llm-wiki/test_governance.py -k "test_undo_ or test_promote_"`.
+Runner: `uv run pytest tests/scripts/llm-wiki/test_reversibility.py`. Not yet a
+case: `promote` (the private segment is not part of the fixture vault).
 
 ## Coordination
 
@@ -57,7 +58,9 @@ with its diagnostics. The two-writer drill applies disjoint proposals in two
 copies, concatenates the ledgers in both orders, and gets identical views with
 every check clean.
 
-Runner: `uv run pytest tests/llm-wiki/test_governance.py -k "test_lock_ or test_inbox_ or test_fold_order_ or test_two_writer_drill"`.
+Runner: `uv run pytest tests/scripts/llm-wiki/test_coordination.py`. The two-copy
+concatenation drill is not yet a case; the racing-writers case (L7b) proves the
+single-checkout half.
 
 ## Provenance
 
@@ -69,4 +72,6 @@ quoted passage of a registered archive — fails `check` naming the observation
 id and the archive path, and passes again only once the span is requoted from
 the archive, never by paraphrasing the archive to match the span.
 
-Runner: `uv run scripts/llm-wiki/render.py check`.
+Runner: `uv run scripts/llm-wiki/render.py check` on this vault, and
+`uv run pytest tests/scripts/llm-wiki/test_provenance.py` on the fixture vault. The
+planted-broken-span case is not yet written.

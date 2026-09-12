@@ -1,0 +1,43 @@
+{
+  "skill_name": "llm-wiki-query",
+  "note": "Tasks reuse cases the retrieval golden set (llm-wiki/evals/retrieval_cases.jsonl) already vouches for, so each has a known reference answer in the vault. Assertions are drafts until the first with/without run has been read; drop any that pass in both configurations.",
+  "contract": [
+    "K1 an answer from the wiki carries, per claim it relies on, the claim key or id, its probability, and its status — never a bare paraphrase",
+    "K2 a superseded, disputed, or stale claim the answer touches is flagged as such in the answer, and the current claim is named beside it",
+    "K3 a question the wiki does not hold is answered as not held, with no fabricated claim and no answer from general knowledge presented as the wiki's",
+    "K4 retrieval goes through the llm-wiki-librarian subagent; the skill reads the pages the slice names before citing them and never edits anything under llm-wiki/"
+  ],
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "does the LLM write the wiki pages or does the wiki render belief? what's our position and how sure are we",
+      "reference": "fact_002_wiki_ownership_now / hist_001 — key llm-wiki.wiki.ownership: the active claim says pages are rendered from state; clm_e77a37176207 (LLM owns the layer) is superseded.",
+      "assertions": [
+        "K1 names the claim key llm-wiki.wiki.ownership or its active claim id, with a probability",
+        "K2 mentions that an earlier ownership belief is superseded and names or paraphrases it",
+        "K4 launches llm-wiki-librarian (a subagent call naming it appears in the transcript)",
+        "K4 reads at least one page under llm-wiki/wiki/ before citing it"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "what depends on the state layer? I'm about to change how transitions are recorded and need to know what's downstream before I touch it",
+      "reference": "str_001_state_layer_dependents — structural intent; claims clm_a91dceb8a749, clm_ccececdb9e58, clm_11592f0abfb3 sit on edges from the state layer.",
+      "assertions": [
+        "K1 lists at least two dependents with a claim key or id and a probability each",
+        "K4 the librarian is launched with a structural intent, or the answer states the intent it used",
+        "K1 does not present a dependency the slice did not return"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "what does our wiki hold about the pricing of Anthropic's Claude Fable 5.1 API per million tokens?",
+      "reference": "Not held. The vault carries Claude Fable 5.1 behaviour notes but no pricing claim; the correct answer is that the wiki holds nothing on this.",
+      "assertions": [
+        "K3 states that the wiki holds no claim on this, in so many words",
+        "K3 cites no claim key or id for a price",
+        "K3 does not answer the price from general knowledge as if it were the wiki's belief"
+      ]
+    }
+  ]
+}

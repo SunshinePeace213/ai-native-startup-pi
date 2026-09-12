@@ -5,7 +5,8 @@
 - **JS/TS checks**: `bun run typecheck` (tsc 7, the only `typescript`) covers `.ts`/`.tsx`; `bun run lint` (ESLint 9) covers `.js`/`.jsx`/`.mjs`/`.cjs` only — typescript-eslint is deliberately absent, see [docs/setup.md](docs/setup.md#typescript).
 - **Safe delete**: never `rm -rf`. Move to trash instead: `mv <target> ~/.Trash/`.
 - **Fresh clone**: [docs/setup.md](docs/setup.md) — toolchain, Pi packages, env file, dependencies, trust, search index.
-- **Done means verified**: run the checks before reporting a task complete and quote their output; a failing check is fixed in the code, never in the check.
+- **Done means verified**: `bun run check` (typecheck · lint · format · `bun test` · `uv run pytest`) before reporting a task complete, and quote its output; a failing check is fixed in the code, never in the check.
+- **Tests**: contract first, cases derived from it, outcomes not paths — the `agent-self-evals` skill; layout, harness, and commands in [docs/testing.md](docs/testing.md). Code under `.pi/extensions/` and `scripts/` gets tests under `tests/`; a skill or subagent gets evals beside it.
 
 ## Knowledge Base
 
@@ -21,4 +22,4 @@
 
 - **Skills**: the llm-wiki verbs are `.agents/skills/llm-wiki-*`; authoring a skill runs through `skill-creator`, a subagent through `meta-agent`.
 - **Subagents**: `.pi/agents/` holds `llm-wiki-librarian` (retrieval, read-only) and `source-archiver` (one URL to one raw archive); skills launch them foreground with `subagent({ agent, task, async: false })` and read the result inline. Model choice lives in `.pi/settings.json`, never in an agent file.
-- **Extension**: `.pi/extensions/llm-wiki/` is the one project extension — session queue, prompt grounding, the write guard, the unregistered-archive reminder; it never writes under `llm-wiki/` and never calls a model. `bun test .pi/extensions/llm-wiki` covers its pure functions.
+- **Extension**: `.pi/extensions/llm-wiki/` is the one project extension — session queue, prompt grounding, the write guard, the unregistered-archive reminder; it never writes under `llm-wiki/` and never calls a model. `bun test tests/pi/llm-wiki` covers its four hooks and the engine bridge.

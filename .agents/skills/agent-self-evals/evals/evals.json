@@ -5,7 +5,11 @@
       "id": 1,
       "prompt": "are the tests in .pi/extensions/llm-wiki/guard.test.ts any good, or are they just re-stating the implementation? don't change anything, just tell me.",
       "expected_output": "A per-case review that separates contract-level tests from ones locking internal helpers or artefacts, and names the guarantees no test covers.",
-      "files": [".pi/extensions/llm-wiki/guard.test.ts", ".pi/extensions/llm-wiki/guard.ts", ".pi/extensions/llm-wiki/index.ts"],
+      "files": [
+        ".pi/extensions/llm-wiki/guard.test.ts",
+        ".pi/extensions/llm-wiki/guard.ts",
+        ".pi/extensions/llm-wiki/index.ts"
+      ],
       "assertions": [
         "Flags the spaceBoundaries exact-string assertions as testing an internal intermediate rather than an outcome",
         "Flags at least one bashTargets assertion (sed pattern or quoted '>') as locking an artefact the comment itself calls harmless",
