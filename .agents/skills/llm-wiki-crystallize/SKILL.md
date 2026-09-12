@@ -5,7 +5,10 @@ description: >-
   was asked, found, and decided into an llm-wiki/raw/chats/ archive, registers
   it, and compiles it through the state layer into claims and pages. Use when
   the user asks to crystallize, capture, keep, save, or remember what this
-  session worked out, or says "don't lose this". Not for archiving an external
+  session worked out, or says "don't lose this". Fire for one decision or one
+  thread of the session as readily as the whole of it — "keep just the part
+  about X", "remember what we decided about Y", "make sure the conclusion we
+  reached is recorded" — scoping it with --topic. Not for archiving an external
   source (llm-wiki-ingest) or answering from the wiki (llm-wiki-query).
 ---
 

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "https://www.anthropic.com/engineering/claude-code-best-practices — get this into the knowledge base",
+    "should_trigger": true
+  },
+  {
+    "query": "file this article on context compaction into the wiki, it should land under concepts",
+    "should_trigger": true
+  },
+  {
+    "query": "there are a couple of archives sitting under llm-wiki/raw that never got extracted — deal with the backlog",
+    "should_trigger": true
+  },
+  {
+    "query": "i've got ~30 chat exports to drop in. i don't need claims out of them, i just want to be able to find them later",
+    "should_trigger": true
+  },
+  {
+    "query": "found a really good post on why agent loops need a separate reviewer. keep it somewhere we can cite it properly later",
+    "should_trigger": true
+  },
+  {
+    "query": "absorb docs/vendor-eval.md into the wiki and pull the claims out of it",
+    "should_trigger": true
+  },
+  {
+    "query": "pull in both https://arxiv.org/abs/2501.12345 and https://simonwillison.net/2026/agents/ — same topic, do them together",
+    "should_trigger": true
+  },
+  {
+    "query": "that MCP transport doc we filed a while back got rewritten upstream. re-file it so our claims match the new version",
+    "should_trigger": true
+  },
+  {
+    "query": "we really should have this paper on judge position bias in the KB before the eval discussion tomorrow",
+    "should_trigger": true
+  },
+  {
+    "query": "add the openai agents sdk changelog as a source, category systems, and run the index afterwards",
+    "should_trigger": true
+  },
+  {
+    "query": "save what we just worked out about the retry backoff design so we don't lose it",
+    "should_trigger": false
+  },
+  {
+    "query": "what does the wiki know about llm-as-judge position bias? i want citations",
+    "should_trigger": false
+  },
+  {
+    "query": "there are a bunch of disputed claims flagged in the knowledge base — walk me through them and let me decide",
+    "should_trigger": false
+  },
+  {
+    "query": "the wiki feels stale and i think some pages contradict each other. audit it",
+    "should_trigger": false
+  },
+  {
+    "query": "search the knowledge base for anything we hold on MCP transports and show me the pages",
+    "should_trigger": false
+  },
+  {
+    "query": "fetch https://simonwillison.net/2026/agents/ and just summarize it for me in chat",
+    "should_trigger": false
+  },
+  {
+    "query": "capture this session's findings before i close the terminal",
+    "should_trigger": false
+  },
+  {
+    "query": "add this link to the references section of README.md",
+    "should_trigger": false
+  },
+  {
+    "query": "qmd embed is failing with a dimension mismatch after i changed the model — sort it out",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how the state layer turns observations into claims, i want to understand the transition table",
+    "should_trigger": false
+  }
+]

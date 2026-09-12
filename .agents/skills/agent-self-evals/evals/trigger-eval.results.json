@@ -1,0 +1,128 @@
+{
+  "skill": "agent-self-evals",
+  "runs": 1,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "add tests for the tool_call guard in .pi/extensions/llm-wiki/index.ts \u2014 it blocks writes to the state ledgers and I want that covered",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "I just wrote scripts/llm-wiki/decay.py. How do I know it's actually right? make sure it works before I move on",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "are the tests in .pi/extensions/llm-wiki/guard.test.ts any good, or are they just re-stating the implementation?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "cover the fail-open behaviour in engine.ts \u2014 uv missing, non-zero exit, garbage stdout, all of it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "we built the llm-wiki-librarian subagent last week and have no idea if it returns good slices. what should we check and how?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the formatQueue function is done. prove it.",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "before I commit the new before_agent_start hook, what could break and how would I catch it?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "design the test cases for the retriever's fusion \u2014 I want a spec of what it guarantees and the cases that check each guarantee",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "our test suite has grown to 300 cases and half of them break every refactor. help me figure out which ones are worth keeping",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "is this solid? I refactored shellSplit and bashTargets and want a definition of done with checks",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "write a skill that turns our incident postmortems into the SRE team's format",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "run the trigger probe on llm-wiki-crystallize and tell me the recall and false-fire numbers",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the llm-wiki-librarian never gets picked when I ask about pi extensions \u2014 fix its description",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "lint the wiki, something looks stale and the index is drifting",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "bun test is failing on guard.test.ts after my change \u2014 fix the code so it passes",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "commit the new test files with a proper message",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "what does the wiki say about eval graders \u2014 code vs model vs human?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "set up bunfig.toml so bun test picks up files under tests/ and preloads a setup file",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "review the flagged claims in the wiki queue and let me settle them",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ingest https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents into the wiki",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    }
+  ]
+}

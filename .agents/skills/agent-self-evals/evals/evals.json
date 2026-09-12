@@ -1,0 +1,44 @@
+{
+  "skill_name": "agent-self-evals",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "are the tests in .pi/extensions/llm-wiki/guard.test.ts any good, or are they just re-stating the implementation? don't change anything, just tell me.",
+      "expected_output": "A per-case review that separates contract-level tests from ones locking internal helpers or artefacts, and names the guarantees no test covers.",
+      "files": [".pi/extensions/llm-wiki/guard.test.ts", ".pi/extensions/llm-wiki/guard.ts", ".pi/extensions/llm-wiki/index.ts"],
+      "assertions": [
+        "Flags the spaceBoundaries exact-string assertions as testing an internal intermediate rather than an outcome",
+        "Flags at least one bashTargets assertion (sed pattern or quoted '>') as locking an artefact the comment itself calls harmless",
+        "Names at least one guarantee with no test: the tool_call hook path, or engine fail-open",
+        "Keeps (does not flag) the symlink and end-to-end pipeline cases",
+        "Does not recommend adding cases for branch coverage"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "cover the fail-open behaviour in .pi/extensions/llm-wiki/engine.ts — uv missing, non-zero exit, timeout, garbage stdout. write the tests.",
+      "expected_output": "A numbered contract for queue()/search() fail-open, then a table-driven bun test with should-fail-open rows and at least one should-succeed row, asserting on the returned value only.",
+      "files": [".pi/extensions/llm-wiki/engine.ts"],
+      "assertions": [
+        "Output states a numbered contract before any test code",
+        "Includes a success row (valid JSON of the right shape returns the parsed object), not only failure rows",
+        "Each case name references its contract line",
+        "Asserts only on the return value of queue()/search(), never on the exec call sequence or argument order",
+        "Uses an injected exec double rather than mocking node:child_process or running uv"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "we built the llm-wiki-librarian subagent and have no idea if it returns good slices. what should we check and how?",
+      "expected_output": "Classifies the librarian as model-driven behaviour, proposes 2-3 eval tasks with realistic questions, graders per assertion, a should-not case, and hands the runner to meta-agent/skill-creator.",
+      "files": [".pi/agents/llm-wiki-librarian.md"],
+      "assertions": [
+        "Does not propose bun/pytest unit tests as the primary instrument",
+        "Proposes between 2 and 5 initial tasks, not dozens",
+        "Includes at least one task where the correct slice is empty or the question is out of scope",
+        "Assertions grade the returned slice (pages named, evidence present, no answer synthesised), not the tool-call sequence",
+        "Says assertions are finalised after a first run, or that transcripts must be read"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "add tests for the tool_call guard in .pi/extensions/llm-wiki/index.ts — it blocks writes to the state ledgers and I want that covered",
+    "should_trigger": true
+  },
+  {
+    "query": "I just wrote scripts/llm-wiki/decay.py. How do I know it's actually right? make sure it works before I move on",
+    "should_trigger": true
+  },
+  {
+    "query": "are the tests in .pi/extensions/llm-wiki/guard.test.ts any good, or are they just re-stating the implementation?",
+    "should_trigger": true
+  },
+  {
+    "query": "cover the fail-open behaviour in engine.ts — uv missing, non-zero exit, garbage stdout, all of it",
+    "should_trigger": true
+  },
+  {
+    "query": "we built the llm-wiki-librarian subagent last week and have no idea if it returns good slices. what should we check and how?",
+    "should_trigger": true
+  },
+  {
+    "query": "the formatQueue function is done. prove it.",
+    "should_trigger": true
+  },
+  {
+    "query": "before I commit the new before_agent_start hook, what could break and how would I catch it?",
+    "should_trigger": true
+  },
+  {
+    "query": "design the test cases for the retriever's fusion — I want a spec of what it guarantees and the cases that check each guarantee",
+    "should_trigger": true
+  },
+  {
+    "query": "our test suite has grown to 300 cases and half of them break every refactor. help me figure out which ones are worth keeping",
+    "should_trigger": true
+  },
+  {
+    "query": "is this solid? I refactored shellSplit and bashTargets and want a definition of done with checks",
+    "should_trigger": true
+  },
+  {
+    "query": "write a skill that turns our incident postmortems into the SRE team's format",
+    "should_trigger": false
+  },
+  {
+    "query": "run the trigger probe on llm-wiki-crystallize and tell me the recall and false-fire numbers",
+    "should_trigger": false
+  },
+  {
+    "query": "the llm-wiki-librarian never gets picked when I ask about pi extensions — fix its description",
+    "should_trigger": false
+  },
+  {
+    "query": "lint the wiki, something looks stale and the index is drifting",
+    "should_trigger": false
+  },
+  {
+    "query": "bun test is failing on guard.test.ts after my change — fix the code so it passes",
+    "should_trigger": false
+  },
+  {
+    "query": "commit the new test files with a proper message",
+    "should_trigger": false
+  },
+  {
+    "query": "what does the wiki say about eval graders — code vs model vs human?",
+    "should_trigger": false
+  },
+  {
+    "query": "set up bunfig.toml so bun test picks up files under tests/ and preloads a setup file",
+    "should_trigger": false
+  },
+  {
+    "query": "review the flagged claims in the wiki queue and let me settle them",
+    "should_trigger": false
+  },
+  {
+    "query": "ingest https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents into the wiki",
+    "should_trigger": false
+  }
+]

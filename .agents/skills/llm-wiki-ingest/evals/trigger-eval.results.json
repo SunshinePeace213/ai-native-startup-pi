@@ -1,0 +1,128 @@
+{
+  "skill": "llm-wiki-ingest",
+  "runs": 3,
+  "recall": 0.9,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "https://www.anthropic.com/engineering/claude-code-best-practices \u2014 get this into the knowledge base",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "file this article on context compaction into the wiki, it should land under concepts",
+      "should_trigger": true,
+      "trigger_rate": 0.6666666666666666,
+      "first_tool": "read"
+    },
+    {
+      "query": "there are a couple of archives sitting under llm-wiki/raw that never got extracted \u2014 deal with the backlog",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i've got ~30 chat exports to drop in. i don't need claims out of them, i just want to be able to find them later",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "found a really good post on why agent loops need a separate reviewer. keep it somewhere we can cite it properly later",
+      "should_trigger": true,
+      "trigger_rate": 0.6666666666666666,
+      "first_tool": "read"
+    },
+    {
+      "query": "absorb docs/vendor-eval.md into the wiki and pull the claims out of it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "pull in both https://arxiv.org/abs/2501.12345 and https://simonwillison.net/2026/agents/ \u2014 same topic, do them together",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "that MCP transport doc we filed a while back got rewritten upstream. re-file it so our claims match the new version",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "we really should have this paper on judge position bias in the KB before the eval discussion tomorrow",
+      "should_trigger": true,
+      "trigger_rate": 0.3333333333333333,
+      "first_tool": "read"
+    },
+    {
+      "query": "add the openai agents sdk changelog as a source, category systems, and run the index afterwards",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "save what we just worked out about the retry backoff design so we don't lose it",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what does the wiki know about llm-as-judge position bias? i want citations",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "there are a bunch of disputed claims flagged in the knowledge base \u2014 walk me through them and let me decide",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the wiki feels stale and i think some pages contradict each other. audit it",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "search the knowledge base for anything we hold on MCP transports and show me the pages",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "fetch https://simonwillison.net/2026/agents/ and just summarize it for me in chat",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "fetch_content"
+    },
+    {
+      "query": "capture this session's findings before i close the terminal",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "add this link to the references section of README.md",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "qmd embed is failing with a dimension mismatch after i changed the model \u2014 sort it out",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "explain how the state layer turns observations into claims, i want to understand the transition table",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    }
+  ]
+}

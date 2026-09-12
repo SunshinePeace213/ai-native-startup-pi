@@ -1,0 +1,82 @@
+[
+  {
+    "query": "walk me through the disputed claims and let me decide each one",
+    "should_trigger": true
+  },
+  {
+    "query": "the lint run said 6 claims need a human — let's go through them now",
+    "should_trigger": true
+  },
+  {
+    "query": "there are merge candidates sitting from the last pass, i want to decide which entities fold together",
+    "should_trigger": true
+  },
+  {
+    "query": "triage the wiki's review queue, three at a time",
+    "should_trigger": true
+  },
+  {
+    "query": "i want to confirm or reject the stale claims the knowledge base is holding",
+    "should_trigger": true
+  },
+  {
+    "query": "the wiki thinks two contradictory things about MCP transports. let me settle it",
+    "should_trigger": true
+  },
+  {
+    "query": "clear the human queue on the knowledge base",
+    "should_trigger": true
+  },
+  {
+    "query": "i disagree with one of the claims the wiki holds — record my correction properly",
+    "should_trigger": true
+  },
+  {
+    "query": "show me the duplicate claims and i'll tell you which one survives",
+    "should_trigger": true
+  },
+  {
+    "query": "anything in the KB waiting on my judgment? let's knock it out",
+    "should_trigger": true
+  },
+  {
+    "query": "find what's stale and contradictory in the wiki and report it",
+    "should_trigger": false
+  },
+  {
+    "query": "run the wiki health checks — decay, ledgers, graph, the lot",
+    "should_trigger": false
+  },
+  {
+    "query": "what does the wiki believe about cross-model review right now?",
+    "should_trigger": false
+  },
+  {
+    "query": "add this arxiv paper to the knowledge base",
+    "should_trigger": false
+  },
+  {
+    "query": "save what we concluded in this session about judge bias",
+    "should_trigger": false
+  },
+  {
+    "query": "review this diff before i push it — second pair of eyes on the auth change",
+    "should_trigger": false
+  },
+  {
+    "query": "review my SKILL.md and tell me what's weak about it",
+    "should_trigger": false
+  },
+  {
+    "query": "undo the last apply run, it landed garbage observations",
+    "should_trigger": false
+  },
+  {
+    "query": "have a second agent review the code we just wrote",
+    "should_trigger": false
+  },
+  {
+    "query": "go through the open PRs and tell me which ones are ready to merge",
+    "should_trigger": false
+  }
+]

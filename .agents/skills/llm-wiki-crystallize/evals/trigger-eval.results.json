@@ -1,0 +1,128 @@
+{
+  "skill": "llm-wiki-crystallize",
+  "runs": 3,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "save what we just worked out about the retry backoff design so we don't lose it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "capture this session's findings before i close the terminal",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "we spent two hours figuring out why the lock contention happens under concurrent applies. write that down somewhere permanent",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "keep just the part about the transport choice from this thread, not the rest",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "don't lose this",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "this debugging session had a bunch of conclusions worth having next time we hit it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "remember what we decided about using a temp fixture root for the evals",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "turn this conversation into something the knowledge base actually holds",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "we reversed our position on batching mid-conversation \u2014 make sure the new one is what's recorded",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "before we move on to the next task, get the conclusions from this thread into the wiki",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "https://simonwillison.net/2026/agents/ \u2014 add this to the knowledge base",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the archives under llm-wiki/raw that got filed light never had claims pulled out of them",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what does the wiki know about MCP transports? with citations please",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "walk me through the disputed claims so i can settle them",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "audit the wiki for stale pages and contradictions",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "commit what we just did with a proper message",
+      "should_trigger": false,
+      "trigger_rate": 0.3333333333333333,
+      "first_tool": "read"
+    },
+    {
+      "query": "summarize this conversation for me in chat, i just want to skim it",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "update AGENTS.md with the bun convention we agreed on",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "write the migration notes we discussed to docs/migration.md",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "export this session's transcript to a file so i can paste it in slack",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    }
+  ]
+}

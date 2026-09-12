@@ -1,0 +1,128 @@
+{
+  "skill": "grilling",
+  "runs": 3,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "grill me on the caching design for the api client before we build it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "poke holes in this plan: we cut over the queue to postgres on friday, keep redis warm for a week, then drop it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "stress-test my thinking on moving everything into a monorepo",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "interview me until you actually know enough to build the importer",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i want to rewrite the auth system. ask me whatever you need before you start",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i've got a rough idea for a usage-based pricing change \u2014 help me find what i haven't thought about",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "challenge my assumptions about using postgres as the job queue",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "before you write a single line, make sure you really understand what i'm asking for",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ask me questions until nothing about the migration is left ambiguous",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "we keep going in circles on the retention policy. drive it to a decision, one question at a time",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "should i use postgres or mysql here? just give me your answer",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "is bun actually faster than node for a workload like this? check",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "confirm you're deleting the feature branch after the merge, right?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "review this design doc and tell me what's weak about it",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "what are the tradeoffs of event sourcing versus a plain audit table?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": null
+    },
+    {
+      "query": "run the test suite and fix whatever fails",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "write the question list for the customer onboarding survey",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "summarize the three options we discussed and pick the best one",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": null
+    },
+    {
+      "query": "explain how ask_user_question renders previews in the terminal",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "draft the RFC for the storage migration based on what i told you",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    }
+  ]
+}

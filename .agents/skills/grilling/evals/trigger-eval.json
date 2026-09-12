@@ -1,0 +1,82 @@
+[
+  {
+    "query": "grill me on the caching design for the api client before we build it",
+    "should_trigger": true
+  },
+  {
+    "query": "poke holes in this plan: we cut over the queue to postgres on friday, keep redis warm for a week, then drop it",
+    "should_trigger": true
+  },
+  {
+    "query": "stress-test my thinking on moving everything into a monorepo",
+    "should_trigger": true
+  },
+  {
+    "query": "interview me until you actually know enough to build the importer",
+    "should_trigger": true
+  },
+  {
+    "query": "i want to rewrite the auth system. ask me whatever you need before you start",
+    "should_trigger": true
+  },
+  {
+    "query": "i've got a rough idea for a usage-based pricing change — help me find what i haven't thought about",
+    "should_trigger": true
+  },
+  {
+    "query": "challenge my assumptions about using postgres as the job queue",
+    "should_trigger": true
+  },
+  {
+    "query": "before you write a single line, make sure you really understand what i'm asking for",
+    "should_trigger": true
+  },
+  {
+    "query": "ask me questions until nothing about the migration is left ambiguous",
+    "should_trigger": true
+  },
+  {
+    "query": "we keep going in circles on the retention policy. drive it to a decision, one question at a time",
+    "should_trigger": true
+  },
+  {
+    "query": "should i use postgres or mysql here? just give me your answer",
+    "should_trigger": false
+  },
+  {
+    "query": "is bun actually faster than node for a workload like this? check",
+    "should_trigger": false
+  },
+  {
+    "query": "confirm you're deleting the feature branch after the merge, right?",
+    "should_trigger": false
+  },
+  {
+    "query": "review this design doc and tell me what's weak about it",
+    "should_trigger": false
+  },
+  {
+    "query": "what are the tradeoffs of event sourcing versus a plain audit table?",
+    "should_trigger": false
+  },
+  {
+    "query": "run the test suite and fix whatever fails",
+    "should_trigger": false
+  },
+  {
+    "query": "write the question list for the customer onboarding survey",
+    "should_trigger": false
+  },
+  {
+    "query": "summarize the three options we discussed and pick the best one",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how ask_user_question renders previews in the terminal",
+    "should_trigger": false
+  },
+  {
+    "query": "draft the RFC for the storage migration based on what i told you",
+    "should_trigger": false
+  }
+]

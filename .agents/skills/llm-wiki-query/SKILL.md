@@ -5,9 +5,15 @@ description: >-
   retrieval to the llm-wiki-librarian subagent, reads the pages the slice
   names, and synthesizes an answer with per-claim citations, probabilities,
   and status flags. Use when the user asks what the wiki knows, believes, or
-  holds about a topic, wants an answer with citations from the knowledge base,
-  or asks what changed or what connects to something. Not for adding a source
-  (llm-wiki-ingest) or keeping this session's findings (llm-wiki-crystallize).
+  holds about a topic, wants an answer with citations, or asks what changed or
+  what connects to something. Fire too when the user never names the wiki but
+  treats our own record as the authority — "our notes", "our position", "what
+  did we conclude", whether we already hold something before researching or
+  deciding, what depends on a page, what superseded an earlier belief.
+  Answering those from general knowledge, or by calling llm-wiki-librarian
+  directly, drops the citations and flags this skill exists to attach. Not for
+  a source in hand (llm-wiki-ingest) or this session's own findings
+  (llm-wiki-crystallize).
 ---
 
 # llm-wiki Query

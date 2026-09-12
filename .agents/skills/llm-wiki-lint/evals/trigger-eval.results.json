@@ -1,0 +1,128 @@
+{
+  "skill": "llm-wiki-lint",
+  "runs": 3,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "the wiki feels stale and i think some pages contradict each other. audit it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "health-check the knowledge base end to end",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "sweep the wiki for orphan pages and index drift",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "is the knowledge base internally consistent? states, pages, graph, all of it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "something looks off between what's in states and what's rendered on the pages",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "check the KB for duplicate claims and anything that leaked a secret",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "do a maintenance pass on the wiki, fix what's mechanical and tell me the rest",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "index.md doesn't match the pages actually on disk anymore",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "before i trust the KB for tomorrow's decision, verify it's in good shape",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "run decay on the knowledge base and tell me what aged out",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "let me decide the disputed claims one by one",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "there are merge candidates waiting on a human \u2014 walk me through them",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what does the wiki hold on agent loops? cite the pages",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ingest this blog post into the knowledge base",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "crystallize what this session worked out",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "run ruff over scripts/ and fix the lint errors it reports",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "bun test the llm-wiki extension, i think guard.test.ts is failing",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "check my markdown formatting in docs/setup.md",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "audit the git history for committed secrets",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "qmd embed is erroring with a dimension mismatch after the model change",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    }
+  ]
+}

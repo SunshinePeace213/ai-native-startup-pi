@@ -5,7 +5,10 @@ description: >-
   structured questions through ask_user_question until nothing is left silently
   assumed. Use when the user wants to stress-test their thinking, clear the
   unknowns in a vague or ambiguous request, or says grill me, interview me,
-  ask me questions, poke holes, or stress-test this. Also the interview engine
+  ask me questions, poke holes, or stress-test this. Fire also when the user
+  demands you understand the request before acting on it — "make sure you know
+  what i want first", "don't start until you're clear", "drive this to a
+  decision" — without ever using the word question. Also the interview engine
   other skills load before they build anything. Not for a single yes/no
   confirmation, and not for questions whose answer is a fact you can look up.
 ---

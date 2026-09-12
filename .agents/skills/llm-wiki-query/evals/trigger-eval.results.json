@@ -1,0 +1,128 @@
+{
+  "skill": "llm-wiki-query",
+  "runs": 3,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "what does the wiki know about llm-as-judge position bias? i want citations",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "search the knowledge base for anything we hold on MCP transports and show me the pages",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what do we believe about agent loops needing a separate reviewer, and how confident are we in it?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "has our thinking on context compaction changed? what did we used to hold?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what connects to the claude-code page \u2014 what depends on it and what would break",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "do we already have something on eval harness design before i go off and research it from scratch?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "according to our own notes, is HTTP actually the recommended transport for remote MCP servers?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "give me a survey of everything the KB holds around judging and evaluation",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "is there anything we've already recorded that contradicts running evals against a temp root?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "has anything superseded our position on cross-model review?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "add this paper on judge bias to the KB",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "save what we worked out in this session about the fixture design",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "settle the flagged claims \u2014 i'll tell you which ones are wrong",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "health-check the wiki, i think it's drifted",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "search the web for benchmarks comparing MCP stdio and http transports",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "web_search"
+    },
+    {
+      "query": "explain how llm-as-judge evaluation works in general, i'm new to it",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "how does the scoring in scripts/llm-wiki/retrieve.py fuse the two streams? walk me through the code",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "grep the repo for TODO comments and list them by file",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "re-render the wiki pages, index.md looks out of date",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "what's the difference between a claim and an observation in our schema? read the docs and tell me",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    }
+  ]
+}

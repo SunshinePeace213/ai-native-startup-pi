@@ -7,8 +7,14 @@ description: >-
   updates the index, the log, and the search index. Use when the user asks to
   ingest, file, absorb, or add a source, article, doc, paper, or chat to the
   wiki, or to file the archives already waiting under llm-wiki/raw (--queue).
-  Not for answering from the wiki (llm-wiki-query), keeping this session
-  (llm-wiki-crystallize), or settling flagged claims (llm-wiki-review).
+  Fire whenever a specific artifact is in hand — a link, paper, post, file, or
+  waiting archive — even when the user never names the wiki and only wants it
+  kept, held on to, or made citable before some decision, review, or
+  discussion. A source being handed over is this skill even when the sentence
+  sounds like a remark about what the wiki should cover. Not for
+  answering from the wiki (llm-wiki-query), keeping what this session itself
+  worked out (llm-wiki-crystallize), or settling flagged claims
+  (llm-wiki-review).
 ---
 
 # llm-wiki Ingest
