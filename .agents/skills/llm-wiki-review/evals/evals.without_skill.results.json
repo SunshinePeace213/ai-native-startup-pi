@@ -1,0 +1,110 @@
+{
+  "skill": "llm-wiki-review",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 12,
+  "cases": [
+    {
+      "id": 1,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'read']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'read']"
+        },
+        {
+          "check": "questions_1_4",
+          "pass": false,
+          "evidence": "no round captured"
+        },
+        {
+          "check": "options_2_4",
+          "pass": false,
+          "evidence": "no round captured"
+        },
+        {
+          "check": "header_len",
+          "pass": false,
+          "evidence": "no round captured"
+        },
+        {
+          "check": "options_have_description",
+          "pass": false,
+          "evidence": "no round captured"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": false,
+          "evidence": "no round captured"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        },
+        {
+          "check": "required_patterns",
+          "pass": false,
+          "evidence": "no round captured"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "read"
+      ]
+    },
+    {
+      "id": 2,
+      "checks": [
+        {
+          "check": "skill_loaded",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'read', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash']"
+        },
+        {
+          "check": "round_absent",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'read', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash']"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "read",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash"
+      ]
+    }
+  ]
+}

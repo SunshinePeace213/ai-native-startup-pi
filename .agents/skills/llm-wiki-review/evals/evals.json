@@ -1,0 +1,31 @@
+{
+  "skill_name": "llm-wiki-review",
+  "note": "Build the vaults first, then run the harness. The live review queue is empty, so both cases point LLM_WIKI_ROOT at a throwaway vault and no live ledger is touched:  uv run --no-project .agents/skills/llm-wiki-review/evals/build_fixture.py /tmp/wiki-review-fixture  and  mkdir -p /tmp/wiki-review-empty (an empty dir is enough for the empty-queue case).",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "walk me through the disputed claims in the wiki and let me decide each one",
+      "expected_output": "A question round presenting the disputed claim by name with confirm/reject style options, and no write before a verdict exists.",
+      "env": { "LLM_WIKI_ROOT": "/tmp/wiki-review-fixture" },
+      "checks": [
+        "round_captured",
+        "skill_loaded",
+        "questions_1_4",
+        "options_2_4",
+        "header_len",
+        "options_have_description",
+        "no_reserved_labels",
+        "no_writes_before_round",
+        "required_patterns"
+      ],
+      "required_patterns": ["append|ledger|engine"]
+    },
+    {
+      "id": 2,
+      "prompt": "triage the wiki's review queue with me",
+      "expected_output": "With an empty queue the skill reports there is nothing to review and asks nothing; it must not invent claims to present.",
+      "env": { "LLM_WIKI_ROOT": "/tmp/wiki-review-empty" },
+      "checks": ["skill_loaded", "round_absent", "no_writes_before_round"]
+    }
+  ]
+}

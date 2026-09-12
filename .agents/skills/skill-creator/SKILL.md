@@ -105,7 +105,17 @@ uv run --no-project scripts/validate_skill.py .agents/skills/<name>
 Write 2–3 cases into `.agents/skills/<name>/evals/evals.json` (shape in
 `references/evaluation.md`), run each once with the skill and once with
 `--no-skills`, grade with quoted evidence, and keep only the instructions that
-moved an assertion from fail to pass. One execute-then-revise pass is the
+moved an assertion from fail to pass. A skill whose output is a question round
+is graded by its captured arguments instead:
+
+```bash
+uv run --no-project .agents/skills/skill-creator/scripts/capture_round.py \
+  <name> .agents/skills/<name>/evals/evals.json [--no-skills]
+```
+
+A case that must not touch live state points `env.LLM_WIKI_ROOT` (or its
+equivalent) at a throwaway root built through the owning tool's own CLI, never
+by hand-writing its files. One execute-then-revise pass is the
 minimum; skip it only for a skill with no output to compare.
 
 ## 7. Prove it triggers
@@ -148,5 +158,11 @@ set, the repo is already installable with `pi install ./path -l`.
   skill loading entirely; everything else only warns.
 - Even a matching description does not guarantee the model reads the body.
   Measure it; do not assume.
-- `ask_user_question` is absent in non-interactive runs, so a skill that
-  interviews must fall back to text rounds as `grilling` does.
+- `ask_user_question` is absent in non-interactive runs, but not silently: the
+  model still calls it and the call fails with `Tool ask_user_question not
+  found`. The arguments are emitted in `tool_execution_start` *before* that
+  error, so the round a skill would have asked is fully observable — grade an
+  interviewing skill from those captured arguments with
+  `scripts/capture_round.py` rather than from a text fallback. Only the first
+  round is reachable this way; answering one, and so testing rounds 2+, needs
+  a stub tool.

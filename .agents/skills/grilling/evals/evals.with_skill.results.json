@@ -1,0 +1,183 @@
+{
+  "skill": "grilling",
+  "config": "with_skill",
+  "passed": 27,
+  "total": 28,
+  "cases": [
+    {
+      "id": 1,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['read', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": true,
+          "evidence": "trace=['read', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "questions_1_4",
+          "pass": true,
+          "evidence": "4 questions"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[4, 4, 3, 4]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Client shape', 'Why cache', 'Traffic mix', 'Staleness']"
+        },
+        {
+          "check": "question_endswith_qmark",
+          "pass": true,
+          "evidence": "all end in '?'"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "recommended_first",
+          "pass": true,
+          "evidence": "every question leads with (Recommended)"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "looked_up_first",
+          "pass": true,
+          "evidence": "before_round=['read', 'bash', 'bash']"
+        },
+        {
+          "check": "forbidden_patterns",
+          "pass": true,
+          "evidence": "none matched"
+        }
+      ],
+      "trace": [
+        "read",
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    },
+    {
+      "id": 2,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "questions_1_4",
+          "pass": true,
+          "evidence": "1 questions"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[4]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Target']"
+        },
+        {
+          "check": "question_endswith_qmark",
+          "pass": true,
+          "evidence": "all end in '?'"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "recommended_first",
+          "pass": true,
+          "evidence": "every question leads with (Recommended)"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    },
+    {
+      "id": 3,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['read', 'bash', 'bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": true,
+          "evidence": "trace=['read', 'bash', 'bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[4, 4, 3, 3]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Content', 'Host', 'Generator', 'Scope']"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        }
+      ],
+      "trace": [
+        "read",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    }
+  ]
+}

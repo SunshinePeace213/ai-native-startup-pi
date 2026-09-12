@@ -1,0 +1,184 @@
+{
+  "skill": "grilling",
+  "config": "without_skill",
+  "passed": 22,
+  "total": 28,
+  "cases": [
+    {
+      "id": 1,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "questions_1_4",
+          "pass": true,
+          "evidence": "4 questions"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[4, 4, 4, 3]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Subject', 'Invalidation', 'Backend', 'Stampede']"
+        },
+        {
+          "check": "question_endswith_qmark",
+          "pass": true,
+          "evidence": "all end in '?'"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "recommended_first",
+          "pass": false,
+          "evidence": "not recommended-first: [\"'Subject'->['HTTP responses']\", \"'Invalidation'->['TTL only']\", \"'Backend'->['In-process, fail-open']\", \"'Stampede'->['Single-flight']\"]"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "looked_up_first",
+          "pass": true,
+          "evidence": "before_round=['bash', 'bash']"
+        },
+        {
+          "check": "forbidden_patterns",
+          "pass": true,
+          "evidence": "none matched"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    },
+    {
+      "id": 2,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "questions_1_4",
+          "pass": true,
+          "evidence": "2 questions"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[4, 4]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Target', 'Motivation']"
+        },
+        {
+          "check": "question_endswith_qmark",
+          "pass": false,
+          "evidence": "missing '?': ['Motivation']"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "recommended_first",
+          "pass": false,
+          "evidence": "not recommended-first: [\"'Target'->['Governance actor model']\", \"'Motivation'->['Identity is unverified']\"]"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    },
+    {
+      "id": 3,
+      "checks": [
+        {
+          "check": "round_captured",
+          "pass": true,
+          "evidence": "trace=['bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "skill_loaded",
+          "pass": false,
+          "evidence": "trace=['bash', 'bash', 'bash', 'ask_user_question']"
+        },
+        {
+          "check": "options_2_4",
+          "pass": true,
+          "evidence": "[3, 4, 4, 3]"
+        },
+        {
+          "check": "header_len",
+          "pass": true,
+          "evidence": "['Content', 'Scheduler', 'Transport', 'Authoring']"
+        },
+        {
+          "check": "options_have_description",
+          "pass": true,
+          "evidence": "all described"
+        },
+        {
+          "check": "no_reserved_labels",
+          "pass": true,
+          "evidence": "none"
+        },
+        {
+          "check": "no_writes_before_round",
+          "pass": true,
+          "evidence": "writes_before_round=[]"
+        }
+      ],
+      "trace": [
+        "bash",
+        "bash",
+        "bash",
+        "ask_user_question"
+      ]
+    }
+  ]
+}

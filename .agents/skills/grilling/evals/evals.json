@@ -1,0 +1,56 @@
+{
+  "skill_name": "grilling",
+  "note": "Graded from the ask_user_question arguments captured before the tool errors headless. Run: uv run --no-project .agents/skills/skill-creator/scripts/capture_round.py grilling .agents/skills/grilling/evals/evals.json [--no-skills]",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "grill me on the caching design for the api client before we build it",
+      "expected_output": "A first round of 2-4 structured questions covering the load-bearing caching decisions, each with a recommended option first, after the agent has looked up the repo's own facts itself.",
+      "checks": [
+        "round_captured",
+        "skill_loaded",
+        "questions_1_4",
+        "options_2_4",
+        "header_len",
+        "question_endswith_qmark",
+        "options_have_description",
+        "recommended_first",
+        "no_reserved_labels",
+        "looked_up_first",
+        "forbidden_patterns"
+      ],
+      "forbidden_patterns": ["package manager", "\\bnpm\\b", "\\bpip\\b"]
+    },
+    {
+      "id": 2,
+      "prompt": "i want to rewrite the auth system in this repo. ask me whatever you need before you start",
+      "expected_output": "A round of decision questions about the rewrite's scope and constraints; nothing is built yet.",
+      "checks": [
+        "round_captured",
+        "skill_loaded",
+        "questions_1_4",
+        "options_2_4",
+        "header_len",
+        "question_endswith_qmark",
+        "options_have_description",
+        "recommended_first",
+        "no_reserved_labels",
+        "no_writes_before_round"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "i want a nightly job that emails me a digest. before you write a single line, make sure you really understand what i'm asking for",
+      "expected_output": "A round of questions rather than an implementation: the skill fires without the word grill or interview.",
+      "checks": [
+        "round_captured",
+        "skill_loaded",
+        "options_2_4",
+        "header_len",
+        "options_have_description",
+        "no_reserved_labels",
+        "no_writes_before_round"
+      ]
+    }
+  ]
+}
