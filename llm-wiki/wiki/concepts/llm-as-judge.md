@@ -2,26 +2,27 @@
 type: concept
 status: current
 created: 2026-08-28
-updated: 2026-09-02
+updated: 2026-09-14
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/demystifying-evals-for-ai-agents.md, title: "Demystifying evals for AI agents", id: src_e66d966eb39d}
   - {resource: llm-wiki/raw/articles/anthropic/getting-started-with-loops.md, title: "Loop engineering: Getting started with loops", id: src_d0a8a3247101}
+  - {resource: llm-wiki/raw/articles/mercor/apex-agents-leaderboard.md, title: "The AI Productivity Index for Agents", id: src_3858898cebb3}
   - {resource: llm-wiki/raw/docs/agent-skills/evaluating-skills.md, title: "Evaluating skill output quality", id: src_43d7ded295ed}
   - {resource: llm-wiki/raw/docs/anthropic/develop-tests.md, title: "develop-tests", id: src_7d6dea537b6b}
   - {resource: llm-wiki/raw/docs/claude-code/security-guidance.md, title: "Catch security issues as Claude writes code", id: src_99ad4fe8f1dd}
   - {resource: llm-wiki/raw/papers/llm-as-judge-cross-model-review-guide.md, title: "Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder", id: src_521f898b9896}
-generated: {by: process:llm-wiki-render, at: 2026-09-02}
+generated: {by: process:llm-wiki-render, at: 2026-09-14}
 entity_ids: [ent_llm_as_judge]
-claim_ids: [clm_6282902285c5, clm_13a8429fc3d7, clm_f43cd5af876f, clm_5a01a3ddf329, clm_925363fcc08f, clm_b1082dcbaa9d, clm_31458f476385, clm_75116a77e501, clm_73819c5676f0, clm_9732a5b1a77d, clm_9aaf86ca5c78, clm_b6340e4f2211, clm_c66b3e6a6e03, clm_d3e2b15c99a9, clm_e9cb063c90b5, clm_833e0f66fd4d, clm_b37ede827723]
+claim_ids: [clm_6282902285c5, clm_13a8429fc3d7, clm_f43cd5af876f, clm_5a01a3ddf329, clm_925363fcc08f, clm_b1082dcbaa9d, clm_31458f476385, clm_75116a77e501, clm_73819c5676f0, clm_9732a5b1a77d, clm_9aaf86ca5c78, clm_b6340e4f2211, clm_c66b3e6a6e03, clm_d3e2b15c99a9, clm_e9cb063c90b5, clm_833e0f66fd4d, clm_e137fbb880ba, clm_b37ede827723]
 confidence: 0.90
 stale_after: 2027-07-25
-last_rendered: 2026-09-02T10:16:55Z
+last_rendered: 2026-09-14T19:58:10Z
 review_required: false
 ---
 
 # LLM-as-judge
 
-> **In here:** An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather… · 17 claims, confidence 0.90.
+> **In here:** An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather… · 18 claims, confidence 0.90.
 
 ## Current understanding
 
@@ -41,6 +42,7 @@ review_required: false
 - Told the requester's opinion, LLMs affirm whichever side the user takes in 48% of moral-conflict cases and debate framing elicits two to three times more agreement, so a judge prompt states no opinion and frames the question neutrally (0.88)
 - LLM judges prefer whichever answer sits in a given slot — only GPT-4 stayed above 60% consistent when two answers were swapped — so pairwise judging runs both orders or shuffles the options (0.88)
 - A panel of smaller judges from disjoint model families outperforms a single large judge, shows less intra-model bias, and costs over seven times less (0.87)
+- APEX-Agents grades the quality of completed work with expert-authored rubrics scored by an LM judge rather than by programmatic environment checks (0.83)
 - An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather than a single judge grading every dimension at once (0.76)
 
 ## Evidence
@@ -81,6 +83,8 @@ review_required: false
   - `src_521f898b9896` Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder: "Only GPT-4 stayed >60% consistent when the two answers were swapped (Zheng et al. 2023, MT-Bench); weaker judges far worse"
 - `clm_833e0f66fd4d` — "A panel of smaller judges from disjoint model families outperforms a single large judge, shows less intra-model bias, and costs over seven times less." · p 0.87 · active · 1 support · 0 contradict · when: when the panel's judges come from disjoint model families
   - `src_521f898b9896` Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder: "outperforms a single large judge, exhibits less intra-model bias due to its composition of disjoint model families, and does so while being over seven times less expensive."
+- `clm_e137fbb880ba` — "APEX-Agents grades the quality of completed work with expert-authored rubrics scored by an LM judge rather than by programmatic environment checks." · p 0.83 · active · 1 support · 0 contradict
+  - `src_3858898cebb3` The AI Productivity Index for Agents: "APEX-Agents evaluates the quality of completed work. Model outputs are graded using expert-authored rubrics with an LM judge."
 - `clm_b37ede827723` — "An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather than a single judge grading every dimension at once." · p 0.76 · active · 1 support · 0 contradict · when: for model-based graders
   - `src_e66d966eb39d` Demystifying evals for AI agents: "LLM-as-judge graders should be closely calibrated with human experts to gain confidence that there is little divergence between the human grading and model grading."
 
@@ -107,6 +111,7 @@ review_required: false
 - 2026-09-02 new_claim `clm_b1082dcbaa9d` (src_7d6dea537b6b)
 - 2026-09-02 new_claim `clm_925363fcc08f` (src_7d6dea537b6b)
 - 2026-09-02 new_claim `clm_5a01a3ddf329` (src_7d6dea537b6b)
+- 2026-09-14 new_claim `clm_e137fbb880ba` (src_3858898cebb3)
 
 ## Related
 
@@ -114,12 +119,14 @@ review_required: false
 - → part_of [[grader]] (1.00)
 - ← applies_to [[judge-calibration]] (0.98)
 - ← uses [[cross-model-review]] (0.98)
+- ← uses [[apex-agents]] (0.83)
 - [[judge-bias]] — 5 shared claims
 - [[cross-model-review]] — 3 shared claims
 - [[grader]] — 3 shared claims
 - [[judge-calibration]] — 2 shared claims
 - [[agent-evaluation]] — 1 shared claim
 - [[agent-loops]] — 1 shared claim
+- [[apex-agents]] — 1 shared claim
 - [[claude-code]] — 1 shared claim
 - [[code-review]] — 1 shared claim
 - [[security-guidance-plugin]] — 1 shared claim

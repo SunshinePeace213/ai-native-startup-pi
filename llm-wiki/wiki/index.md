@@ -8,9 +8,10 @@ verbatim. This file is the routing tier: read it to choose a page.
 
 | Page | Status | In here |
 | --- | --- | --- |
+| [[aa-omniscience]] | current | The AA-Omniscience paper reports Claude 4.1 Opus as the top scorer at 4.8 and only three models above zero, far below the live leaderboard's 43.73 leader, so the published headline result no longer… · 6 claims, confidence 0.81. |
 | [[adaptive-thinking]] | current | Adaptive thinking is on by default on Claude Sonnet 5, a change from Sonnet 4.6 where the same requests ran without thinking, and manual extended thinking is removed and returns a 400 error · 3 claims, confidence 0.92. |
 | [[adversarial-verification]] | current | adversarial verification — 3 claims, confidence 0.87, 3 sources. |
-| [[agent-evaluation]] | current | No single evaluation layer catches every issue, so the most effective teams combine automated evals for fast iteration, production monitoring for ground truth, and periodic human review for… · 5 claims, confidence 0.81. |
+| [[agent-evaluation]] | current | No single evaluation layer catches every issue, so the most effective teams combine automated evals for fast iteration, production monitoring for ground truth, and periodic human review for… · 6 claims, confidence 0.81. |
 | [[agent-harness]] | current | A harness is every piece of code, configuration, and execution logic beyond the model itself; · 20 claims, confidence 0.80. |
 | [[agent-memory]] | current | Memory file standards such as AGENTS.md are a form of continual learning: agents durably store knowledge from one session and the harness injects it into future sessions · 3 claims, confidence 0.87. |
 | [[agent-teams]] | current | Subagents fit quick, focused workers that report a result back, while agent teams fit work where the workers must share findings, challenge each other, and coordinate on their own · 9 claims, confidence 0.91. |
@@ -20,7 +21,9 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[agents-skills]] | current | Clients look for skills in a default directory — VS Code uses .agents/skills/ — so creating .agents/skills/<name>/SKILL.md in a project is enough to make a skill discoverable · 4 claims, confidence 0.88. |
 | [[ai-native-startup]] | current | An AI-native startup's defensible moat at Scale is built from accumulated depth · 5 claims, confidence 0.85. |
 | [[allowed-tools]] | current | The optional allowed-tools field is a space-separated string of pre-approved tools and is explicitly experimental, so support for it may vary between agent implementations · 5 claims, confidence 0.92. |
+| [[apex-agents]] | current | APEX-Agents ranks on Mean Score, the average share of rubric criteria passed, while Pass@1 counts only tasks scoring 100% of the rubric on a single attempt · 10 claims, confidence 0.82. |
 | [[auto-mode]] | current | Auto mode replaces routine permission prompts with a separate classifier model that reviews each action and blocks anything escalating beyond the request, targeting unrecognized infrastructure, or… · 2 claims, confidence 0.93. |
+| [[automationbench]] | current | Each AutomationBench-AA task run is capped at roughly 50 tool-using turns against simulated Gmail, Salesforce, Slack, Zendesk, Jira, HubSpot and similar apps reached through REST API tools · 6 claims, confidence 0.82. |
 | [[bare-mode]] | current | Bare mode makes a headless Claude Code run reproducible across machines by skipping auto-discovery of hooks, skills, custom commands, subagents, plugins, MCP servers, auto memory, and CLAUDE.md, and… · 2 claims, confidence 0.93. |
 | [[branch-protection]] | current | Editing a ruleset to push past a required check is the failure branch protection exists to prevent rather than a workaround for it, and a rule that names an allowed head branch without a condition… · 2 claims, confidence 0.74. |
 | [[cache-rewarming]] | current | After a certain number of turns or a token threshold the librarian injects a brief recap — what was retrieved, why it was relevant, what the team is building toward · 2 claims, confidence 0.83. |
@@ -34,13 +37,14 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[context-window]] | current | Claude Opus 5 carries a 1M token context window as both the default and the maximum, and its instruction following, tool calling, and reasoning stay consistent throughout that window · 34 claims, confidence 0.89. |
 | [[cross-model-review]] | current | Review direction matters: in Xiang et al.'s LiveCodeBench study Claude reviewing Codex raised accuracy from 71.6% to 89.7% while Codex reviewing Claude lowered it from 91.4% to 82.8%, so the… · 3 claims, confidence 0.92. |
 | [[cross-session-messaging]] | current | A message to a session on the same machine travels over a per-session socket, or a named pipe on native Windows, and never through Anthropic servers, while a message to a session on another of your… · 9 claims, confidence 0.91. |
+| [[deepswe]] | current | DeepSWE v1.1 sets main to the task's starting commit with no future commits visible instead of running the agent in detached HEAD, so the agent branches and commits the way it would in normal… · 8 claims, confidence 0.81. |
 | [[defense-in-depth]] | current | Anthropic's security layers stack by stage: the security-guidance plugin in session, /security-review as a single on-demand pass over the branch, the Claude Security plugin as an on-demand deep… · 4 claims, confidence 0.95. |
-| [[effort-level]] | current | Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability · 25 claims, confidence 0.92. |
+| [[effort-level]] | current | Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability · 26 claims, confidence 0.91. |
 | [[embeddings]] | current | No cosine-similarity threshold cleanly separates same-entity mentions from related-but-distinct ones — the best achievable was F1 0.667 at threshold 0.72 · 3 claims, confidence 0.93. |
 | [[entity-extraction]] | current | entity extraction — 2 claims, confidence 0.98, 5 sources. |
 | [[entity-resolution]] | current | Entity resolution runs as two stages rather than one cosine threshold: a low vector-similarity threshold screens out the obviously-unrelated candidates for free, then each surviving candidate gets… · 5 claims, confidence 0.85. |
 | [[eval-suite]] | current | eval suite — 7 claims, confidence 0.88, 2 sources. |
-| [[eval-task]] | current | A good eval task is one where two domain experts would independently reach the same pass/fail verdict; ambiguity in the task specification turns into noise in the metric · 3 claims, confidence 0.77. |
+| [[eval-task]] | current | A good eval task is one where two domain experts would independently reach the same pass/fail verdict; ambiguity in the task specification turns into noise in the metric · 4 claims, confidence 0.77. |
 | [[evidence-span]] | current | evidence span — 3 claims, confidence 0.83, 1 source. |
 | [[explicit-triggers]] | current | The working principle of schema design is that explicit schema stays minimal and structural, implicit charters carry judgment and culture, and explicit triggers connect the two at the right moment… · 3 claims, confidence 0.83. |
 | [[filesystem]] | current | The filesystem is a natural collaboration surface because multiple agents and humans coordinate through shared files · 5 claims, confidence 0.77. |
@@ -51,7 +55,8 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[grader]] | current | grader — 8 claims, confidence 0.85, 3 sources. |
 | [[graph-architecture]] | current | A knowledge graph is justified only when the same entity or relationship is queried by more than one agent or across more than one session; · 4 claims, confidence 0.90. |
 | [[graph-traversal]] | current | An ingest extracts structured entities — people, projects, libraries, concepts, files, decisions · 3 claims, confidence 0.95. |
-| [[hallucination]] | current | hallucination — 7 claims, confidence 0.93, 1 source. |
+| [[guardrail]] | current | AutomationBench scores a task 0 whenever any guardrail is violated and otherwise credits the share of objectives completed, where guardrails are the checks that already held before the agent acted · 2 claims, confidence 0.82. |
+| [[hallucination]] | current | GPT-6 Astra's hallucination rate on AA-Omniscience fell to 51% at max effort from GPT-5.6 Sol's 92%, while accuracy also rose · 9 claims, confidence 0.92. |
 | [[html-output-format]] | current | Markdown became an increasingly restrictive output format as agents grew more powerful, and members of the Claude Code team now prefer HTML for outputs they read, share, and use as specs and… · 7 claims, confidence 0.81. |
 | [[human-in-the-loop]] | current | Expertise that can be codified belongs in the prompt or tools, but sensitive actions such as financial transactions and database operations need live human review · 4 claims, confidence 0.84. |
 | [[hybrid-search]] | current | Search that scales combines four retrieval streams · 10 claims, confidence 0.81. |
@@ -62,7 +67,7 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[keybindings]] | current | Every Pi keyboard shortcut is rebindable through ~/.pi/agent/keybindings.json, and an action may carry one key or an array of them · 4 claims, confidence 0.93. |
 | [[knowledge-graph]] | current | A knowledge graph is justified only when the same entity or relationship is queried by more than one agent or across more than one session; · 11 claims, confidence 0.91. |
 | [[latency]] | current | Engineer a prompt that works well without model or prompt constraints first and only then apply latency reduction, because premature latency optimization can hide what top performance looks like · 7 claims, confidence 0.93. |
-| [[llm-as-judge]] | current | An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather… · 17 claims, confidence 0.90. |
+| [[llm-as-judge]] | current | An LLM-as-judge grader needs close calibration against human experts, an explicit way out such as returning "Unknown" when it lacks information, and one isolated judge per rubric dimension rather… · 18 claims, confidence 0.90. |
 | [[llm-wiki]] | current | In the LLM Wiki pattern the LLM incrementally builds and maintains a persistent wiki — a structured, interlinked collection of markdown files that sits between a reader and their raw sources · 29 claims, confidence 0.88. |
 | [[loop-engineering]] | current | The agent loop, the first level of the stack, is a model calling tools in a loop until a task is complete · 8 claims, confidence 0.80. |
 | [[managed-settings]] | current | Managed settings an organization deploys sit at the top of Claude Code's precedence stack, so nothing a developer sets overrides them — not even a key passed with `--settings` · 3 claims, confidence 0.93. |
@@ -117,6 +122,7 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[system-prompt]] | current | Appending to Claude Code's system prompt preserves the default tool guidance, safety instructions, and coding conventions so only the difference must be supplied, whereas replacing it drops the… · 11 claims, confidence 0.92. |
 | [[task-harness-fit]] | current | The best harness for a task is not necessarily the one a model was post-trained with: Terminal Bench 2.0 shows the same model scoring differently across harnesses, so optimizing the harness for the… · 3 claims, confidence 0.79. |
 | [[team-lead]] | current | team lead — 4 claims, confidence 0.91, 1 source. |
+| [[terminal-bench]] | current | Terminal-Bench v4.0 recalibrates compute and time allowances, improves instructions, environments and verifiers, and removes eight tasks that were saturated, refusal-prone, publicly solved, or… · 5 claims, confidence 0.84. |
 | [[theme]] | current | A theme change makes Pi's TUI call invalidate() on every component to drop cached renders, so a component that does not implement it correctly will not pick the new theme up · 5 claims, confidence 0.93. |
 | [[tool-results]] | current | Third-party content should reach Claude only inside tool_result blocks, never in the system prompt or plain user text, because Claude is trained to treat instructions appearing inside tool results… · 6 claims, confidence 0.93. |
 | [[tool-use]] | current | In coding and computer-use loops where the next independent tool calls are implied by the task rather than explicitly requested, Claude Fable 5.1 may issue them one per turn instead of in parallel… · 9 claims, confidence 0.90. |
@@ -131,9 +137,11 @@ verbatim. This file is the routing tier: read it to choose a page.
 | Page | Status | In here |
 | --- | --- | --- |
 | [[agent-skills]] | current | The Agent Skills format was originally developed by Anthropic, released as an open standard, adopted by a growing number of agent products, and is open to contributions from the broader ecosystem · 17 claims, confidence 0.91. |
-| [[artificial-analysis]] | current | Artificial Analysis — 13 claims, confidence 0.81, 2 sources. |
+| [[artificial-analysis]] | current | Artificial Analysis — 16 claims, confidence 0.83, 5 sources. |
+| [[datacurve]] | current | Datacurve — 2 claims, confidence 0.82, 1 source. |
 | [[graphwiki]] | current | graphwiki — 6 claims, confidence 0.96, 5 sources. |
 | [[langchain]] | current | LangChain — 2 claims, confidence 0.78, 2 sources. |
+| [[mercor]] | current | Mercor — 2 claims, confidence 0.82, 1 source. |
 
 ## People
 
@@ -146,7 +154,7 @@ verbatim. This file is the routing tier: read it to choose a page.
 
 | Page | Status | In here |
 | --- | --- | --- |
-| [[model-selection]] | current | Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current… · 11 claims, confidence 0.87. |
+| [[model-selection]] | current | Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current… · 12 claims, confidence 0.87. |
 
 ## Systems
 
@@ -161,21 +169,23 @@ verbatim. This file is the routing tier: read it to choose a page.
 | [[claude-code-github-action]] | current | On public repositories GitHub withholds secrets from runs triggered by fork pull requests, so a workflow-based review runs only on pull requests from branches in the same repository · 14 claims, confidence 0.91. |
 | [[claude-code-review]] | current | The Claude Code Review check run always completes with a neutral conclusion so it never blocks merging through branch protection rules; · 10 claims, confidence 0.95. |
 | [[claude-code]] | current | A mistyped claude subcommand does not fall through to a prompt: Claude Code suggests the closest matching subcommand and exits without starting a session · 155 claims, confidence 0.92. |
-| [[claude-fable-5-1]] | current | Cache hits on Claude Fable 5.1 are priced at 0.025x the base input price — $0.25 per million · 24 claims, confidence 0.90. |
-| [[claude-fable-5]] | current | Claude Fable 5's individual requests on hard tasks can run for many minutes and autonomous runs for hours, which is one of the largest shifts teams encounter on migration: client timeouts… · 15 claims, confidence 0.89. |
+| [[claude-fable-5-1]] | current | Cache hits on Claude Fable 5.1 are priced at 0.025x the base input price — $0.25 per million · 27 claims, confidence 0.89. |
+| [[claude-fable-5]] | current | Claude Fable 5's individual requests on hard tasks can run for many minutes and autonomous runs for hours, which is one of the largest shifts teams encounter on migration: client timeouts… · 16 claims, confidence 0.88. |
 | [[claude-github-app]] | current | Installing the Claude GitHub App means accepting its full permission set — GitHub does not let you accept a subset · 2 claims, confidence 0.93. |
 | [[claude-haiku-4-5]] | current | Claude Haiku 4.5 does not support the effort parameter at all — it uses extended rather than adaptive thinking — so an effort level stamped on Haiku sets nothing · 8 claims, confidence 0.93. |
-| [[claude-opus-5]] | current | Claude Opus 5 verifies its own work without being told to, so explicit verification instructions carried over from earlier prompts cause over-verification and removing them reduces wasted tokens… · 16 claims, confidence 0.91. |
+| [[claude-opus-5]] | current | Claude Opus 5 verifies its own work without being told to, so explicit verification instructions carried over from earlier prompts cause over-verification and removing them reduces wasted tokens… · 17 claims, confidence 0.90. |
 | [[claude-security-plugin]] | current | Claude Security scans are nondeterministic — two scans of the same code can surface different findings · 10 claims, confidence 0.94. |
 | [[claude-sonnet-5]] | current | Claude Sonnet 5 uses a new tokenizer that produces approximately 30% more tokens for the same text, so max_tokens limits tuned for Claude Sonnet 4.6 may truncate equivalent output · 12 claims, confidence 0.93. |
 | [[deep-links]] | current | Markdown renderers that allow only http and https links strip the claude-cli:// scheme, and GitHub does this in READMEs, issues, pull requests, and wikis so the link renders as its bare label · 6 claims, confidence 0.92. |
 | [[docker-sandboxes]] | current | Docker Sandboxes — 2 claims, confidence 0.93, 1 source. |
 | [[edit-tool]] | current | The Edit tool requires Claude to have read the file in the current conversation first — a read cut short by a `PARTIAL view` notice does not count · 3 claims, confidence 0.93. |
+| [[gemini-3-7-flash]] | current | Gemini 3.7 Flash — 2 claims, confidence 0.81, 1 source. |
+| [[gemini-3-8-flash]] | current | Gemini 3.8 Flash — 2 claims, confidence 0.81, 2 sources. |
 | [[goal-command]] | current | /goal rides on the hooks system, so it follows the same workspace-trust rule as hooks in settings files and is unavailable wherever disableAllHooks or allowManagedHooksOnly is in force · 6 claims, confidence 0.93. |
 | [[gpt-5-6-luna]] | current | GPT-5.6 Luna is the cost-sensitive, high-volume tier, corresponding to the nano tier of earlier GPT-5 families · 13 claims, confidence 0.85. |
-| [[gpt-5-6-sol]] | current | GPT-5.6 Sol is the flagship of the GPT-5.6 family and corresponds to the unsuffixed model tier of earlier GPT-5 families; the gpt-5.6 alias routes to it · 17 claims, confidence 0.84. |
+| [[gpt-5-6-sol]] | current | GPT-5.6 Sol is the flagship of the GPT-5.6 family and corresponds to the unsuffixed model tier of earlier GPT-5 families; the gpt-5.6 alias routes to it · 17 claims, confidence 0.85. |
 | [[gpt-5-6-terra]] | current | GPT-5.6 Terra is the balanced tier, corresponding to the mini tier of earlier GPT-5 families · 12 claims, confidence 0.86. |
-| [[gpt-6-astra]] | current | GPT-6 Astra lists at $10 per million input tokens, $1 cached input, $12.50 cache writes, and $50 per million output tokens · 18 claims, confidence 0.87. |
+| [[gpt-6-astra]] | current | GPT-6 Astra lists at $10 per million input tokens, $1 cached input, $12.50 cache writes, and $50 per million output tokens · 25 claims, confidence 0.87. |
 | [[hooks]] | current | A guard rule carrying the action ask resolves to a block when no human is present to answer, so an unattended agent cannot run what it gates: the destructive-command guard's git-force-push rule… · 40 claims, confidence 0.87. |
 | [[index-md]] | current | Reading index.md first to find relevant pages and then drilling into them works well enough that no embedding-based RAG infrastructure is needed · 3 claims, confidence 0.83. |
 | [[listagents]] | current | ListAgents — 2 claims, confidence 0.91, 1 source. |

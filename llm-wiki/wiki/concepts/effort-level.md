@@ -2,9 +2,10 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-12
+updated: 2026-09-14
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/claude-model-and-effort-level-in-claude-code.md, title: "Choosing a Claude model and effort level in Claude Code", id: src_fbabc2423960}
+  - {resource: llm-wiki/raw/articles/artificial-analysis/terminalbench-v4-0.md, title: "Terminal-Bench v4.0 Benchmark Leaderboard", id: src_28e09fc746e0}
   - {resource: llm-wiki/raw/docs/anthropic/models-overview.md, title: "Models overview", id: src_963229517470}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5-1.md, title: "Delivering work", id: src_9f2ae1e705ce}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5.md, title: "prompting-claude-fable-5", id: src_84badaa3952a}
@@ -16,18 +17,18 @@ sources:
   - {resource: llm-wiki/raw/docs/openai/guides-reasoning.md, title: "Reasoning models", id: src_7fcd56977d57}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-5-6-sol.md, title: "GPT-5.6 Sol", id: src_2799e7222597}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-6-astra.md, title: "GPT-6 Astra", id: src_5fbc74a9d0b2}
-generated: {by: process:llm-wiki-render, at: 2026-09-12}
+generated: {by: process:llm-wiki-render, at: 2026-09-14}
 entity_ids: [ent_effort_level]
-claim_ids: [clm_3a056b12fdae, clm_2361143345d6, clm_639cfed3cd72, clm_276d872e5414, clm_6dfe4cd8cabb, clm_176a1b0b4554, clm_5bae95a20dd2, clm_7c4565fc3397, clm_8479874ac5ba, clm_8b4e7965fc9f, clm_a59ebad0a4be, clm_d14e11fac1d7, clm_e24b51402fe1, clm_f9352cf8d901, clm_9c0d8265daab, clm_b912dae9bece, clm_46e3c15120c2, clm_56f905a63307, clm_90f666969a1a, clm_9e1d6aa8e826, clm_60ac29d854e8, clm_c9de5ea3f012, clm_3cc279b5026f, clm_d6ec10ffd6b5, clm_f78e75dbfc4a]
-confidence: 0.92
-stale_after: 2028-01-30
-last_rendered: 2026-09-12T20:30:33Z
+claim_ids: [clm_3a056b12fdae, clm_2361143345d6, clm_639cfed3cd72, clm_276d872e5414, clm_6dfe4cd8cabb, clm_176a1b0b4554, clm_5bae95a20dd2, clm_7c4565fc3397, clm_8479874ac5ba, clm_8b4e7965fc9f, clm_a59ebad0a4be, clm_d14e11fac1d7, clm_e24b51402fe1, clm_f9352cf8d901, clm_9c0d8265daab, clm_b912dae9bece, clm_46e3c15120c2, clm_56f905a63307, clm_90f666969a1a, clm_9e1d6aa8e826, clm_60ac29d854e8, clm_c9de5ea3f012, clm_3cc279b5026f, clm_d6ec10ffd6b5, clm_f78e75dbfc4a, clm_458be0d9c81d]
+confidence: 0.91
+stale_after: 2026-12-07
+last_rendered: 2026-09-14T19:58:10Z
 review_required: false
 ---
 
 # effort level
 
-> **In here:** Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability · 25 claims, confidence 0.92.
+> **In here:** Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability · 26 claims, confidence 0.91.
 
 ## Current understanding
 
@@ -56,6 +57,7 @@ review_required: false
 - The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort (0.82)
 - Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability (0.80)
 - Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort (0.80)
+- On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one (0.80)
 
 ## Evidence
 
@@ -111,6 +113,8 @@ review_required: false
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "Effort determines how far Claude **will travel** along capability curves, not how far it **must travel** to complete tasks."
 - `clm_f78e75dbfc4a` — "Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort" · p 0.80 · active · 1 support · 0 contradict · when: on harder multi-step work
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "Per-token costs increase with larger models, but total per-task costs may decrease on genuinely difficult tasks where smaller models cannot succeed regardless of effort."
+- `clm_458be0d9c81d` — "On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one." · p 0.80 · active · 1 support · 0 contradict
+  - `src_28e09fc746e0` Terminal-Bench v4.0 Benchmark Leaderboard: "GPT-6 Astra (xhigh) scores the highest on Terminal-Bench v4.0 with a score of 59.6%, followed by GPT-6 Astra (max) with a score of 59.1%"
 
 ## Timeline
 
@@ -141,11 +145,13 @@ review_required: false
 - 2026-09-12 new_claim `clm_46e3c15120c2` (src_7fcd56977d57)
 - 2026-09-12 new_claim `clm_9c0d8265daab` (src_963229517470)
 - 2026-09-12 new_claim `clm_7c4565fc3397` (src_963229517470)
+- 2026-09-14 new_claim `clm_458be0d9c81d` (src_28e09fc746e0)
 
 ## Related
 
 - ← uses [[claude-fable-5-1]] (1.00)
 - ← uses [[claude-opus-5]] (0.99)
+- ← uses [[gpt-6-astra]] (0.98)
 - ← related_to [[model-selection]] (0.95)
 - ← uses [[claude-code]] (0.94)
 - ← depends_on extended thinking (no page yet) (0.93)
@@ -155,11 +161,10 @@ review_required: false
 - → depends_on [[claude-code]] (0.93)
 - ← depends_on [[model-selection]] (0.93)
 - ← uses [[claude-fable-5]] (0.93)
-- ← uses [[claude-sonnet-5]] (0.93)
 - … 4 more edges — `graph.py neighbors ent_effort_level`
+- [[gpt-6-astra]] — 5 shared claims
 - [[claude-code]] — 4 shared claims
 - [[claude-fable-5-1]] — 4 shared claims
-- [[gpt-6-astra]] — 4 shared claims
 - [[model-selection]] — 4 shared claims
 - [[claude-opus-5]] — 3 shared claims
 - [[gpt-5-6-luna]] — 2 shared claims

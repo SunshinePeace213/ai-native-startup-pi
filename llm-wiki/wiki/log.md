@@ -597,3 +597,23 @@ lane: deep · observations: 6 · claims: +6 ~0 · rendered: llm-wiki/wiki/system
 ## [2026-09-12] ingest | pricing | llm-wiki/raw/docs/anthropic/pricing.md
 
 lane: deep · observations: 2 · claims: +2 ~0 · rendered: llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/claude-opus-5.md
+
+## [2026-09-14] ingest | Terminal-Bench v4.0 Benchmark Leaderboard | llm-wiki/raw/articles/artificial-analysis/terminalbench-v4-0.md
+
+lane: deep · observations: 6 · claims: +5 ~1 · rendered: llm-wiki/wiki/concepts/terminal-bench.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/gpt-5-6-sol.md, llm-wiki/wiki/concepts/effort-level.md, llm-wiki/wiki/projects/artificial-analysis.md
+
+## [2026-09-14] ingest | AA-Omniscience: Knowledge and Hallucination Benchmark | llm-wiki/raw/articles/artificial-analysis/omniscience.md
+
+lane: deep · observations: 7 · claims: +6 ~1 · rendered: llm-wiki/wiki/concepts/aa-omniscience.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/concepts/hallucination.md, llm-wiki/wiki/decisions/model-selection.md, llm-wiki/wiki/projects/artificial-analysis.md
+
+## [2026-09-14] ingest | AutomationBench-AA: Agentic SaaS Workflow Benchmark | llm-wiki/raw/articles/artificial-analysis/automationbench-aa.md
+
+lane: deep · observations: 7 · claims: +7 ~0 · rendered: llm-wiki/wiki/concepts/automationbench.md, llm-wiki/wiki/concepts/guardrail.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/projects/artificial-analysis.md
+
+## [2026-09-14] ingest | The AI Productivity Index for Agents | llm-wiki/raw/articles/mercor/apex-agents-leaderboard.md
+
+lane: deep · observations: 10 · claims: +10 ~0 · rendered: llm-wiki/wiki/concepts/apex-agents.md, llm-wiki/wiki/projects/mercor.md, llm-wiki/wiki/systems/gemini-3-7-flash.md, llm-wiki/wiki/systems/gemini-3-8-flash.md, llm-wiki/wiki/systems/claude-fable-5-1.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/concepts/llm-as-judge.md
+
+## [2026-09-14] ingest | DeepSWE v1.1 | llm-wiki/raw/articles/datacurve/deepswe-v1-1.md
+
+lane: deep · observations: 9 · claims: +9 ~0 · rendered: llm-wiki/wiki/concepts/deepswe.md, llm-wiki/wiki/projects/datacurve.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/systems/claude-opus-5.md, llm-wiki/wiki/systems/gemini-3-8-flash.md, llm-wiki/wiki/systems/claude-fable-5.md, llm-wiki/wiki/concepts/agent-evaluation.md, llm-wiki/wiki/concepts/eval-task.md

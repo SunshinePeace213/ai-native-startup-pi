@@ -2,24 +2,25 @@
 type: decision
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-14
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/ai-code-migration.md, title: "How Anthropic runs large-scale code migrations with Claude Code", id: src_40c83dc51471}
   - {resource: llm-wiki/raw/articles/anthropic/claude-model-and-effort-level-in-claude-code.md, title: "Choosing a Claude model and effort level in Claude Code", id: src_fbabc2423960}
+  - {resource: llm-wiki/raw/articles/artificial-analysis/omniscience.md, title: "AA-Omniscience: Knowledge and Hallucination Benchmark", id: src_c197533a04c8}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5-1.md, title: "Delivering work", id: src_9f2ae1e705ce}
   - {resource: llm-wiki/raw/docs/claude-code/model-config.md, title: "Model configuration", id: src_a959e4684753}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-14}
 entity_ids: [ent_model_selection]
-claim_ids: [clm_2361143345d6, clm_199a3ad4af87, clm_a59ebad0a4be, clm_4c418d487b7e, clm_ad6abaac0af5, clm_c7fff347847f, clm_3cc279b5026f, clm_49f17b556c83, clm_5c7656071869, clm_f78e75dbfc4a, clm_6134d99b8bc9]
+claim_ids: [clm_2361143345d6, clm_199a3ad4af87, clm_a59ebad0a4be, clm_4c418d487b7e, clm_ad6abaac0af5, clm_c7fff347847f, clm_3cc279b5026f, clm_49f17b556c83, clm_796c94171245, clm_5c7656071869, clm_f78e75dbfc4a, clm_6134d99b8bc9]
 confidence: 0.87
 stale_after: 2027-01-17
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-14T19:58:10Z
 review_required: false
 ---
 
 # model selection
 
-> **In here:** Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current… · 11 claims, confidence 0.87.
+> **In here:** Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current… · 12 claims, confidence 0.87.
 
 ## Current understanding
 
@@ -31,6 +32,7 @@ review_required: false
 - Running `/model` in Claude Code saves the chosen model as the default for new sessions by writing the `model` field in user settings, while pressing `s` in the picker switches for the current session only (0.91)
 - The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort (0.82)
 - A model's weights are frozen after training and nothing in a prompt or context modifies them, so supplying documentation for a library the model never saw steers predictions for that request only and adds no permanent knowledge (0.82)
+- AA-Omniscience performance varies by domain with models from three different labs leading across its six domains, so models should be chosen for the demands of the use case rather than by general performance where knowledge matters (0.81)
 - The model tiers map onto three kinds of consultant — Fable as the specialist who has seen nearly unprecedented problems, Opus as the expert with deep experience of similar challenges, and Sonnet as the highly capable generalist (0.80)
 - Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort (0.80)
 - A migration should not run the largest model for everything: the large model is reserved for reviewers and rule-writing while smaller models carry the high-volume implementation work (0.79)
@@ -54,6 +56,8 @@ review_required: false
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "If Claude has adequate context and still fails, a more capable model is needed. If it skipped steps or abandoned tasks prematurely, increase effort level."
 - `clm_49f17b556c83` — "A model's weights are frozen after training and nothing in a prompt or context modifies them, so supplying documentation for a library the model never saw steers predictions for that request only and adds no permanent knowledge" · p 0.82 · active · 1 support · 0 contradict
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "These weights remain frozen after training; nothing in your prompt or context modifies them."
+- `clm_796c94171245` — "AA-Omniscience performance varies by domain with models from three different labs leading across its six domains, so models should be chosen for the demands of the use case rather than by general performance where knowledge matters." · p 0.81 · active · 1 support · 0 contradict
+  - `src_c197533a04c8` AA-Omniscience: Knowledge and Hallucination Benchmark: "Performance also varies by domain, with the models from three different research labs leading across the six domains."
 - `clm_5c7656071869` — "The model tiers map onto three kinds of consultant — Fable as the specialist who has seen nearly unprecedented problems, Opus as the expert with deep experience of similar challenges, and Sonnet as the highly capable generalist" · p 0.80 · active · 1 support · 0 contradict
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "**Fable as specialist:** Has seen nearly unprecedented problems **Opus as expert:** Deep experience with similar challenges **Sonnet as generalist:** Highly capable across domains"
 - `clm_f78e75dbfc4a` — "Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort" · p 0.80 · active · 1 support · 0 contradict · when: on harder multi-step work
@@ -75,6 +79,7 @@ review_required: false
 - 2026-08-23 new_claim `clm_ad6abaac0af5` (src_a959e4684753)
 - 2026-08-23 new_claim `clm_4c418d487b7e` (src_a959e4684753)
 - 2026-09-02 new_claim `clm_a59ebad0a4be` (src_9f2ae1e705ce)
+- 2026-09-14 new_claim `clm_796c94171245` (src_c197533a04c8)
 
 ## Related
 
@@ -85,9 +90,11 @@ review_required: false
 - → part_of [[claude-code]] (0.93)
 - ← uses fast mode (no page yet) (0.92)
 - → depends_on model weights (no page yet) (0.82)
+- ← applies_to [[aa-omniscience]] (0.81)
 - ← uses [[code-migration]] (0.79)
 - [[claude-code]] — 4 shared claims
 - [[effort-level]] — 4 shared claims
+- [[aa-omniscience]] — 1 shared claim
 - [[code-migration]] — 1 shared claim
 - [[model-alias]] — 1 shared claim
 - [[subagents]] — 1 shared claim

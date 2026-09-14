@@ -2,25 +2,26 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-12
+updated: 2026-09-14
 sources:
   - {resource: llm-wiki/raw/articles/artificial-analysis/benchmarking-gpt-6-astra.md, title: "Benchmarking GPT-6 Astra", id: src_1a690917c61d}
+  - {resource: llm-wiki/raw/articles/datacurve/deepswe-v1-1.md, title: "DeepSWE v1.1", id: src_74863c70ef6c}
   - {resource: llm-wiki/raw/docs/anthropic/models-overview.md, title: "Models overview", id: src_963229517470}
   - {resource: llm-wiki/raw/docs/anthropic/pricing.md, title: "pricing", id: src_41365e6aef45}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-opus-5.md, title: "prompting-claude-opus-5", id: src_26d415487f93}
   - {resource: llm-wiki/raw/docs/claude-code/code-review.md, title: "Code Review", id: src_1d5f4c9615f1}
-generated: {by: process:llm-wiki-render, at: 2026-09-12}
+generated: {by: process:llm-wiki-render, at: 2026-09-14}
 entity_ids: [ent_claude_opus_5]
-claim_ids: [clm_a5e46d967548, clm_ad10275e9301, clm_176a1b0b4554, clm_2bd0da02bf11, clm_45fbc544515a, clm_d14e11fac1d7, clm_d30741f36b3c, clm_de413e5598d2, clm_9c0d8265daab, clm_34fc0b797675, clm_41f9da71e4cf, clm_99361b6ce5ac, clm_a6168419f5b5, clm_2b15ffa95160, clm_3cf4d9ede51e, clm_a50b6a0ab8de]
-confidence: 0.91
-stale_after: 2027-03-22
-last_rendered: 2026-09-12T20:30:33Z
+claim_ids: [clm_a5e46d967548, clm_ad10275e9301, clm_176a1b0b4554, clm_2bd0da02bf11, clm_45fbc544515a, clm_d14e11fac1d7, clm_d30741f36b3c, clm_de413e5598d2, clm_9c0d8265daab, clm_34fc0b797675, clm_41f9da71e4cf, clm_99361b6ce5ac, clm_a6168419f5b5, clm_2b15ffa95160, clm_3cf4d9ede51e, clm_2d9fb7740370, clm_a50b6a0ab8de]
+confidence: 0.90
+stale_after: 2026-12-18
+last_rendered: 2026-09-14T19:58:10Z
 review_required: false
 ---
 
 # Claude Opus 5
 
-> **In here:** Claude Opus 5 verifies its own work without being told to, so explicit verification instructions carried over from earlier prompts cause over-verification and removing them reduces wasted tokens… · 16 claims, confidence 0.91.
+> **In here:** Claude Opus 5 verifies its own work without being told to, so explicit verification instructions carried over from earlier prompts cause over-verification and removing them reduces wasted tokens… · 17 claims, confidence 0.90.
 
 ## Current understanding
 
@@ -39,6 +40,7 @@ review_required: false
 - Anthropic positions Fable 5.1 for demanding reasoning and long-horizon agentic work, Opus 5 for complex agentic coding and enterprise work, Sonnet 5 as the best combination of speed and intelligence, and Haiku 4.5 as the fastest model with near-frontier intelligence (0.93)
 - On the Intelligence Index GPT-6 Astra costs $3.26 per task at max effort against $7.63 for Claude Fable 5.1, with every Astra effort level from low ($0.82) to max on the cost frontier; on the Coding Agent Index it costs $7.09 per task, about 40% less than Fable 5.1 and 30% less than Opus 5 (0.81)
 - On the Artificial Analysis Coding Agent Index GPT-6 Astra scores 62, level with Claude Fable 5.1 (62) and ahead of Claude Opus 5 (60), GPT-5.6 Sol (55), and Muse Spark 1.3 (54) (0.81)
+- DeepSWE v1.1 puts GPT-6 Astra at xhigh, Gemini 3.8 Flash at high, and Claude Opus 5 at max in a three-way tie at 74% pass@1 on costs of $6.52, $2.36, and $11.84 per task (0.81)
 - GPT-6 Astra takes markedly fewer turns per task than other frontier models — 24 at max effort on GDPval tasks against 45 for GPT-5.6 Sol and 60 for Claude Fable 5.1 and Claude Opus 5 — and its GDPval-AA v2 score dropped about 45 Elo against Sol (0.81)
 
 ## Evidence
@@ -74,6 +76,8 @@ review_required: false
   - `src_1a690917c61d` Benchmarking GPT-6 Astra: "Every reasoning effort of GPT-6 Astra sits on the Intelligence Index vs Cost per Task frontier, from low at $0.82 per task to max at $3.26."
 - `clm_3cf4d9ede51e` — "On the Artificial Analysis Coding Agent Index GPT-6 Astra scores 62, level with Claude Fable 5.1 (62) and ahead of Claude Opus 5 (60), GPT-5.6 Sol (55), and Muse Spark 1.3 (54)." · p 0.81 · active · 1 support · 0 contradict
   - `src_1a690917c61d` Benchmarking GPT-6 Astra: "In Codex, GPT-6 Astra scores 62 in the Index, level with Claude Fable 5.1 in Claude Code (62) and ahead of Claude Opus 5 (60), GPT-5.6 Sol (55) and Muse Spark 1.3 in Muse Code (54)."
+- `clm_2d9fb7740370` — "DeepSWE v1.1 puts GPT-6 Astra at xhigh, Gemini 3.8 Flash at high, and Claude Opus 5 at max in a three-way tie at 74% pass@1 on costs of $6.52, $2.36, and $11.84 per task." · p 0.81 · active · 1 support · 0 contradict
+  - `src_74863c70ef6c` DeepSWE v1.1: "gpt-6-astra[xhigh] 74%±3% Avg cost $6.52Out tok 30kSteps 29 74%±3% $6.52 30k 29 gemini-3.8-flash[high] 74%±1% Avg cost $2.36Out tok 143kSteps 166 74%±1% $2.36 143k 166 claude-opus-5[max] 74%±4% Avg cost $11.84Out tok 118kSteps 99 74%±4%…"
 - `clm_a50b6a0ab8de` — "GPT-6 Astra takes markedly fewer turns per task than other frontier models — 24 at max effort on GDPval tasks against 45 for GPT-5.6 Sol and 60 for Claude Fable 5.1 and Claude Opus 5 — and its GDPval-AA v2 score dropped about 45 Elo against Sol." · p 0.81 · active · 1 support · 0 contradict
   - `src_1a690917c61d` Benchmarking GPT-6 Astra: "24 per task at max effort, compared to 45 for GPT-5.6 Sol and 60 turns per task for Claude Fable 5.1 and Claude Opus 5."
 
@@ -96,6 +100,7 @@ review_required: false
 - 2026-09-12 new_claim `clm_34fc0b797675` (src_963229517470)
 - 2026-09-12 new_claim `clm_a6168419f5b5` (src_963229517470)
 - 2026-09-12 new_claim `clm_99361b6ce5ac` (src_41365e6aef45)
+- 2026-09-14 new_claim `clm_2d9fb7740370` (src_74863c70ef6c)
 
 ## Related
 
@@ -108,12 +113,13 @@ review_required: false
 - [[claude-fable-5-1]] — 9 shared claims
 - [[claude-haiku-4-5]] — 4 shared claims
 - [[claude-sonnet-5]] — 4 shared claims
+- [[gpt-6-astra]] — 4 shared claims
 - [[artificial-analysis]] — 3 shared claims
 - [[effort-level]] — 3 shared claims
-- [[gpt-6-astra]] — 3 shared claims
 - [[gpt-5-6-sol]] — 2 shared claims
 - [[subagents]] — 2 shared claims
 - [[adaptive-thinking]] — 1 shared claim
 - [[claude-code-review]] — 1 shared claim
 - [[code-review]] — 1 shared claim
 - [[context-window]] — 1 shared claim
+- [[deepswe]] — 1 shared claim
