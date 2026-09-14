@@ -5,8 +5,9 @@
     "M1 every stamp names a model id as pi --list-models prints it and an effort, and cites the roster row it matched",
     "M2 an orchestrator or judgment task defaults to opus, a delegated scoped task to sonnet; fable is never stamped on a subagent",
     "M3 a failure is diagnosed before escalation: didn't-know raises the model, didn't-try raises the effort, and the same tier is never retried",
-    "M4 no stamp goes below the provider default to save tokens; haiku is never given an effort; terra is never stamped",
-    "M5 the stamp is written where it binds — .pi/settings.json agentOverrides, a plan row, or a --model flag — never into a template or an agent file"
+    "M4 no stamp goes below the provider default to save tokens; haiku is never given an effort; terra is stamped only as a named candidate for sonnet-tier work pending a head-to-head, never as a settled default and never for utility work luna covers",
+    "M5 the stamp is written where it binds — .pi/settings.json agentOverrides, a plan row, or a --model flag — never into a template or an agent file",
+    "M6 a model already at its measured best effort escalates on the model axis: max is not proposed as the step up from Astra or Fable 5.1 xhigh, nor anything above high on Sonnet 5; max is accepted where the roster names it the measured setting (Sol, Terra)"
   ],
   "evals": [
     {
@@ -35,12 +36,34 @@
     {
       "id": 3,
       "prompt": "the eval graders are getting expensive. can we run the librarian on terra, or haiku at low effort?",
-      "expected_output": "Refuses both as written: terra is dominated (roster: not on the roster, cites the AA claim); haiku has no effort parameter so 'haiku at low' sets nothing. Offers luna at medium for the code-gradable assertions and keeps sonnet for the librarian's judgment, or splits grader from subject.",
+      "expected_output": "Rejects 'haiku at low' because Haiku has no effort parameter. Does not swap the librarian to terra as a settled default: terra is a candidate for sonnet-tier work whose 'dominated' verdict was Intelligence-Index-only and pre-price-cut, and the librarian's retrieval judgment is not the place for an untested trial. Offers luna at medium for the code-gradable grader assertions, keeps sonnet for the librarian's judgment, and names a head-to-head as the route if terra is to be tried.",
       "assertions": [
-        "M4 rejects terra and gives the domination reason",
+        "M4 does not stamp terra as a settled default; if terra is raised it is called a candidate and a head-to-head is named as the gate",
         "M4 states that haiku has no effort setting",
         "M1 proposes luna with a model id and an effort as the cheap option",
         "M2 does not move the librarian's retrieval judgment itself to luna or haiku"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "my main Pi session is on Astra at xhigh and it keeps declaring the ARCHITECTURE.md restructure done after touching two of the six folders. bump it to max?",
+      "expected_output": "Diagnosed as didn't-try (bailed early — Astra's 24-turn habit), but Astra is already at its measured best effort: max scores below xhigh on Terminal-Bench v4.0 and is not the step up. After checking the prompt scopes all six folders, the escalation is a model move to Fable 5.1 at xhigh (different family), not Astra max. Names the roster's measured-best table.",
+      "assertions": [
+        "M6 does not propose Astra max as the fix",
+        "M6 names Fable 5.1 (or opus) at xhigh as the escalation, i.e. moves on the model axis",
+        "M3 checks the prompt or scoping before escalating",
+        "M1 the proposed stamp carries a provider/id model and an effort"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "one-off run: build the investor update deck from the Q3 numbers in docs/finance/. I want it on Sol. what effort do I pass?",
+      "expected_output": "sol at max — Sol's Presentation Elo lead is measured at max and max is the only effort Sol is benchmarked at; the command is --model openai-codex/gpt-5.6-sol:max. Cites the presentation row and notes the promotional price.",
+      "assertions": [
+        "M6 accepts max for Sol rather than pushing it down to high or medium",
+        "M1 writes the stamp as openai-codex/gpt-5.6-sol with an effort suffix",
+        "M5 places the stamp on the command line for a one-off run, not in an agent file",
+        "M1 cites the presentation roster row"
       ]
     }
   ]
