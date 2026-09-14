@@ -125,6 +125,7 @@ the same rule: unstubbed means throw.
 - The retrieval eval needs `qmd` with its models; a local `.qmd/index.yml`
   pointing at another checkout, or naming a collection whose path is gone,
   makes every unattended qmd call print a trust prompt ahead of its JSON.
-  `bash scripts/qmd-setup.sh` repoints and drops those.
+  `bash .agents/skills/meta-install/scripts/qmd-setup.sh` repoints and drops
+  those.
 - The two docs under `llm-wiki/evals/` name which pytest file proves each
   governance family, and which cases are still unwritten.

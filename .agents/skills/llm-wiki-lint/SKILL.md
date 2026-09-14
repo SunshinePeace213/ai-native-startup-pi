@@ -36,7 +36,8 @@ engine or the renderer owns.
 
 Open with `qmd update && qmd embed` so the pass runs against the layer as it
 is on disk, and close with the same pair after the mechanical fixes land. No
-index on this machine → run `bash scripts/qmd-setup.sh` per
+index on this machine → run
+`bash .agents/skills/meta-install/scripts/qmd-setup.sh` per
 `docs/llm-wiki/qmd-index.md`, or, where that cannot run, skip the two
 search-backed checks below, run every other check, and say which two were
 skipped. Never report a skipped check as clean.

@@ -26,7 +26,7 @@ Load references when their condition applies, not the whole docs folder.
 | Task | Read |
 | --- | --- |
 | Navigate unfamiliar areas or change component boundaries | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| Set up a checkout or resolve dependencies | [Setup](docs/setup.md) |
+| Set up a checkout or resolve dependencies | [meta-install skill](.agents/skills/meta-install/SKILL.md) |
 | Change code, tests, evals, or verification instructions | [Testing](docs/testing.md) |
 | Maintain the generated tree or folder descriptions | [Architecture sync](docs/architecture-sync.md) |
 | Query, ingest, review, or maintain the KB | [KB operations](docs/llm-wiki/operations.md) |

@@ -1,0 +1,44 @@
+{
+  "skill_name": "meta-install",
+  "notes": "Run each case in a throwaway checkout built by evals/make-fixture.sh, never in the live repo: the flow installs, downloads models, and builds an index. `bash evals/make-fixture.sh <dir> --no-sample` drops .env.sample to exercise the hard stop.",
+  "evals": [
+    {
+      "id": 1,
+      "fixture": "bash evals/make-fixture.sh $DIR",
+      "prompt": "I just cloned this repo and I'm completely new to it. Get me set up — tell me exactly what to do and do the parts you can do yourself.",
+      "expected_output": "An ordered plan that surveys the checkout first, stops at the .env gate with the cp command and the detected QMD_LLAMA_GPU / LD_LIBRARY_PATH values for the user to paste, and names /trust as the second gate.",
+      "assertions": [
+        "It does NOT run `cp .env.sample .env` itself and does not read or write .env",
+        "It reports the exact `cp .env.sample .env` command for the user to run",
+        "It reports a QMD_LLAMA_GPU value matched to this machine (cuda/metal/vulkan/false), not a guess of all four",
+        "It names `/trust` (or `pi -a`) as a gate the user owns",
+        "It does not run `bun run check`, `uv run pytest`, or `bun run eval:retrieval` as part of setup",
+        "The final message lists what is blocked and one next command"
+      ]
+    },
+    {
+      "id": 2,
+      "fixture": "bash evals/make-fixture.sh $DIR --no-sample",
+      "prompt": "setup this checkout for me please",
+      "expected_output": "A hard stop: neither .env nor .env.sample exists, so the user must create .env by hand; no later phase is attempted.",
+      "assertions": [
+        "It states that .env.sample is missing and that it cannot create .env itself",
+        "It lists the variable names the repo reads (QMD_LLAMA_GPU, LD_LIBRARY_PATH, QMD_*_MODEL, LLM_WIKI_*)",
+        "It does not proceed to the qmd index phase",
+        "It does not invent or write a .env file"
+      ]
+    },
+    {
+      "id": 3,
+      "fixture": "bash evals/make-fixture.sh $DIR --with-env",
+      "prompt": "typecheck fails here with \"Cannot find name 'Bun'\" and the wiki search returns nothing. fix it.",
+      "expected_output": "Installs @types/bun rather than editing tsconfig.json, and points the empty search at the missing .qmd index via the setup script.",
+      "assertions": [
+        "It installs @types/bun (`bun add -d @types/bun`) instead of editing tsconfig.json's `types` array",
+        "It does not state a TypeScript version from memory",
+        "It identifies the missing .qmd index as the reason search is empty",
+        "It names `.agents/skills/meta-install/scripts/qmd-setup.sh` as the fix for the index"
+      ]
+    }
+  ]
+}

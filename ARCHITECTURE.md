@@ -27,6 +27,7 @@ ai-native-startup/
 │       ├── llm-wiki-query/ — Evidence-backed KB answers
 │       ├── llm-wiki-review/ — Human review of flagged knowledge
 │       ├── meta-agent/ — Subagent authoring and validation
+│       ├── meta-install/ — Checkout bootstrap and setup health checks
 │       ├── model-selection/ — Model and effort selection policy
 │       └── skill-creator/ — Skill authoring and evaluation
 ├── .pi/ — Project-local Pi resources
@@ -102,7 +103,7 @@ the current policy; its existence is not permission to use it or proof of readin
 
 | Need | Reference |
 | --- | --- |
-| Bootstrap or reconfigure a checkout | [Setup](docs/setup.md) |
+| Bootstrap or reconfigure a checkout | [meta-install skill](.agents/skills/meta-install/SKILL.md) |
 | Verify a change or understand coverage | [Testing](docs/testing.md) |
 | Operate or troubleshoot this generated map | [Architecture sync](docs/architecture-sync.md) |
 | Choose a KB operation and understand its side effects | [KB operations](docs/llm-wiki/operations.md) |

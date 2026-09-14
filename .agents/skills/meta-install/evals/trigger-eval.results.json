@@ -1,0 +1,128 @@
+{
+  "skill": "meta-install",
+  "runs": 1,
+  "recall": 1.0,
+  "false_fire": 0.0,
+  "queries": [
+    {
+      "query": "i just cloned this repo and i'm new here \u2014 walk me through getting it working",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "nothing runs in this checkout. `qmd: command not found` and `uv` isn't there either. what do i install?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "onboard me onto this project, i want to be able to run the wiki search and the tests by the end",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "the wiki search comes back with nothing at all and .qmd doesn't exist in the repo. how do i get the index built?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "qmd doctor says it's running on CPU but i have a 4090 in this box. which QMD_LLAMA_GPU value do i need and what's my cuda library path?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "there's no .env in my clone \u2014 what am i supposed to put in it before anything else works?",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "typecheck is exploding with Cannot find name 'Bun' and Cannot find module 'bun:test' on a fresh checkout",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "my colleague can use /skill:llm-wiki-query but none of the slash commands show up for me in this repo",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i got halfway through installing this thing last week and stopped. figure out what's still missing and finish it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "set up my new laptop so i can work on this repo \u2014 bun, python deps, the search index, all of it",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "health-check the wiki: run decay, the ledger checks, and sweep for orphans and contradictions",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "what does the wiki know about pi skill triggering? give me the answer with citations",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i added twelve new pages under llm-wiki/wiki \u2014 refresh the index so searches see them",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "write me a skill that turns our weekly release checklist into something pi does on its own",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "add tests for the state engine's rebuild --check path, i want the contract covered",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "bun run check fails at prettier on three files i just edited \u2014 fix the formatting",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "bash"
+    },
+    {
+      "query": "commit the staged changes with a proper message for this repo",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "which model should the llm-wiki-librarian agent run on, and at what thinking effort?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "i want to switch QMD_EMBED_MODEL to the 8B one on my already-working index \u2014 what does that cost me?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    },
+    {
+      "query": "ingest this article into the wiki and make it citable before our meeting",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "first_tool": "read"
+    }
+  ]
+}

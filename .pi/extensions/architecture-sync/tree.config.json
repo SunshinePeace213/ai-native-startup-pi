@@ -15,6 +15,7 @@
     ".agents/skills/llm-wiki-query": "Evidence-backed KB answers",
     ".agents/skills/llm-wiki-review": "Human review of flagged knowledge",
     ".agents/skills/meta-agent": "Subagent authoring and validation",
+    ".agents/skills/meta-install": "Checkout bootstrap and setup health checks",
     ".agents/skills/model-selection": "Model and effort selection policy",
     ".agents/skills/skill-creator": "Skill authoring and evaluation",
     ".pi": "Project-local Pi resources",

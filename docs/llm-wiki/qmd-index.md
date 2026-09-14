@@ -10,10 +10,13 @@ repairs the index.
 - Config and database live in `.qmd/` at the repo root — gitignored,
   project-local, machine-local, and absent from a fresh clone. A missing index
   is the normal state of a new checkout, never an error.
-- `bash scripts/qmd-setup.sh` creates both collections (`wiki` over
-  `llm-wiki/wiki`, `raw` over `llm-wiki/raw`), attaches their context
-  descriptions, and indexes the layer. It is idempotent — re-run it whenever
-  the collections look wrong.
+- `bash .agents/skills/meta-install/scripts/qmd-setup.sh` creates both
+  collections (`wiki` over `llm-wiki/wiki`, `raw` over `llm-wiki/raw`), attaches
+  their context descriptions, downloads any missing model, and indexes the
+  layer. It is idempotent — re-run it whenever the collections look wrong, and
+  `--check` runs its health check alone. It ships with the
+  [meta-install skill](../../.agents/skills/meta-install/SKILL.md), which owns
+  first-time setup.
 - qmd finds the index by walking up from the working directory, so it is
   scoped by directory, not by git branch: checking out another branch in the
   same directory keeps the same index.
