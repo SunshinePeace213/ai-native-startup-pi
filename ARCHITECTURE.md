@@ -35,7 +35,9 @@ ai-native-startup/
 │   │   └── evals/ — Subagent behavior evals
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
-│   │   └── llm-wiki/ — KB grounding, reminders, and write protection
+│   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
+│   │   └── ui-customization-soriza/ — S/Z header, theme picker, and terminal colour sync
+│   ├── themes/ — Pi colour themes (disler's set plus deep-purple)
 │   └── settings.json — Persistent agent model overrides
 ├── docs/ — Task-specific operating references
 │   └── llm-wiki/ — KB standards, contracts, and operations
@@ -53,7 +55,8 @@ ai-native-startup/
 │   ├── pi/ — Pi extension contracts
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
-│   │   └── llm-wiki/ — KB extension hook and bridge tests
+│   │   ├── llm-wiki/ — KB extension hook and bridge tests
+│   │   └── ui-customization-soriza/ — Header, picker, terminal sync, and theme file contracts
 │   └── scripts/ — Python CLI contract tests
 │       └── llm-wiki/ — State engine tests using isolated vaults
 ├── AGENTS.md — Essential constraints and reference routing

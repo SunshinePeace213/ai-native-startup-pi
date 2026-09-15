@@ -18,6 +18,7 @@ export interface FakePi {
   sent: SentMessage[];
   execCalls: ExecCall[];
   commands: Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>;
+  shortcuts: Map<string, Parameters<ExtensionAPI["registerShortcut"]>[1]>;
   entries: Array<{ customType: string; data: unknown }>;
   /** Fire one event through every handler registered for it; the first defined result wins. */
   emit(event: string, payload: Record<string, unknown>, ctx: ExtensionContext): Promise<unknown>;
@@ -35,6 +36,7 @@ export function createFakePi(
   const sent: SentMessage[] = [];
   const execCalls: ExecCall[] = [];
   const commands = new Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>();
+  const shortcuts = new Map<string, Parameters<ExtensionAPI["registerShortcut"]>[1]>();
   const entries: Array<{ customType: string; data: unknown }> = [];
   const flags: Record<string, unknown> = { ...options.flags };
 
@@ -52,6 +54,9 @@ export function createFakePi(
     },
     registerCommand(name: string, command: Parameters<ExtensionAPI["registerCommand"]>[1]) {
       commands.set(name, command);
+    },
+    registerShortcut(key: string, shortcut: Parameters<ExtensionAPI["registerShortcut"]>[1]) {
+      shortcuts.set(key, shortcut);
     },
     registerFlag(name: string, flag: { default?: unknown }) {
       if (!(name in flags)) flags[name] = flag.default;
@@ -76,6 +81,7 @@ export function createFakePi(
     sent,
     execCalls,
     commands,
+    shortcuts,
     entries,
     async emit(event, payload, ctx) {
       for (const handler of handlers.get(event) ?? []) {

@@ -6,3 +6,6 @@ dist
 # machine-written by the skill trigger probe and by Obsidian
 .agents/skills/*/evals/*.results.json
 llm-wiki/.obsidian/
+
+# theme files are kept byte-identical to their upstream (disler/pi-vs-claude-code)
+.pi/themes/
