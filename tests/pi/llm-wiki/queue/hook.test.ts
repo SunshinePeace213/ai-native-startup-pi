@@ -8,6 +8,9 @@
 // Q4  more rows than MAX_QUEUE_LINES → the rows are capped and the rest are counted
 // Q5  the block is a machine-parsed format: <llm-wiki-queue> … </llm-wiki-queue>
 // Q6  without a UI the status is not set, the message still goes
+// Q7  session_start replayed on the unchanged conversation (reason "reload") → the status
+//     refreshes but no second reminder is queued; every reason that opens a conversation
+//     not yet told (startup, new, resume, fork) sends
 
 import { describe, expect, test } from "bun:test";
 import { writeFileSync } from "node:fs";
@@ -26,7 +29,10 @@ const row = (n: number, lane = "light") => ({
 });
 const EMPTY = { total: 0, unregistered: [], unextracted: [] };
 
-function session(exec: ExecScript, options: { hasUI?: boolean; inbox?: number } = {}) {
+function session(
+  exec: ExecScript,
+  options: { hasUI?: boolean; inbox?: number; reason?: string } = {},
+) {
   const layer = scratchLayer();
   for (let i = 0; i < (options.inbox ?? 0); i++) {
     writeFileSync(layer.at(`llm-wiki/states/inbox/agent-${i}.jsonl`), "{}\n");
@@ -37,7 +43,7 @@ function session(exec: ExecScript, options: { hasUI?: boolean; inbox?: number } 
   return {
     fake,
     status,
-    start: () => fake.emit("session_start", { reason: "startup" }, ctx),
+    start: (reason = options.reason ?? "startup") => fake.emit("session_start", { reason }, ctx),
   };
 }
 
@@ -112,6 +118,33 @@ describe("queue", () => {
     );
     expect(block).toContain("3 more");
   });
+
+  const WAITING = { total: 1, unregistered: [row(1)], unextracted: [] };
+
+  test("Q7 a reload replays session_start → status refreshed, no second reminder", async () => {
+    const s = session(scriptedExec({ queue: ok(WAITING) }), { hasUI: true });
+    await s.start("startup");
+    await s.start("reload");
+    await s.start("reload");
+    expect(s.fake.sent).toHaveLength(1);
+    expect(s.status.get("llm-wiki")).toContain("1");
+  });
+
+  test("Q7 a reload with nothing yet sent stays silent but still refreshes", async () => {
+    const s = session(scriptedExec({ queue: ok(WAITING) }), { hasUI: true });
+    await s.start("reload");
+    expect(s.fake.sent).toEqual([]);
+    expect(s.status.get("llm-wiki")).toContain("1");
+  });
+
+  for (const reason of ["startup", "new", "resume", "fork"]) {
+    test(`Q7 ${reason} opens a conversation not yet told → the reminder is sent`, async () => {
+      const s = session(scriptedExec({ queue: ok(WAITING) }));
+      await s.start(reason);
+      expect(s.fake.sent).toHaveLength(1);
+      expect(s.fake.sent[0]!.message.customType).toBe("llm-wiki-queue");
+    });
+  }
 
   test("Q6 without a UI the message still goes and no status is set", async () => {
     const s = session(

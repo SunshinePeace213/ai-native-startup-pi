@@ -1,6 +1,8 @@
 // The llm-wiki extension: the knowledge base's presence in every Pi turn.
 //
 //   session_start        → the ingest queue and inbox, delivered with the next prompt
+//                          (once per conversation: an extension reload replays the event
+//                          on the same conversation, so it refreshes the status only)
 //   before_agent_start   → the top leads for the prompt, as a persistent context message
 //   tool_call            → a write or bash command aimed at an engine- or renderer-owned
 //                          file is blocked, naming the verb to run instead
@@ -39,7 +41,7 @@ export default function (pi: ExtensionAPI) {
   const exec: ExecFn = (command, args, options) => pi.exec(command, args, options);
   let skipGrounding = false;
 
-  pi.on("session_start", async (_event, ctx) => {
+  pi.on("session_start", async (event, ctx) => {
     const root = layerRoot(ctx.cwd);
     if (!root) return;
     const result = await queue(exec, root, QUEUE_TIMEOUT_MS);
@@ -52,6 +54,12 @@ export default function (pi: ExtensionAPI) {
       );
     }
     if (result.total === 0 && inbox === 0) return;
+    // An extension reload — every save of an extension file is one — replays
+    // session_start against the unchanged conversation, while the reminder the
+    // first start queued is still waiting for the next prompt. Sending again
+    // stacks a copy per reload, all flushed into one turn. The other reasons
+    // each open a conversation that has not been told yet.
+    if (event.reason === "reload") return;
     pi.sendMessage(
       { customType: "llm-wiki-queue", content: formatQueue(result, inbox), display: true },
       { deliverAs: "nextTurn" },
