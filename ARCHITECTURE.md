@@ -36,7 +36,7 @@ ai-native-startup/
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
-│   │   └── ui-customization-soriza/ — S/Z header, theme picker, and terminal colour sync
+│   │   └── ui-customization-soriza/ — Pi chrome: S/Z header, theme picker, and the emoji statusline
 │   ├── themes/ — Pi colour themes (disler's set plus deep-purple)
 │   └── settings.json — Persistent agent model overrides
 ├── docs/ — Task-specific operating references
@@ -56,7 +56,7 @@ ai-native-startup/
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
-│   │   └── ui-customization-soriza/ — Header, picker, terminal sync, and theme file contracts
+│   │   └── ui-customization-soriza/ — Header, picker, terminal sync, statusline, and theme file contracts
 │   └── scripts/ — Python CLI contract tests
 │       └── llm-wiki/ — State engine tests using isolated vaults
 ├── AGENTS.md — Essential constraints and reference routing
@@ -79,6 +79,14 @@ ai-native-startup/
   `agent_settled` synchronization. It owns only the marked block above and never
   touches KB content. Descriptions and the rest of this document are maintained
   in authorized edits.
+- **UI extension (`ui-customization-soriza`):** `index.ts` wires Pi's lifecycle to
+  three features sharing one TUI handle — `header/` (the S/Z monogram and repo
+  line), `theme/` (picker, cycling, the 🎨 status with its swatch, terminal colour
+  sync), and `statusline/` (the emoji footer: `render.ts` is pure, `quota.ts` and
+  `quota-fetch.ts` read the Anthropic and Codex subscription usage with tokens Pi
+  resolves in memory, `quota-store.ts` caches them with backoff, `git.ts` and
+  `stats.ts` supply the tree and session figures). It paints only with theme
+  tokens, never blocks render on I/O, and persists nothing.
 - **State engine:** Python CLIs apply observations and maintain state. Rendering
   derives pages and index rows, and appends render audit records. Graph and retrieval
   commands inspect the layer. qmd maintains the separate machine-local search index.

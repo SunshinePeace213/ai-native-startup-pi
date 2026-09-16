@@ -12,7 +12,7 @@
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { CATALOG } from "@ext/ui-customization-soriza/catalog";
+import { CATALOG } from "@ext/ui-customization-soriza/theme/catalog";
 
 const ROOT = join(import.meta.dir, "../../../..");
 const THEMES_DIR = join(ROOT, ".pi/themes");

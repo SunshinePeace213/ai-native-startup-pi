@@ -17,7 +17,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import extension from "@ext/ui-customization-soriza/index";
-import { oscReset, oscSet } from "@ext/ui-customization-soriza/terminal";
+import { oscReset, oscSet } from "@ext/ui-customization-soriza/theme/terminal";
 import { createFakePi } from "@harness/fake-pi";
 import { createUiCtx, tagTheme } from "../fixture";
 

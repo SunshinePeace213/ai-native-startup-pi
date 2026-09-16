@@ -19,9 +19,10 @@
 // R1: the picker lists themes in Pi's own (alphabetical) order, except the
 //     built-ins go last — identified by name, since Pi 0.85 gives them a
 //     path into its package like any theme file.
-// A1: after every successful switch the footer status names the theme in
-//     accent and a swatch widget in the new theme's colours sits below the
-//     editor; shutdown clears the widget.
+// A1: after every successful switch the footer status carries the 🎨 icon and
+//     the theme's name in accent followed by its swatch in the new theme's
+//     colours, and a swatch widget in those colours sits below the editor;
+//     shutdown clears the widget.
 
 import { describe, expect, test } from "bun:test";
 import extension from "@ext/ui-customization-soriza/index";
@@ -267,10 +268,13 @@ describe("K1 keys", () => {
 });
 
 describe("A1 after a switch", () => {
-  test("A1 status in accent and a swatch widget below the editor in the new colours", async () => {
+  test("A1 status: 🎨 name in accent plus the swatch; a swatch widget below the editor", async () => {
     const { ui, run } = await setup();
     await run("nord");
-    expect(ui.status.get("soriza-theme")).toContain("<accent:nord>◆ nord</accent:nord>");
+    const status = ui.status.get("soriza-theme")!;
+    expect(status).toContain("<accent:nord>🎨 nord</accent:nord>");
+    expect(status).toContain("<success:nord>██</success:nord>");
+    expect(status).toContain("<error:nord>██</error:nord>");
     const widget = ui.widgets.get("soriza-swatch")!;
     expect(widget).toBeDefined();
     const text = widget.join("\n");

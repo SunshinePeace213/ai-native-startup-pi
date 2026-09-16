@@ -16,23 +16,11 @@ import {
   truncateToWidth,
 } from "@earendil-works/pi-tui";
 import { CATALOG } from "./catalog";
+import { showThemeStatus, swatch } from "./status";
 
-export const THEME_STATUS_KEY = "soriza-theme";
-export const SWATCH_WIDGET_KEY = "soriza-swatch";
 export type Applied = (ctx: ExtensionContext) => void;
 
-const SWATCH_TOKENS = ["accent", "borderAccent", "success", "warning", "error", "muted"] as const;
-const BLOCK = "██";
 const MAX_VISIBLE = 12;
-
-/** Six blocks in a theme's own accent / border / success / warning / error / muted. */
-export function swatch(theme: Theme): string {
-  return SWATCH_TOKENS.map((token) => theme.fg(token, BLOCK)).join(" ");
-}
-
-export function themeName(theme: Theme): string {
-  return theme.name ?? "custom";
-}
 
 /** Pi's two built-in themes; they ship inside the Pi package, not in a themes folder. */
 const BUILT_IN = new Set(["dark", "light"]);
@@ -46,19 +34,6 @@ export function orderThemes<T extends { name: string }>(themes: T[]): T[] {
     ...themes.filter((t) => !BUILT_IN.has(t.name)),
     ...themes.filter((t) => BUILT_IN.has(t.name)),
   ];
-}
-
-export function showThemeStatus(ctx: ExtensionContext): void {
-  if (!ctx.hasUI) return;
-  const theme = ctx.ui.theme;
-  ctx.ui.setStatus(THEME_STATUS_KEY, theme.fg("accent", `◆ ${themeName(theme)}`));
-}
-
-/** The widget flashed under the editor after a switch: name plus swatch in the new colours. */
-export function swatchWidget(theme: Theme, width: number): string[] {
-  const label = `${theme.fg("accent", "◆")} ${theme.bold(theme.fg("accent", themeName(theme)))}  ${swatch(theme)}`;
-  const rule = theme.fg("borderMuted", "─".repeat(Math.max(0, width)));
-  return [rule, truncateToWidth(`  ${label}`, width), rule];
 }
 
 function applyByName(ctx: ExtensionContext, name: string, applied: Applied, suffix = ""): boolean {
