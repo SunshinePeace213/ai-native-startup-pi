@@ -33,9 +33,10 @@
 // R6: the last line lists other extensions' statuses with their icons in the
 //     fixed order (architecture-sync, llm-wiki, then unknown keys) and the
 //     theme status last on its left, and the session's context length as
-//     `<count> Tokens` flush against its right edge; with no statuses the
-//     badge still holds the corner, it follows the Context row's own figure,
-//     and control characters in a status never break the line.
+//     `<count> Tokens` — the exact count, not the Context row's abbreviation —
+//     flush against its right edge; with no statuses the badge still holds the
+//     corner, it follows the Context row's own figure, and control characters
+//     in a status never break the line.
 // R7: compact mode is two content lines with no bars, every provider terse on
 //     the second, plus the badge line; verbose adds the cache read/write
 //     totals and the provider id.
@@ -45,7 +46,8 @@
 // F1: the bar fills in proportion and bands green → amber → red by position,
 //     never by the total; durations read 4d6h · 2h14m · 18m · 45s and never
 //     negative; quota countdowns keep their smaller unit (4h00m · 5d0h) so the
-//     column holds still; token counts abbreviate exactly as Pi's footer does.
+//     column holds still; token counts abbreviate exactly as Pi's footer does,
+//     and `fmtExactTokens` keeps every digit, grouped in threes.
 // F2: `layoutGrid` aligns every column when that fits, falls back to the first
 //     column only, then to plain rows, and never leaves trailing space;
 //     `layoutRight` pins its trailer to the right edge, keeps a gap, and
@@ -62,6 +64,7 @@ import {
   fmtDuration,
   fmtResetAt,
   fmtStamp,
+  fmtExactTokens,
   fmtTokens,
   layout,
   layoutGrid,
@@ -452,7 +455,7 @@ describe("R6 status line", () => {
   test("R6 no statuses → the badge still holds the line; newlines stay on one line", () => {
     const bare = renderStatusline(bareTheme(), 120, snapshot());
     expect(bare).toHaveLength(5);
-    expect(bare[4]!.trim()).toBe("84k Tokens");
+    expect(bare[4]!.trim()).toBe("84,000 Tokens");
     const lines = plain(snapshot({ statuses: new Map([["llm-wiki", "wiki\nqueue\t2"]]) }));
     expect(lines).toHaveLength(5);
     expect(lines[4]).toContain("📚 wiki queue 2");
@@ -464,23 +467,24 @@ describe("R6 status line", () => {
       const lines = renderStatusline(bareTheme(), width, snapshot({ statuses }));
       const last = lines.at(-1)!;
       expect(last).toContain("📚 wiki queue 2");
-      expect(last.endsWith("84k Tokens")).toBe(true);
+      expect(last.endsWith("84,000 Tokens")).toBe(true);
       expect(visibleWidth(last)).toBe(width);
       // left content, then a run of padding, then the badge — nothing after it
-      expect(last).toMatch(/ {2,}84k Tokens$/);
+      expect(last).toMatch(/ {2,}84,000 Tokens$/);
     }
   });
 
   test("R6 the badge is the session's context length, not its cumulative traffic", () => {
     // cumulative traffic is 2.4M; the context holds 84k of the window
-    expect(renderStatusline(bareTheme(), 160, snapshot()).at(-1)).toContain("84k Tokens");
+    expect(renderStatusline(bareTheme(), 160, snapshot()).at(-1)).toContain("84,000 Tokens");
     const longer = renderStatusline(
       bareTheme(),
       160,
-      snapshot({ context: { percent: 11, tokens: 114_000, window: 1_000_000, auto: true } }),
+      snapshot({ context: { percent: 11, tokens: 114_325, window: 1_000_000, auto: true } }),
     );
+    // the Context row still abbreviates; the badge carries the exact figure
     expect(longer[1]).toContain("11% (114k/1.0M)");
-    expect(longer.at(-1)).toContain("114k Tokens");
+    expect(longer.at(-1)).toContain("114,325 Tokens");
   });
 
   test("R6 no context reading → the badge reads — Tokens, like the Context row", () => {
@@ -554,7 +558,7 @@ describe("R7 modes", () => {
     expect(lines[1]).toContain("🟠 Claude 5h 58% · 7d 21%");
     expect(lines[1]).toContain("🟢 OpenAI 5h 3% · 7d 2%");
     expect(lines[1]!.indexOf("🟠")).toBeLessThan(lines[1]!.indexOf("🟢"));
-    expect(lines[2]!.trim()).toBe("84k Tokens");
+    expect(lines[2]!.trim()).toBe("84,000 Tokens");
   });
 
   test("R7 verbose: cache read/write totals and the provider id", () => {
@@ -623,6 +627,18 @@ describe("F1 format", () => {
     [12_000_000, "12M"],
   ])("F1 %d tokens read %s", (n, text) => {
     expect(fmtTokens(n)).toBe(text);
+  });
+
+  test.each([
+    [0, "0"],
+    [999, "999"],
+    [1_000, "1,000"],
+    [48_321, "48,321"],
+    [114_325, "114,325"],
+    [1_240_567, "1,240,567"],
+    [1_240_567.4, "1,240,567"],
+  ])("F1 %d tokens read %s in full", (n, text) => {
+    expect(fmtExactTokens(n)).toBe(text);
   });
 
   test("F2 layoutGrid aligns every column, then the first, then gives up", () => {

@@ -4,10 +4,13 @@
 // the statusline's layout, so what the badge means can change without
 // touching how the lines are fitted.
 //
-//   context 114k of 1.0M → "114k Tokens"
+// The badge carries the exact count, grouped for reading, not the abbreviated
+// form the rest of the statusline uses:
+//
+//   context 114,325 of 1.0M → "114,325 Tokens"
 
 import type { Theme } from "@earendil-works/pi-coding-agent";
-import { fmtTokens } from "../statusline/format";
+import { fmtExactTokens } from "../statusline/format";
 
 /** Pi's context reading, as the statusline snapshots it. */
 export interface ContextReading {
@@ -23,16 +26,16 @@ export function sessionTokens(context: ContextReading): number | null {
   return Math.max(0, Math.round(context.tokens));
 }
 
-/** The text of the badge, unpainted: `114k Tokens`, or `— Tokens` with no reading. */
+/** The text of the badge, unpainted: `114,325 Tokens`, or `— Tokens` with no reading. */
 export function tokenBadgeText(context: ContextReading): string {
   const tokens = sessionTokens(context);
-  return `${tokens === null ? "—" : fmtTokens(tokens)} Tokens`;
+  return `${tokens === null ? "—" : fmtExactTokens(tokens)} Tokens`;
 }
 
 /** The badge as the statusline shows it: the count in text, the unit dim. */
 export function tokenBadge(theme: Theme, context: ContextReading): string {
   const tokens = sessionTokens(context);
   const count =
-    tokens === null ? theme.fg("dim", "—") : theme.bold(theme.fg("text", fmtTokens(tokens)));
+    tokens === null ? theme.fg("dim", "—") : theme.bold(theme.fg("text", fmtExactTokens(tokens)));
   return `${count} ${theme.fg("dim", "Tokens")}`;
 }

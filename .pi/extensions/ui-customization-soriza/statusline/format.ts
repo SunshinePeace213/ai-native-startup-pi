@@ -34,6 +34,19 @@ export function fmtTokens(count: number): string {
   return `${Math.round(count / 1000000)}M`;
 }
 
+/**
+ * The count in full, grouped for reading: 999 · 1,234 · 114,325 · 1,240,000.
+ * Used where the exact figure matters more than a short column — the token
+ * badge — while `fmtTokens` keeps the abbreviated form everywhere else.
+ */
+export function fmtExactTokens(count: number): string {
+  const rounded = Math.round(count);
+  const sign = rounded < 0 ? "-" : "";
+  return `${sign}${Math.abs(rounded)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+}
+
 /** Two significant units at most: 4d6h · 2h14m · 18m · 45s; never negative. */
 export function fmtDuration(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
