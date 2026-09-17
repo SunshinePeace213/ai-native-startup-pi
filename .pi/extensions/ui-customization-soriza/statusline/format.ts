@@ -1,5 +1,5 @@
 // Pure formatting for the statusline: token counts the way Pi's footer
-// abbreviates them, countdowns and elapsed times, the ⛁ bar with its
+// abbreviates them, countdowns, reset stamps, the ⛁ bar with its
 // green → amber → red banding, the severity of a percentage, and the layout
 // step that fits prioritised segments into a width — full forms first, then
 // compact forms from the least important segment up, then dropping segments,
@@ -47,10 +47,60 @@ export function fmtDuration(ms: number): string {
   return `${s}s`;
 }
 
+/**
+ * Quota countdowns, where the columns must hold still across a redraw:
+ * 5d0h · 4d6h · 4h00m · 18m · 45s. Unlike `fmtDuration` the smaller unit is
+ * always carried, so a window never jumps between `4h` and `4h00m`.
+ */
+export function fmtCountdown(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const h = Math.floor((total % 86400) / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  if (d > 0) return `${d}d${h}h`;
+  if (h > 0) return `${h}h${String(m).padStart(2, "0")}m`;
+  if (m > 0) return `${m}m`;
+  return `${total % 60}s`;
+}
+
 export function fmtClock(date: Date): string {
   const hh = String(date.getHours()).padStart(2, "0");
   const mm = String(date.getMinutes()).padStart(2, "0");
   return `${hh}:${mm}`;
+}
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+
+/** A dated 24-hour stamp: `20 Sep Sun 20:32`. */
+export function fmtStamp(date: Date): string {
+  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${WEEKDAYS[date.getDay()]} ${fmtClock(date)}`;
+}
+
+/**
+ * When a window resets, in wall-clock terms: a bare `16:46` while it lands on
+ * today's date, the full `20 Sep Sun 18:32` stamp otherwise. `dated` forces
+ * the stamp — the 7-day window always carries its date.
+ */
+export function fmtResetAt(at: Date, now: Date, dated = false): string {
+  const sameDay =
+    at.getFullYear() === now.getFullYear() &&
+    at.getMonth() === now.getMonth() &&
+    at.getDate() === now.getDate();
+  return !dated && sameDay ? fmtClock(at) : fmtStamp(at);
 }
 
 export function fmtPercent(percent: number): string {
@@ -112,6 +162,10 @@ export interface Segment {
  * truncated with an ellipsis. Order on the line is the order given.
  */
 export function layout(segments: Segment[], width: number, gap = "   "): string {
+  return join(segments, width, gap);
+}
+
+function join(segments: Segment[], width: number, gap: string): string {
   const present = segments.filter((s) => s.full.length > 0);
   const forms = present.map((s) => s.full);
   const alive = present.map(() => true);
@@ -133,4 +187,67 @@ export function layout(segments: Segment[], width: number, gap = "   "): string 
     if (fits()) return join();
   }
   return truncateToWidth(join(), width, "…");
+}
+
+/**
+ * Pad every row's cells to a shared column width, so the bars, percentages
+ * and the groups after them start at the same column on every row. A row's
+ * last cell is never padded, so no line carries trailing space. `columns`
+ * caps how many columns take part.
+ */
+function align(rows: Segment[][], width: number, gap: string, columns: number): string[] | null {
+  const present = rows.map((row) => row.filter((s) => s.full.length > 0));
+  const widths: number[] = [];
+  for (const row of present)
+    row.forEach((cell, i) => {
+      widths[i] = Math.max(widths[i] ?? 0, visibleWidth(cell.full));
+    });
+  const lines = present.map((row) =>
+    row
+      .map((cell, i) => {
+        if (i >= columns || i === row.length - 1) return cell.full;
+        return `${cell.full}${" ".repeat(Math.max(0, widths[i]! - visibleWidth(cell.full)))}`;
+      })
+      .join(gap),
+  );
+  return lines.every((line) => visibleWidth(line) <= width) ? lines : null;
+}
+
+/**
+ * Lay rows out as a grid, relaxing in steps that every row takes together —
+ * so no row keeps its bars while its neighbour loses them:
+ *
+ *   full forms, every column aligned → full forms, first column aligned →
+ *   compact forms, every column aligned → compact forms, first column →
+ *   compact forms flowing, least important segments dropped.
+ */
+export function layoutGrid(rows: Segment[][], width: number, gap = "   "): string[] {
+  if (rows.length === 0) return [];
+  const compact = rows.map((row) => row.map((s) => ({ ...s, full: s.compact ?? s.full })));
+  return (
+    align(rows, width, gap, Infinity) ??
+    align(rows, width, gap, 1) ??
+    align(compact, width, gap, Infinity) ??
+    align(compact, width, gap, 1) ??
+    compact.map((row) => join(row, width, gap))
+  );
+}
+
+/**
+ * `segments` from the left, `trailer` flush against the right edge, at least
+ * `gap` between them. The trailer always survives; the segments give way to
+ * it by their own priorities.
+ */
+export function layoutRight(
+  segments: Segment[],
+  trailer: string,
+  width: number,
+  gap = "   ",
+): string {
+  const trailerWidth = visibleWidth(trailer);
+  if (trailerWidth >= width) return truncateToWidth(trailer, width, "…");
+  const left = join(segments, Math.max(0, width - trailerWidth - gap.length), gap);
+  const room = width - visibleWidth(left) - trailerWidth;
+  if (left.length === 0) return `${" ".repeat(Math.max(0, width - trailerWidth))}${trailer}`;
+  return `${left}${" ".repeat(Math.max(gap.length, room))}${trailer}`;
 }

@@ -32,6 +32,17 @@ export function tagTheme(name: string): TagTheme {
 
 export const strip = (s: string) => s.replace(/<\/?[a-zA-Z:.-]+>/g, "");
 
+/** A theme that paints nothing, for measuring real widths and columns. */
+export function bareTheme(): TagTheme {
+  return {
+    name: "bare",
+    fg: (_token: string, text: string) => text,
+    bg: (_token: string, text: string) => text,
+    bold: (text: string) => text,
+    italic: (text: string) => text,
+  } as unknown as TagTheme;
+}
+
 type Factory = (tui: unknown, theme: Theme) => Component & { dispose?(): void };
 type FooterFactory = (
   tui: unknown,

@@ -5,10 +5,18 @@
 // of prioritised segments that `layout` fits to the width: full forms, then
 // compact forms (bars off) from the least important segment up, then drops.
 //
-//   📁 cwd  🌿 branch ✓|+s ~m ?u ⇡a ⇣b  🔖 session  🤖 model · 🧠 thinking  🕐 clock ⏱️ elapsed
-//   🧮 ⛁ ⛁ ⛁ … pct (used/window) auto   📥 in · 📤 out · ⚡ cached   💰 cost sub ($/h)
-//   🟠 5h ⛁ ⛁ … pct ⏳reset   7d ⛁ ⛁ … pct ⏳reset (fable · opus · sonnet)   🟢 codex 5h · 7d
-//   🏗️ architecture …   📚 wiki …   🎨 theme ██ ██ …
+//   📁 cwd  🌿 branch ✓|+s ~m ?u ⇡a ⇣b  🔖 session  🤖 model · 🧠 thinking  🕐 clock
+//   🧮 Context    ⛁ …  pct (used/window) auto   📥 in · 📤 out · ⚡ cached   💰 cost sub ($/h)
+//   🟠 Claude  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at      (fable · opus …)
+//   🟢 OpenAI  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at
+//   🏗️ architecture …   📚 wiki …   🎨 theme ██ …                       114k Tokens
+//
+// The middle lines are a grid: one row for the context, one per provider,
+// their names padded into a shared column so the bars, the percentages and
+// everything after them line up (see `layoutGrid`). The last line carries the
+// other extensions' statuses on the left and the context's token count flush
+// right.
+// Compact mode drops the grid: two content lines, bars off, providers terse.
 
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { basename } from "node:path";
@@ -17,10 +25,14 @@ import {
   bar,
   CONTEXT_THRESHOLDS,
   fmtCost,
+  fmtCountdown,
   fmtDuration,
   fmtPercent,
+  fmtResetAt,
   fmtTokens,
   layout,
+  layoutGrid,
+  layoutRight,
   level,
   type Level,
   QUOTA_THRESHOLDS,
@@ -30,6 +42,7 @@ import { type GitState, isClean } from "./git";
 import { modelWindowFor, PROVIDER_META, type ProviderId, type QuotaWindow } from "./quota";
 import type { QuotaEntry } from "./quota-store";
 import type { UsageTotals } from "./stats";
+import { tokenBadge } from "../tokens";
 
 export interface Snapshot {
   /** Already `~`-collapsed. */
@@ -66,13 +79,12 @@ export const ICON = {
   model: "🤖",
   thinking: "🧠",
   clock: "🕐",
-  elapsed: "⏱️",
   context: "🧮",
   input: "📥",
   output: "📤",
   cache: "⚡",
   cost: "💰",
-  reset: "⏳",
+  reset: "↻",
   stale: "⚠️",
   auth: "🔒",
 } as const;
@@ -83,8 +95,16 @@ export const STATUS_ICONS: ReadonlyArray<[key: string, icon: string]> = [
   ["llm-wiki", "📚"],
 ];
 
-const CONTEXT_CELLS = 16;
+const CONTEXT_CELLS = 10;
 const QUOTA_CELLS = 10;
+/** The context row's name in the grid's shared label column. */
+const CONTEXT_LABEL = "Context";
+/** Width of the `5h` / `7d` tag the provider rows carry and the context row does not. */
+const TAG_WIDTH = 2;
+/** Two spaces separate every bar from its percentage. */
+const BAR_GAP = "  ";
+/** Percentages are padded to this width so the countdowns line up in a column. */
+const PERCENT_WIDTH = 3;
 /** Values older than this without an error are flagged too: the idle poll should have replaced them. */
 const STALE_AFTER_MS = 15 * 60_000;
 
@@ -104,6 +124,9 @@ class Paint {
   byLevel = (lvl: Level, s: string) => this.theme.fg(LEVEL_TOKEN[lvl], s);
   pct = (percent: number, thresholds = QUOTA_THRESHOLDS) =>
     this.byLevel(level(percent, thresholds), fmtPercent(percent));
+  /** The percentage plus plain padding to `PERCENT_WIDTH` (outside the paint). */
+  pctColumn = (percent: number, thresholds = QUOTA_THRESHOLDS) =>
+    `${this.pct(percent, thresholds)}${pad(fmtPercent(percent), PERCENT_WIDTH)}`;
   bar = (percent: number, cells: number, thresholds = QUOTA_THRESHOLDS) =>
     bar(
       percent,
@@ -113,6 +136,9 @@ class Paint {
       thresholds,
     );
 }
+
+/** Spaces that widen `text` to `width`; never negative. */
+const pad = (text: string, width: number) => " ".repeat(Math.max(0, width - text.length));
 
 const sanitize = (text: string) =>
   text
@@ -162,27 +188,39 @@ function whereLine(p: Paint, snap: Snapshot, opts: RenderOptions): Segment[] {
       : "";
     segments.push({ full: `${model}${thinking}`, compact: model, priority: 80 });
   }
-  const clock = `${ICON.clock} ${p.dim(snap.clock)}`;
-  const elapsed =
-    snap.elapsedMs !== undefined
-      ? ` ${p.dim("·")} ${ICON.elapsed} ${p.dim(fmtDuration(snap.elapsedMs))}`
-      : "";
-  segments.push({ full: `${clock}${elapsed}`, compact: clock, priority: 30 });
+  segments.push({ full: `${ICON.clock} ${p.dim(snap.clock)}`, priority: 30 });
   return segments;
 }
 
 // ── line 2: this session ────────────────────────────────────────────────────
 
-function contextSegment(p: Paint, snap: Snapshot): Segment {
+/**
+ * The context row of the grid. In the grid its label sits in the same column
+ * as the providers' names and the `5h`/`7d` tag slot is left blank, so its bar
+ * and percentage start exactly where theirs do — in both the full and the
+ * bars-off form. Off the grid (compact mode) it drops the label and stands on
+ * its own.
+ */
+function contextSegment(p: Paint, snap: Snapshot, labelWidth: number, labelled: boolean): Segment {
   const { percent, tokens, window, auto } = snap.context;
-  const pct = percent === null ? p.dim("—") : p.pct(percent, CONTEXT_THRESHOLDS);
+  const plain = percent === null ? "—" : fmtPercent(percent);
+  const painted = percent === null ? p.dim("—") : p.pct(percent, CONTEXT_THRESHOLDS);
+  const pct = `${painted}${pad(plain, PERCENT_WIDTH)}`;
   const used = tokens === null ? "—" : fmtTokens(tokens);
   const detail = p.dim(`(${used}/${fmtTokens(window)})`);
   const autoMark = auto ? ` ${p.dim("auto")}` : "";
   const filled = p.bar(percent ?? 0, CONTEXT_CELLS, CONTEXT_THRESHOLDS);
+  if (!labelled)
+    return {
+      full: `${ICON.context} ${filled}${BAR_GAP}${pct} ${detail}${autoMark}`,
+      compact: `${ICON.context} ${painted} ${detail}`,
+      priority: Infinity,
+    };
+  const label = `${p.text(CONTEXT_LABEL)}${pad(CONTEXT_LABEL, labelWidth)}`;
+  const lead = `${ICON.context} ${label}${BAR_GAP}${" ".repeat(TAG_WIDTH)} `;
   return {
-    full: `${ICON.context} ${filled} ${pct} ${detail}${autoMark}`,
-    compact: `${ICON.context} ${pct} ${detail}`,
+    full: `${lead}${filled}${BAR_GAP}${pct} ${detail}${autoMark}`,
+    compact: `${lead}${pct} ${detail}${autoMark}`,
     priority: Infinity,
   };
 }
@@ -219,9 +257,9 @@ function costSegment(p: Paint, snap: Snapshot): Segment {
   return { full: `${cost}${perHour}`, compact: cost, priority: 80 };
 }
 
-function sessionLine(p: Paint, snap: Snapshot, opts: RenderOptions): Segment[] {
+function sessionLine(p: Paint, snap: Snapshot, opts: RenderOptions, labelWidth: number): Segment[] {
   const segments = [
-    contextSegment(p, snap),
+    contextSegment(p, snap, labelWidth, opts.mode === "full"),
     tokensSegment(p, snap.usage, opts.verbose),
     costSegment(p, snap),
   ];
@@ -229,11 +267,18 @@ function sessionLine(p: Paint, snap: Snapshot, opts: RenderOptions): Segment[] {
   return segments;
 }
 
-// ── line 3: quota ───────────────────────────────────────────────────────────
+// ── line 3+: one line per provider ───────────────────────────────────────────────────────────
 
-function countdown(p: Paint, window: QuotaWindow, now: number): string {
+/**
+ * `↻ 2h14m · 16:46` — how long the window has left and when it turns over.
+ * The 5-hour window shows a bare clock while it resets today; the 7-day one
+ * always carries its date (`↻ 4d6h · 20 Sep Sun 20:32`).
+ */
+function countdown(p: Paint, window: QuotaWindow, now: number, dated: boolean): string {
   if (window.resetsAt === null) return "";
-  return ` ${ICON.reset} ${p.dim(fmtDuration(window.resetsAt - now))}`;
+  const left = fmtCountdown(window.resetsAt - now);
+  const at = fmtResetAt(new Date(window.resetsAt), new Date(now), dated);
+  return ` ${ICON.reset} ${p.dim(left)} ${p.dim("·")} ${p.dim(at)}`;
 }
 
 interface Marker {
@@ -262,17 +307,26 @@ function marker(p: Paint, entry: QuotaEntry, now: number): Marker {
   return same("");
 }
 
-function activeQuota(
+/** `🟠 Claude  ` — the icon and the label padded into a column shared by every line. */
+function head(p: Paint, entry: QuotaEntry, labelWidth: number): string {
+  const { icon, name } = PROVIDER_META[entry.provider];
+  return `${icon} ${p.text(name)}${pad(name, labelWidth)}${BAR_GAP}`;
+}
+
+/** One provider's own line: `🟠 Claude  5h ⛁…  58% ↻ 2h14m · 16:46   7d …   (fable …)`. */
+function providerQuota(
   p: Paint,
   entry: QuotaEntry,
   modelId: string | undefined,
   now: number,
+  labelWidth: number,
 ): Segment[] {
-  const { icon } = PROVIDER_META[entry.provider];
+  const lead = head(p, entry, labelWidth);
   const mark = marker(p, entry, now);
   const quota = entry.quota;
   if (!quota) {
-    return [{ full: `${icon} ${mark.full} ${p.dim("5h — · 7d —")}`, priority: Infinity }];
+    const qualifier = mark.full ? `${mark.full} ` : "";
+    return [{ full: `${lead}${qualifier}${p.dim("5h — · 7d —")}`, priority: Infinity }];
   }
   const segments: Segment[] = [];
   // The marker trails the first window shown (never dropped), spaced like the countdown.
@@ -283,23 +337,25 @@ function activeQuota(
   const windowSegment = (
     label: string,
     window: QuotaWindow | undefined,
-    lead: string,
+    dated: boolean,
     priority: number,
   ) => {
     if (!window) return;
-    const pct = p.pct(window.percent);
-    const reset = countdown(p, window, now);
+    // Only the first window shown carries the provider's name column.
+    const at = segments.length === 0 ? lead : "";
+    const pct = p.pctColumn(window.percent);
+    const reset = countdown(p, window, now, dated);
     segments.push({
-      full: `${lead}${p.dim(label)} ${p.bar(window.percent, QUOTA_CELLS)} ${pct}${reset}${trail.full}`,
-      compact: `${lead}${p.dim(label)} ${pct}${reset}${trail.compact}`,
+      full: `${at}${p.dim(label)} ${p.bar(window.percent, QUOTA_CELLS)}${BAR_GAP}${pct}${reset}${trail.full}`,
+      compact: `${at}${p.dim(label)} ${pct}${reset}${trail.compact}`,
       priority,
     });
     trail = { full: "", compact: "" };
   };
-  windowSegment("5h", quota.session, `${icon} `, Infinity);
-  windowSegment("7d", quota.weekly, quota.session ? "" : `${icon} `, 90);
+  windowSegment("5h", quota.session, false, Infinity);
+  windowSegment("7d", quota.weekly, true, 90);
   if (!quota.session && !quota.weekly)
-    segments.push({ full: `${icon}${trail.full}`, priority: Infinity });
+    segments.push({ full: `${lead}${trail.full}`.trimEnd(), priority: Infinity });
 
   if (quota.models.length > 0) {
     const gating = modelWindowFor(quota, modelId);
@@ -320,7 +376,8 @@ function activeQuota(
   return segments;
 }
 
-function otherQuota(
+/** The terse one-line form compact mode folds onto the session line. */
+function terseQuota(
   p: Paint,
   entry: QuotaEntry,
   modelId: string | undefined,
@@ -337,11 +394,11 @@ function otherQuota(
   const shortParts: string[] = [];
   if (quota.session) {
     parts.push(`${p.dim("5h")} ${pct(quota.session)}`);
-    shortParts.push(pct(quota.session));
+    shortParts.push(`${p.dim("5h")} ${pct(quota.session)}`);
   }
   if (quota.weekly) {
     parts.push(`${p.dim("7d")} ${pct(quota.weekly)}`);
-    shortParts.push(pct(quota.weekly));
+    shortParts.push(`${p.dim("7d")} ${pct(quota.weekly)}`);
   }
   const gating = modelWindowFor(quota, modelId) ?? quota.models[0];
   if (gating) parts.push(`${p.dim(gating.label)} ${pct(gating)}`);
@@ -357,19 +414,35 @@ function otherQuota(
   };
 }
 
-function quotaLine(p: Paint, snap: Snapshot): Segment[] {
-  if (snap.quotas.length === 0) return [];
+/** Every provider with a stored entry, the one the session is talking to first. */
+function orderedQuotas(snap: Snapshot): QuotaEntry[] {
   const activeId = snap.model?.provider as ProviderId | undefined;
-  const active = snap.quotas.find((q) => q.provider === activeId) ?? snap.quotas[0]!;
-  const segments = activeQuota(p, active, snap.model?.id, snap.now);
-  for (const entry of snap.quotas) {
-    if (entry === active) continue;
-    segments.push(otherQuota(p, entry, snap.model?.id, snap.now));
-  }
-  return segments;
+  const active = snap.quotas.find((q) => q.provider === activeId);
+  if (!active) return [...snap.quotas];
+  return [active, ...snap.quotas.filter((q) => q !== active)];
 }
 
-// ── line 4: extension statuses ──────────────────────────────────────────────
+/** The grid's shared label column: the widest of `Context` and the provider names. */
+function labelColumnWidth(snap: Snapshot): number {
+  return Math.max(
+    CONTEXT_LABEL.length,
+    ...snap.quotas.map((e) => PROVIDER_META[e.provider].name.length),
+  );
+}
+
+/** Full mode: one row of segments per provider, labels in the shared column. */
+function quotaLines(p: Paint, snap: Snapshot, labelWidth: number): Segment[][] {
+  return orderedQuotas(snap).map((entry) =>
+    providerQuota(p, entry, snap.model?.id, snap.now, labelWidth),
+  );
+}
+
+/** Compact mode: every provider terse, folded onto the session line. */
+function quotaCompact(p: Paint, snap: Snapshot): Segment[] {
+  return orderedQuotas(snap).map((entry) => terseQuota(p, entry, snap.model?.id, snap.now));
+}
+
+// ── last line: extension statuses, and the token badge flush right ──────────
 
 function statusLine(statuses: ReadonlyMap<string, string>): Segment[] {
   const known = new Map(STATUS_ICONS);
@@ -400,16 +473,15 @@ export function renderStatusline(
   const compact = (segments: Segment[]) =>
     opts.mode === "compact" ? segments.map((s) => ({ ...s, full: s.compact ?? s.full })) : segments;
 
+  const labelWidth = labelColumnWidth(snap);
   const lines: string[] = [layout(compact(whereLine(p, snap, opts)), width)];
-  const session = sessionLine(p, snap, opts);
-  const quota = quotaLine(p, snap);
+  const session = sessionLine(p, snap, opts, labelWidth);
   if (opts.mode === "compact") {
-    lines.push(layout(compact([...session, ...quota]), width));
+    lines.push(layout(compact([...session, ...quotaCompact(p, snap)]), width));
   } else {
-    lines.push(layout(session, width));
-    if (quota.length > 0) lines.push(layout(quota, width));
+    lines.push(...layoutGrid([session, ...quotaLines(p, snap, labelWidth)], width));
   }
-  const statuses = statusLine(snap.statuses);
-  if (statuses.length > 0) lines.push(layout(statuses, width));
-  return lines.filter((line, i) => i === 0 || line.length > 0);
+  // The badge owns the bottom-right corner whether or not anything shares the line.
+  lines.push(layoutRight(statusLine(snap.statuses), tokenBadge(theme, snap.context), width));
+  return lines.filter((line, i) => i === 0 || line.trim().length > 0);
 }

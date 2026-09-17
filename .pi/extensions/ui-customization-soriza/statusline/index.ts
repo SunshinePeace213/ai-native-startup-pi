@@ -7,8 +7,8 @@
 // logged into by OAuth; nothing is read from disk and nothing is persisted.
 //
 //   /statusline            show the mode
-//   /statusline full       three lines (four with extension statuses)
-//   /statusline compact    two lines, bars off
+//   /statusline full       where · session · a line per provider (· statuses)
+//   /statusline compact    two lines, bars off, every provider terse
 //   /statusline verbose    toggle cache read/write totals and the provider id
 //   /statusline off | on   restore Pi's footer / bring the statusline back
 //   /statusline refresh    poll the quotas now
@@ -171,6 +171,7 @@ export function createStatusline(
           }
         : undefined,
       clock: fmtClock(new Date(at)),
+      // not shown itself; the cost line's burn rate is derived from it
       elapsedMs: started === undefined ? undefined : Math.max(0, at - started),
       context: {
         percent: usage?.percent ?? null,

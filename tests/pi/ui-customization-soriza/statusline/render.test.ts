@@ -3,35 +3,53 @@
 // R1: every line fits the width it is given, at every width; as the width
 //     shrinks, bars go before numbers and the least important segment goes
 //     before the more important — the cwd, the context figure, and the
-//     active 5h window are never dropped.
+//     active 5h window are never dropped; the grid relaxes (all columns
+//     aligned → the label column only → plain flow) rather than overflowing.
 // R2: the where line carries cwd, branch with its dirty marks (✓ clean, else
 //     +staged ~modified ?untracked ⇡ahead ⇣behind), the session name, the
-//     model with its thinking level, the clock and the elapsed time; Pi's own
-//     branch stands in when the probe has nothing, and a session with no name
-//     shows no 🔖.
-// R3: the session line carries the context bar and percentage in Pi's own
-//     thresholds (warning above 70, error above 90), the used/window figures,
+//     model with its thinking level and the clock — never an elapsed time;
+//     Pi's own branch stands in when the probe has nothing, and a session
+//     with no name shows no 🔖.
+// R3: the context row is labelled `Context` in the grid's shared label column
+//     and carries the ten-cell bar, two spaces, and the percentage in Pi's
+//     own thresholds (warning above 70, error above 90), the used/window
+//     figures,
 //     `auto` only when auto-compaction is on, tokens in and out, the latest
 //     cache-hit rate (warning below 50 %), and the cost with `sub` only on a
 //     subscription and a burn rate only once a minute has elapsed; an unknown
 //     context (after compaction) shows — rather than 0.
-// R4: the quota line puts the active provider first with bars and countdowns,
-//     the per-model weekly windows in parentheses with the one gating the
-//     active model highlighted and the rest dim, and every other provider
-//     after it without bars; no quota at all → no quota line.
+// R4: every provider gets its own line — icon, name padded into a shared
+//     column, then 5h and 7d as bar, two spaces, percentage padded to three,
+//     ↻ time-left · reset stamp — the active provider's line first and
+//     carrying the per-model weekly windows in parentheses, the one gating
+//     the active model highlighted and the rest dim; no quota at all → no
+//     quota lines.
+// R4b: a 5h window resetting today shows a bare 24-hour clock and otherwise
+//     the dated `20 Sep Sun 18:32` stamp; the 7d window is always dated.
 // R5: a failed poll keeps the last values and marks them, after the numbers,
 //     ⚠️ stale with their age; a re-login need shows 🔒; a first fetch still
 //     pending shows …; values older than the idle poll are marked stale too.
 //     Every icon is followed by a space; sibling icon groups are separated by ·.
-// R6: the status line lists other extensions' statuses with their icons in the
-//     fixed order (architecture-sync, llm-wiki, then unknown keys), the theme
-//     status last, and is absent when there are none; control characters in a
-//     status never break the line.
-// R7: compact mode is two content lines with no bars; verbose adds the cache
-//     read/write totals and the provider id.
+// R6: the last line lists other extensions' statuses with their icons in the
+//     fixed order (architecture-sync, llm-wiki, then unknown keys) and the
+//     theme status last on its left, and the session's context length as
+//     `<count> Tokens` flush against its right edge; with no statuses the
+//     badge still holds the corner, it follows the Context row's own figure,
+//     and control characters in a status never break the line.
+// R7: compact mode is two content lines with no bars, every provider terse on
+//     the second, plus the badge line; verbose adds the cache read/write
+//     totals and the provider id.
+// R8: lines 2..n are one grid — `Context`, then a row per provider — so the
+//     ⛁ bars, the percentages and the group after them all start at the same
+//     column on every row, whatever the names and numbers are.
 // F1: the bar fills in proportion and bands green → amber → red by position,
 //     never by the total; durations read 4d6h · 2h14m · 18m · 45s and never
-//     negative; token counts abbreviate exactly as Pi's footer does.
+//     negative; quota countdowns keep their smaller unit (4h00m · 5d0h) so the
+//     column holds still; token counts abbreviate exactly as Pi's footer does.
+// F2: `layoutGrid` aligns every column when that fits, falls back to the first
+//     column only, then to plain rows, and never leaves trailing space;
+//     `layoutRight` pins its trailer to the right edge, keeps a gap, and
+//     sacrifices the segments rather than the trailer.
 // G1: porcelain v2 parses branch, ahead/behind, staged, modified (including
 //     conflicts), untracked; ignored files are not counted; a detached HEAD
 //     reads "detached".
@@ -40,18 +58,25 @@ import { describe, expect, test } from "bun:test";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import {
   bar,
+  fmtCountdown,
   fmtDuration,
+  fmtResetAt,
+  fmtStamp,
   fmtTokens,
   layout,
+  layoutGrid,
+  layoutRight,
 } from "@ext/ui-customization-soriza/statusline/format";
 import { parsePorcelain } from "@ext/ui-customization-soriza/statusline/git";
 import type { QuotaEntry } from "@ext/ui-customization-soriza/statusline/quota-store";
 import { renderStatusline, type Snapshot } from "@ext/ui-customization-soriza/statusline/render";
 import { themeStatus } from "@ext/ui-customization-soriza/theme/status";
-import { strip, tagTheme } from "../fixture";
+import { bareTheme, strip, tagTheme } from "../fixture";
 
-const NOW = Date.parse("2026-09-16T06:32:00Z");
+// Local time, because the reset stamps are wall-clock: Wed 16 Sep 2026, 14:32.
+const NOW = new Date(2026, 8, 16, 14, 32).getTime();
 const H = 3_600_000;
+const DAY = 24 * H;
 const theme = tagTheme("nord");
 /** `n` bar cells as they read once stripped: a space between every glyph. */
 const cells = (n: number) => Array.from({ length: n }, () => "⛁").join(" ");
@@ -63,7 +88,7 @@ const anthropic: QuotaEntry = {
   quota: {
     provider: "anthropic",
     session: { percent: 58, resetsAt: NOW + 2 * H + 14 * 60_000 },
-    weekly: { percent: 21, resetsAt: NOW + 4 * 24 * H + 6 * H },
+    weekly: { percent: 21, resetsAt: NOW + 4 * DAY + 6 * H },
     models: [
       { label: "fable", percent: 21, resetsAt: null },
       { label: "opus", percent: 12, resetsAt: null },
@@ -78,7 +103,7 @@ const codex: QuotaEntry = {
   quota: {
     provider: "openai-codex",
     session: { percent: 3, resetsAt: NOW + 4 * H },
-    weekly: { percent: 17, resetsAt: NOW + 5 * 24 * H },
+    weekly: { percent: 2, resetsAt: NOW + 5 * DAY },
     models: [],
   },
 };
@@ -130,13 +155,7 @@ describe("R1 width", () => {
   );
 
   test("R1 a plain theme (no markup) fits exactly at narrow widths", () => {
-    const bare = {
-      name: "bare",
-      fg: (_t: string, s: string) => s,
-      bg: (_t: string, s: string) => s,
-      bold: (s: string) => s,
-      italic: (s: string) => s,
-    } as unknown as ReturnType<typeof tagTheme>;
+    const bare = bareTheme();
     for (const width of [130, 100, 80, 60, 40, 24]) {
       const lines = renderStatusline(bare, width, snapshot());
       // an icon is never glued to what follows it
@@ -149,17 +168,12 @@ describe("R1 width", () => {
       expect(lines[1]).toContain("42%");
       expect(lines[2]).toContain("🟠");
       expect(lines[2]).toContain("58%");
+      expect(lines[3]).toContain("🟢");
     }
   });
 
   test("R1 shrinking drops the bars before the numbers and the clock before the model", () => {
-    const bare = {
-      name: "bare",
-      fg: (_t: string, s: string) => s,
-      bg: (_t: string, s: string) => s,
-      bold: (s: string) => s,
-      italic: (s: string) => s,
-    } as unknown as ReturnType<typeof tagTheme>;
+    const bare = bareTheme();
     const wide = renderStatusline(bare, 200, snapshot());
     const narrow = renderStatusline(bare, 80, snapshot());
     expect(wide[1]).toContain("⛁");
@@ -167,18 +181,28 @@ describe("R1 width", () => {
     expect(narrow[1]).toContain("42%");
     expect(narrow[0]).toContain("claude-fable-5-1");
     expect(narrow[0]).not.toContain("🕐");
+    // the 5h window survives on every provider line
+    expect(narrow[2]).toContain("58%");
+    expect(narrow[3]).toContain("3%");
   });
 });
 
 describe("R2 where line", () => {
-  test("R2 clean tree: cwd, branch ✓, session, model · thinking, clock, elapsed", () => {
+  test("R2 clean tree: cwd, branch ✓, session, model · thinking, clock", () => {
     const [line] = plain(snapshot());
     expect(line).toContain("📁 ~/ai-native-startup-pi");
     expect(line).toContain("🌿 main ✓");
     expect(line).toContain("🔖 statusline redesign");
     expect(line).toContain("🤖 claude-fable-5-1 · 🧠 xhigh");
     expect(line).toContain("🕐 14:32");
-    expect(line).toContain("🕐 14:32 · ⏱️ 1h12m");
+  });
+
+  test("R2 the elapsed time is never shown, whatever the session's age", () => {
+    for (const elapsedMs of [undefined, 30_000, 72 * 60_000, 9 * H]) {
+      const [line] = plain(snapshot({ elapsedMs }));
+      expect(line).not.toContain("⏱");
+      expect(line).not.toContain("1h12m");
+    }
   });
 
   test("R2 dirty tree: the marks with their signs, branch painted warning", () => {
@@ -200,25 +224,23 @@ describe("R2 where line", () => {
     expect(plain(snapshot({ git: null, branch: null }))[0]).not.toContain("🌿");
   });
 
-  test("R2 no session name → no 🔖; no thinking → no 🧠; no elapsed → no ⏱️", () => {
+  test("R2 no session name → no 🔖; no thinking → no 🧠", () => {
     const [line] = plain(
       snapshot({
         sessionName: undefined,
         model: { id: "gpt-5.5", provider: "openai-codex" },
-        elapsedMs: undefined,
       }),
     );
     expect(line).not.toContain("🔖");
     expect(line).toContain("🤖 gpt-5.5");
     expect(line).not.toContain("🧠");
-    expect(line).not.toContain("⏱️");
   });
 });
 
-describe("R3 session line", () => {
-  test("R3 context, tokens, cache hit, cost with sub and burn rate", () => {
+describe("R3 context row", () => {
+  test("R3 labelled Context, ten-cell bar, two spaces, tokens, cache hit, cost", () => {
     const [, line] = plain(snapshot());
-    expect(line).toContain(`🧮 ${cells(16)} 42% (84k/200k) auto`);
+    expect(line).toContain(`🧮 Context     ${cells(10)}  42% (84k/200k) auto`);
     expect(line).toContain("📥 1.2M in · 📤 48k out · ⚡ 92% cached");
     expect(line).toContain("💰 $4.31 sub ($3.59/h)");
   });
@@ -236,7 +258,7 @@ describe("R3 session line", () => {
     const [, line] = plain(
       snapshot({ context: { percent: null, tokens: null, window: 200_000, auto: false } }),
     );
-    expect(line).toContain(`🧮 ${cells(16)} — (—/200k)`);
+    expect(line).toContain(`🧮 Context     ${cells(10)}  —   (—/200k)`);
     expect(line).not.toContain("auto");
     expect(line).not.toContain("0%");
   });
@@ -257,14 +279,21 @@ describe("R3 session line", () => {
   });
 });
 
-describe("R4 quota line", () => {
-  test("R4 active provider first with bars and countdowns; models in parentheses; codex compact after", () => {
-    const [, , line] = plain(snapshot());
-    expect(line).toContain(`🟠 5h ${cells(10)} 58% ⏳ 2h14m`);
-    expect(line).toContain(`7d ${cells(10)} 21% ⏳ 4d6h`);
-    expect(line).toContain("(fable 21% · opus 12% · sonnet 5%)");
-    expect(line).toContain("🟢 codex 5h 3% · 7d 17%");
-    expect(line!.indexOf("🟠")).toBeLessThan(line!.indexOf("🟢"));
+describe("R4 quota lines", () => {
+  test("R4 one line per provider: label column, bars, padded percentages, resets", () => {
+    const [, , claude, openai] = plain(snapshot());
+    expect(claude).toContain(`🟠 Claude   5h ${cells(10)}  58% ↻ 2h14m · 16:46`);
+    expect(claude).toContain(`7d ${cells(10)}  21% ↻ 4d6h · 20 Sep Sun 20:32`);
+    expect(claude).toContain("(fable 21% · opus 12% · sonnet 5%)");
+    expect(openai).toContain(`🟢 OpenAI   5h ${cells(10)}  3%  ↻ 4h00m · 18:32`);
+    expect(openai).toContain(`7d ${cells(10)}  2%  ↻ 5d0h · 21 Sep Mon 14:32`);
+  });
+
+  test("R4 the provider is named, never the api id", () => {
+    const lines = plain(snapshot()).join("\n");
+    expect(lines).toContain("OpenAI");
+    expect(lines).not.toContain("Codex ");
+    expect(lines).not.toContain("anthropic");
   });
 
   test("R4 the window gating the active model is text, the others dim", () => {
@@ -279,13 +308,13 @@ describe("R4 quota line", () => {
     expect(sonnet).toContain("<dim:nord>fable</dim:nord>");
   });
 
-  test("R4 switching to codex flips the order; anthropic trails with its gating model only", () => {
-    const [, , line] = plain(
+  test("R4 switching to codex puts its line first; both keep their bars", () => {
+    const lines = plain(
       snapshot({ model: { id: "gpt-5.5-codex", provider: "openai-codex", thinking: "high" } }),
     );
-    expect(line!.startsWith("🟢 5h ⛁")).toBe(true);
-    expect(line).toContain("🟠 anthropic 5h 58% · 7d 21% · fable 21%");
-    expect(line).not.toContain("opus");
+    expect(lines[2]!.startsWith("🟢 OpenAI")).toBe(true);
+    expect(lines[3]!.startsWith("🟠 Claude")).toBe(true);
+    expect(lines[3]).toContain("(fable 21% · opus 12% · sonnet 5%)");
   });
 
   test.each([
@@ -301,12 +330,52 @@ describe("R4 quota line", () => {
     expect(raw).toContain(`<${token}:nord>${percent}%</${token}:nord>`);
   });
 
-  test("R4 no quotas → no quota line; statuses follow the session line directly", () => {
+  test("R4 no quotas → no quota lines; statuses follow the session line directly", () => {
     const lines = plain(
       snapshot({ quotas: [], statuses: new Map([["llm-wiki", "wiki queue 1"]]) }),
     );
     expect(lines).toHaveLength(3);
     expect(lines[2]).toContain("📚 wiki queue 1");
+  });
+
+  test("R4 a window with no reset time carries no ↻ at all", () => {
+    const entry: QuotaEntry = {
+      ...anthropic,
+      quota: { ...anthropic.quota!, session: { percent: 58, resetsAt: null }, models: [] },
+    };
+    const [, , line] = plain(snapshot({ quotas: [entry] }));
+    expect(line).toContain(`🟠 Claude   5h ${cells(10)}  58%`);
+    // the 5h group ends at its percentage: nothing between it and the 7d window
+    expect(line!.slice(0, line!.indexOf("7d"))).not.toContain("↻");
+    expect(line).toContain("21% ↻ 4d6h");
+  });
+});
+
+describe("R4b reset stamps", () => {
+  const session = (resetsAt: number) => ({
+    ...anthropic,
+    quota: { ...anthropic.quota!, session: { percent: 58, resetsAt } },
+  });
+
+  test("R4b a 5h window resetting today shows a bare 24-hour clock", () => {
+    const [, , line] = plain(snapshot({ quotas: [session(NOW + 2 * H + 14 * 60_000)] }));
+    expect(line).toContain("58% ↻ 2h14m · 16:46");
+  });
+
+  test("R4b a 5h window resetting tomorrow shows the dated stamp", () => {
+    // 16 Sep 2026 22:32 + 4h → 17 Sep, a Thursday
+    const late = new Date(2026, 8, 16, 22, 32).getTime();
+    const [, , line] = plain(snapshot({ now: late, quotas: [session(late + 4 * H)] }));
+    expect(line).toContain("58% ↻ 4h00m · 17 Sep Thu 02:32");
+  });
+
+  test("R4b the 7d window is dated even when it resets today", () => {
+    const entry: QuotaEntry = {
+      ...anthropic,
+      quota: { ...anthropic.quota!, weekly: { percent: 21, resetsAt: NOW + 3 * H } },
+    };
+    const [, , line] = plain(snapshot({ quotas: [entry] }));
+    expect(line).toContain("21% ↻ 3h00m · 16 Sep Wed 17:32");
   });
 });
 
@@ -314,38 +383,39 @@ describe("R5 stale and failed", () => {
   test("R5 a throttled poll keeps the numbers and marks them ⚠️ with their age", () => {
     const stale: QuotaEntry = { ...anthropic, error: "throttled", fetchedAt: NOW - 12 * 60_000 };
     const [, , line] = plain(snapshot({ quotas: [stale] }));
-    expect(line).toContain("🟠 5h");
-    expect(line).toContain("58% ⏳ 2h14m ⚠️ stale 12m");
+    expect(line).toContain("🟠 Claude   5h");
+    expect(line).toContain("58% ↻ 2h14m · 16:46 ⚠️ stale 12m");
   });
 
-  test("R5 a stale inactive provider carries the marker after its numbers", () => {
+  test("R5 a stale inactive provider carries the marker on its own line", () => {
     const stale: QuotaEntry = { ...anthropic, error: "network", fetchedAt: NOW - 3 * 60_000 };
-    const [, , line] = plain(
+    const lines = plain(
       snapshot({
         model: { id: "gpt-5.5-codex", provider: "openai-codex" },
         quotas: [stale, codex],
       }),
     );
-    expect(line).toContain("🟠 anthropic 5h 58% · 7d 21% · fable 21% · ⚠️ stale 3m");
+    expect(lines[3]).toContain("🟠 Claude");
+    expect(lines[3]).toContain("58% ↻ 2h14m · 16:46 ⚠️ stale 3m");
   });
 
   test("R5 an auth failure with no values → 🔒 re-login and dashes", () => {
     const [, , line] = plain(
       snapshot({ quotas: [{ provider: "anthropic", nextAllowedAt: 0, error: "auth" }] }),
     );
-    expect(line).toContain("🟠 🔒 re-login 5h — · 7d —");
+    expect(line).toContain("🟠 Claude   🔒 re-login 5h — · 7d —");
   });
 
   test("R5 an auth failure after good values → 🔒 next to the numbers", () => {
     const [, , line] = plain(snapshot({ quotas: [{ ...anthropic, error: "auth" }] }));
-    expect(line).toContain("58% ⏳ 2h14m 🔒");
+    expect(line).toContain("58% ↻ 2h14m · 16:46 🔒");
   });
 
   test("R5 a first fetch still pending → …", () => {
     const [, , line] = plain(
       snapshot({ quotas: [{ provider: "openai-codex", nextAllowedAt: 0 }] }),
     );
-    expect(line).toContain("🟢 …");
+    expect(line).toContain("🟢 OpenAI   … 5h — · 7d —");
   });
 
   test("R5 fresh values carry no marker; values older than the idle poll are marked", () => {
@@ -363,8 +433,10 @@ describe("R6 status line", () => {
       ["llm-wiki", "wiki queue 2 · inbox 0"],
       ["architecture-sync", "architecture: current"],
     ]);
+    // where, Context, Claude, OpenAI, then the statuses and the badge
     const lines = plain(snapshot({ statuses }));
-    const line = lines[3]!;
+    expect(lines).toHaveLength(5);
+    const line = lines[4]!;
     const order = [
       "🏗️ architecture: current",
       "📚 wiki queue 2 · inbox 0",
@@ -377,21 +449,112 @@ describe("R6 status line", () => {
     expect(line).toContain("██");
   });
 
-  test("R6 no statuses → three lines; a status with newlines stays on one line", () => {
-    expect(plain(snapshot())).toHaveLength(3);
+  test("R6 no statuses → the badge still holds the line; newlines stay on one line", () => {
+    const bare = renderStatusline(bareTheme(), 120, snapshot());
+    expect(bare).toHaveLength(5);
+    expect(bare[4]!.trim()).toBe("84k Tokens");
     const lines = plain(snapshot({ statuses: new Map([["llm-wiki", "wiki\nqueue\t2"]]) }));
-    expect(lines).toHaveLength(4);
-    expect(lines[3]).toBe("📚 wiki queue 2");
+    expect(lines).toHaveLength(5);
+    expect(lines[4]).toContain("📚 wiki queue 2");
+  });
+
+  test("R6 the token badge sits in the bottom-right corner of the last line", () => {
+    const statuses = new Map([["llm-wiki", "wiki queue 2"]]);
+    for (const width of [160, 120, 100]) {
+      const lines = renderStatusline(bareTheme(), width, snapshot({ statuses }));
+      const last = lines.at(-1)!;
+      expect(last).toContain("📚 wiki queue 2");
+      expect(last.endsWith("84k Tokens")).toBe(true);
+      expect(visibleWidth(last)).toBe(width);
+      // left content, then a run of padding, then the badge — nothing after it
+      expect(last).toMatch(/ {2,}84k Tokens$/);
+    }
+  });
+
+  test("R6 the badge is the session's context length, not its cumulative traffic", () => {
+    // cumulative traffic is 2.4M; the context holds 84k of the window
+    expect(renderStatusline(bareTheme(), 160, snapshot()).at(-1)).toContain("84k Tokens");
+    const longer = renderStatusline(
+      bareTheme(),
+      160,
+      snapshot({ context: { percent: 11, tokens: 114_000, window: 1_000_000, auto: true } }),
+    );
+    expect(longer[1]).toContain("11% (114k/1.0M)");
+    expect(longer.at(-1)).toContain("114k Tokens");
+  });
+
+  test("R6 no context reading → the badge reads — Tokens, like the Context row", () => {
+    const lines = renderStatusline(
+      bareTheme(),
+      160,
+      snapshot({ context: { percent: null, tokens: null, window: 200_000, auto: false } }),
+    );
+    expect(lines[1]).toContain("—   (—/200k)");
+    expect(lines.at(-1)!.trim()).toBe("— Tokens");
+  });
+});
+
+describe("R8 the grid", () => {
+  /** The display column a marker starts at, counting emoji as their real width. */
+  const col = (line: string, marker: string) => {
+    const at = line.indexOf(marker);
+    expect(at).toBeGreaterThanOrEqual(0);
+    return visibleWidth(line.slice(0, at));
+  };
+
+  test("R8 bars, percentages and the next group start at the same column on every row", () => {
+    const [, context, claude, openai] = renderStatusline(bareTheme(), 200, snapshot());
+    expect(col(context!, "⛁")).toBe(col(claude!, "⛁"));
+    expect(col(openai!, "⛁")).toBe(col(claude!, "⛁"));
+    expect(col(context!, "42%")).toBe(col(claude!, "58%"));
+    expect(col(openai!, "3%")).toBe(col(claude!, "58%"));
+    // the second column: the tokens group sits where the 7d windows start
+    expect(col(context!, "📥")).toBe(col(claude!, "7d"));
+    expect(col(openai!, "7d")).toBe(col(claude!, "7d"));
+    // the third: cost sits where the per-model windows start
+    expect(col(context!, "💰")).toBe(col(claude!, "(fable"));
+  });
+
+  test("R8 a longer name moves every row's bar together, never one row alone", () => {
+    const [, context, claude] = renderStatusline(
+      bareTheme(),
+      200,
+      snapshot({ quotas: [anthropic] }),
+    );
+    expect(col(context!, "⛁")).toBe(col(claude!, "⛁"));
+    // "Context" is the widest label, so it sets the column
+    expect(claude).toContain("🟠 Claude   5h");
+  });
+
+  test("R8 no row carries trailing space, and every row still fits", () => {
+    for (const width of [200, 160, 140, 120, 90]) {
+      for (const line of renderStatusline(bareTheme(), width, snapshot())) {
+        expect(line).toBe(line.replace(/\s+$/, ""));
+        expect(visibleWidth(line)).toBeLessThanOrEqual(width);
+      }
+    }
+  });
+
+  test("R8 too narrow for the grid → rows flow, but the name column still holds", () => {
+    for (const width of [110, 100, 90, 80]) {
+      const [, , claude, openai] = renderStatusline(bareTheme(), width, snapshot());
+      expect(claude).toContain("🟠 Claude   5h");
+      expect(openai).toContain("🟢 OpenAI   5h");
+      expect(col(openai!, "3%")).toBe(col(claude!, "58%"));
+    }
   });
 });
 
 describe("R7 modes", () => {
-  test("R7 compact: two content lines, no bars, quota on the second", () => {
+  test("R7 compact: two content lines, no bars, every provider terse, badge last", () => {
     const lines = plain(snapshot(), WIDE, { mode: "compact", verbose: false });
-    expect(lines).toHaveLength(2);
+    expect(lines).toHaveLength(3);
     expect(lines.join("\n")).not.toContain("⛁");
     expect(lines[1]).toContain("🧮 42%");
-    expect(lines[1]).toContain("🟠 5h 58% ⏳ 2h14m");
+    expect(lines[1]).toContain("🟠 Claude 5h 58% · 7d 21%");
+    expect(lines[1]).toContain("🟢 OpenAI 5h 3% · 7d 2%");
+    expect(lines[1]!.indexOf("🟠")).toBeLessThan(lines[1]!.indexOf("🟢"));
+    expect(lines[2]!.trim()).toBe("84k Tokens");
   });
 
   test("R7 verbose: cache read/write totals and the provider id", () => {
@@ -430,6 +593,29 @@ describe("F1 format", () => {
   });
 
   test.each([
+    [45_000, "45s"],
+    [18 * 60_000, "18m"],
+    [(2 * 60 + 14) * 60_000, "2h14m"],
+    [4 * H, "4h00m"],
+    [4 * H + 5 * 60_000, "4h05m"],
+    [5 * DAY, "5d0h"],
+    [(4 * 24 + 6) * H, "4d6h"],
+    [-5_000, "0s"],
+  ])("F1 %d ms counts down as %s", (ms, text) => {
+    expect(fmtCountdown(ms)).toBe(text);
+  });
+
+  test("F1 the stamp is `20 Sep Sun 20:32`; a reset today is bare unless dated", () => {
+    const now = new Date(2026, 8, 16, 14, 32);
+    expect(fmtStamp(new Date(2026, 8, 20, 20, 32))).toBe("20 Sep Sun 20:32");
+    expect(fmtResetAt(new Date(2026, 8, 16, 16, 46), now)).toBe("16:46");
+    expect(fmtResetAt(new Date(2026, 8, 16, 16, 46), now, true)).toBe("16 Sep Wed 16:46");
+    expect(fmtResetAt(new Date(2026, 8, 17, 2, 32), now)).toBe("17 Sep Thu 02:32");
+    // same day-of-month a year on is not "today"
+    expect(fmtResetAt(new Date(2027, 8, 16, 16, 46), now)).toBe("16 Sep Thu 16:46");
+  });
+
+  test.each([
     [999, "999"],
     [1_234, "1.2k"],
     [48_000, "48k"],
@@ -437,6 +623,43 @@ describe("F1 format", () => {
     [12_000_000, "12M"],
   ])("F1 %d tokens read %s", (n, text) => {
     expect(fmtTokens(n)).toBe(text);
+  });
+
+  test("F2 layoutGrid aligns every column, then the first, then gives up", () => {
+    const rows = [
+      [
+        { full: "AAA", priority: Infinity },
+        { full: "BB", priority: 50 },
+        { full: "CCCCCCCC", priority: 10 },
+      ],
+      [
+        { full: "A", priority: Infinity },
+        { full: "BBBB", priority: 50 },
+        { full: "CC", priority: 10 },
+      ],
+    ];
+    // every column aligned; the last cell of a row is never padded
+    expect(layoutGrid(rows, 40, " ")).toEqual(["AAA BB   CCCCCCCC", "A   BBBB CC"]);
+    // 17 wide no longer fits every column → only the first stays aligned
+    expect(layoutGrid(rows, 16, " ")).toEqual(["AAA BB CCCCCCCC", "A   BBBB CC"]);
+    // nothing fits aligned → rows laid out on their own, least important dropped
+    expect(layoutGrid(rows, 14, " ")).toEqual(["AAA BB", "A BBBB CC"]);
+    expect(layoutGrid([], 40, " ")).toEqual([]);
+  });
+
+  test("F2 layoutRight pins the trailer to the right edge and keeps a gap", () => {
+    const segs = [
+      { full: "LEFT", priority: 50 },
+      { full: "MORE", priority: 10 },
+    ];
+    const line = layoutRight(segs, "9 Tokens", 30, "  ");
+    expect(visibleWidth(line)).toBe(30);
+    expect(line).toBe("LEFT  MORE            9 Tokens");
+    // no segments → the trailer alone, still flush right
+    expect(layoutRight([], "9 Tokens", 12)).toBe("    9 Tokens");
+    // too tight → segments give way, the trailer never does
+    expect(layoutRight(segs, "9 Tokens", 14, "  ")).toBe("LEFT  9 Tokens");
+    expect(layoutRight(segs, "9 Tokens", 8)).toBe("9 Tokens");
   });
 
   test("F1 layout: full, then compact from the least important, then drop, then truncate", () => {

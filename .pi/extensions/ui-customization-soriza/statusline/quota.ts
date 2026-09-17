@@ -28,9 +28,10 @@ export interface ProviderQuota {
   plan?: string;
 }
 
+/** `name` is the display label on the quota lines, padded into a column. */
 export const PROVIDER_META: Record<ProviderId, { icon: string; name: string }> = {
-  anthropic: { icon: "🟠", name: "anthropic" },
-  "openai-codex": { icon: "🟢", name: "codex" },
+  anthropic: { icon: "🟠", name: "Claude" },
+  "openai-codex": { icon: "🟢", name: "OpenAI" },
 };
 
 type Json = Record<string, unknown>;

@@ -83,10 +83,13 @@ ai-native-startup/
   three features sharing one TUI handle — `header/` (the S/Z monogram and repo
   line), `theme/` (picker, cycling, the 🎨 status with its swatch, terminal colour
   sync), and `statusline/` (the emoji footer: `render.ts` is pure, `quota.ts` and
-  `quota-fetch.ts` read the Anthropic and Codex subscription usage with tokens Pi
+  `quota-fetch.ts` read the Anthropic and OpenAI subscription usage with tokens Pi
   resolves in memory, `quota-store.ts` caches them with backoff, `git.ts` and
-  `stats.ts` supply the tree and session figures). It paints only with theme
-  tokens, never blocks render on I/O, and persists nothing.
+  `stats.ts` supply the tree and session figures, `format.ts` fits prioritised
+  segments into the width and aligns the context/provider rows as one grid).
+  `tokens/` owns the session's context length and the badge the footer pins to
+  its bottom-right corner, kept apart from layout so counting can change alone. It
+  paints only with theme tokens, never blocks render on I/O, and persists nothing.
 - **State engine:** Python CLIs apply observations and maintain state. Rendering
   derives pages and index rows, and appends render audit records. Graph and retrieval
   commands inspect the layer. qmd maintains the separate machine-local search index.

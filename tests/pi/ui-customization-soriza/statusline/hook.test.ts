@@ -12,8 +12,9 @@
 //     the TUI to redraw, no change asks for nothing; a branch change reported
 //     by Pi re-probes.
 // S4: quota: a provider the session is logged into by OAuth is polled at
-//     session_start with the token Pi resolves for it, and its windows
-//     render; a provider on an API key is never polled and gets no line.
+//     session_start with the token Pi resolves for it, and its windows render
+//     on a line of their own, the active provider's first; a provider on an
+//     API key is never polled and gets no line.
 // S5: a switch to another model polls that model's provider; agent_end polls
 //     the active provider only, and not again within a minute.
 // S6: an Anthropic response's rate-limit headers update the 5h/7d windows
@@ -22,7 +23,8 @@
 //     compact renders two content lines, verbose toggles the cache detail,
 //     refresh polls now, an unknown word is an error; each reports its state.
 // S8: session_shutdown restores Pi's footer; extension statuses other
-//     extensions set render on the last line with their icons.
+//     extensions set render on the last line with their icons, and the
+//     session's token total sits flush right on that same line.
 
 import { describe, expect, test } from "bun:test";
 import extension from "@ext/ui-customization-soriza/index";
@@ -155,13 +157,15 @@ describe("S1 install", () => {
 });
 
 describe("S2 session variables", () => {
-  test("S2 cwd, session, model · thinking, elapsed, tokens, cost sub, context", async () => {
+  test("S2 cwd, session, model · thinking, tokens, cost sub, context", async () => {
     const { lines } = await start(gitExec({ status: CLEAN }));
     const [where, session] = lines();
     expect(where).toContain("📁 ~/work/ai-native-startup-pi");
     expect(where).toContain("🔖 statusline redesign");
     expect(where).toContain("🤖 claude-fable-5-1 · 🧠 xhigh");
-    expect(where).toMatch(/🕐 \d\d:\d\d · ⏱️ 1h12m/);
+    expect(where).toMatch(/🕐 \d\d:\d\d$/);
+    expect(where).not.toContain("⏱");
+    expect(where).not.toContain("1h12m");
     expect(session).toContain("42% (84k/200k)");
     expect(session).toContain("📥 1.2M in · 📤 48k out");
     // the latest turn: 200k cached of 200k + 200k + 6k prompt
@@ -234,20 +238,23 @@ describe("S4 quota", () => {
     expect(usage.calls[0]!.url).toContain("anthropic.com");
     expect(usage.calls[0]!.authorization).toBe("Bearer anthropic-token");
     const quota = lines()[2]!;
-    expect(quota).toContain("🟠 5h ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ 58% ⏳ 2h14m");
-    expect(quota).toContain("7d ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ ⛁ 21% ⏳ 4d6h");
+    // the wall-clock stamps are local, so only their shape is asserted here
+    expect(quota).toMatch(/^🟠 Claude   5h (⛁ ){9}⛁  58% ↻ 2h14m · \d\d:\d\d/);
+    expect(quota).toMatch(/7d (⛁ ){9}⛁  21% ↻ 4d6h · \d\d? \w{3} \w{3} \d\d:\d\d/);
     expect(quota).toContain("(fable 21%)");
   });
 
-  test("S4 both providers logged in → both polled, the active one first with bars", async () => {
+  test("S4 both providers logged in → both polled, a line each, the active one first", async () => {
     const { lines, usage } = await start(gitExec({ status: CLEAN }), { models: [CODEX] });
     expect(usage.calls.map((c) => c.url).sort()).toEqual([
       "https://api.anthropic.com/api/oauth/usage",
       "https://chatgpt.com/backend-api/wham/usage",
     ]);
-    const quota = lines()[2]!;
-    expect(quota.startsWith("🟠 5h ⛁")).toBe(true);
-    expect(quota).toContain("🟢 codex 5h 3% · 7d 17%");
+    const all = lines();
+    expect(all[2]!.startsWith("🟠 Claude   5h ⛁")).toBe(true);
+    expect(all[3]!.startsWith("🟢 OpenAI   5h ⛁")).toBe(true);
+    expect(all[3]).toContain("3%");
+    expect(all[3]).toContain("17%");
   });
 
   test("S4 a provider on an API key is not polled even when another is", async () => {
@@ -280,8 +287,9 @@ describe("S5 when to poll", () => {
     advance(61_000);
     await fake.emit("model_select", { model: ui.ctx.model }, ui.ctx);
     expect(usage.calls[2]!.url).toContain("chatgpt.com");
-    expect(lines()[2]!.startsWith("🟢 5h ⛁")).toBe(true);
-    expect(lines()[2]).toContain("🟠 anthropic 5h 58% · 7d 21% · fable 21%");
+    expect(lines()[2]!.startsWith("🟢 OpenAI   5h ⛁")).toBe(true);
+    expect(lines()[3]!.startsWith("🟠 Claude   5h ⛁")).toBe(true);
+    expect(lines()[3]).toContain("(fable 21%)");
   });
 });
 
@@ -332,14 +340,15 @@ describe("S7 /statusline", () => {
     const { run, lines } = await start(gitExec({ status: CLEAN }));
     await run("compact");
     let all = lines();
-    expect(all).toHaveLength(3); // where · session+quota · the theme status
+    expect(all).toHaveLength(3); // where · session+quota · the statuses and the badge
     expect(all[1]).toContain("🧮");
-    expect(all[1]).toContain("🟠 5h 58%");
+    expect(all[2]).toContain("Tokens");
+    expect(all[1]).toContain("🟠 Claude 5h 58% · 7d 21%");
     expect(all.join("\n")).not.toContain("⛁");
     await run("full");
     all = lines();
     expect(all).toHaveLength(4);
-    expect(all[2]!.startsWith("🟠 5h ⛁")).toBe(true);
+    expect(all[2]!.startsWith("🟠 Claude   5h ⛁")).toBe(true);
   });
 
   test("S7 verbose toggles the cache detail", async () => {
@@ -381,5 +390,15 @@ describe("S8 shutdown and statuses", () => {
     expect(last).toContain("📚 wiki queue 2 · inbox 0");
     expect(last).toContain("🎨 dark");
     expect(last.indexOf("📚")).toBeLessThan(last.indexOf("🎨"));
+  });
+
+  test("S8 the session's token total holds the bottom-right corner", async () => {
+    // one assistant turn: 200k in, 1k out, 200k cache read, 6k cache write
+    const { ui, lines } = await start(gitExec({ status: CLEAN }));
+    const last = lines().at(-1)!;
+    expect(last.endsWith("Tokens")).toBe(true);
+    expect(last).toMatch(/ {2,}\S+ Tokens$/);
+    ui.ctx.ui.setStatus("llm-wiki", "wiki queue 2");
+    expect(lines().at(-1)!.endsWith("Tokens")).toBe(true);
   });
 });
