@@ -5,8 +5,9 @@
 //                      real options — file types, modes, hidden/ignore toggles,
 //                      recency, regex — with the same limits and renderers
 //   session_start      probes which rg and fd this machine has (Pi's managed
-//                      ~/.pi/agent/bin, then PATH, `fdfind` included) and shows
-//                      the footer status; a missing tool is named, never faked
+//                      ~/.pi/agent/bin, then PATH, `fdfind` included); a missing
+//                      tool is named in the footer and a warning, never faked —
+//                      with both present the footer stays quiet
 //   /fast-search       paths, versions, and install hints
 //
 // The binaries are spawned directly and streamed, stopping at the result

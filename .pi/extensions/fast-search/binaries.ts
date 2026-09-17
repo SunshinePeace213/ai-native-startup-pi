@@ -61,10 +61,10 @@ export function installHint(tool: Tool): string {
     : "install fd: `sudo apt install fd-find` (installs as `fdfind`, which is found) · `brew install fd` · `cargo install fd-find`";
 }
 
-/** One line for the footer: which tool backs which search, or what is missing. */
+/** The footer status: names what is missing, and is empty when nothing is. */
 export function statusText(binaries: Binaries): string {
   const missing = (["rg", "fd"] as const).filter((tool) => !binaries[tool]);
-  return missing.length ? `🔍 ${missing.join("+")} missing` : "🔍 rg+fd";
+  return missing.length ? `🔍 ${missing.join("+")} missing` : "";
 }
 
 /** The `/fast-search` report: paths, versions, and install hints for the gaps. */

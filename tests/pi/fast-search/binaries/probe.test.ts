@@ -1,7 +1,7 @@
 // binaries — how .pi/extensions/fast-search finds ripgrep and fd, seen through
 // session_start, the tools, and /fast-search.
 //
-// B1  both on PATH → the footer status reads "🔍 rg+fd" and nothing is notified
+// B1  both on PATH → the footer stays empty and nothing is notified
 // B2  one missing → the status names it and a warning carries the install hint
 // B3  Pi's managed ~/.pi/agent/bin copy wins over PATH; Debian's `fdfind` is
 //     found when `fd` is not; the report shows the path and version used
@@ -17,10 +17,10 @@ import { join } from "node:path";
 import { BOTH, wire } from "../fixture";
 
 describe("fast-search binaries", () => {
-  test("B1 both present: quiet status", async () => {
+  test("B1 both present: nothing in the footer, nothing notified", async () => {
     const w = wire();
     await w.sessionStart();
-    expect(w.ctx.status.get("fast-search")).toBe("🔍 rg+fd");
+    expect(w.ctx.status.get("fast-search")).toBe("");
     expect(w.ctx.notifications).toHaveLength(0);
   });
 
@@ -67,6 +67,9 @@ describe("fast-search binaries", () => {
     await w.command();
     expect(w.ctx.notifications.at(-1)?.type).toBe("warning");
     expect(w.ctx.status.get("fast-search")).toBe("🔍 rg missing");
+    versions.rg = "ripgrep 15.1.0";
+    await w.command();
+    expect(w.ctx.status.get("fast-search")).toBe("");
   });
 
   test("B6 a later install is found at call time; a present tool is cached", async () => {
