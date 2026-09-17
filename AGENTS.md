@@ -11,8 +11,11 @@ base. Keep changes within the requested scope.
   authorize file edits or KB processing.
 - Do not read `.env` or `.envrc`; use `.env.sample` for configuration names. Never
   expose credentials or archive secrets and sensitive PII.
-- Never use `rm -rf`. Move deletions to a unique destination under `~/.Trash/`
-  without overwriting existing contents.
+- Never `rm -rf` anything but a regenerable build directory inside the workspace
+  (`node_modules`, `dist`, `.venv`, `__pycache__` …). Move other deletions to a unique
+  destination under `~/.Trash/` without overwriting existing contents. The
+  destructive-guard extension enforces the boundary and asks before the rest; put a
+  `# why: …` line above a destructive command so the approval shows your reason.
 - Never hand-edit KB ledgers, state views, rendered type-folder pages, or
   `llm-wiki/wiki/index.md`. Filed raw archives are immutable. Authorized inbox
   proposals and log entries follow the KB operations guide.
@@ -28,6 +31,7 @@ Load references when their condition applies, not the whole docs folder.
 | Navigate unfamiliar areas or change component boundaries | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Set up a checkout or resolve dependencies | [meta-install skill](.agents/skills/meta-install/SKILL.md) |
 | Change code, tests, evals, or verification instructions | [Testing](docs/testing.md) |
+| Change what agents may destroy, or be asked about, before it runs | [Destructive guard](docs/destructive-guard.md) |
 | Maintain the generated tree or folder descriptions | [Architecture sync](docs/architecture-sync.md) |
 | Query, ingest, review, or maintain the KB | [KB operations](docs/llm-wiki/operations.md) |
 | Change archive, citation, privacy, or page conventions | [KB standards](docs/llm-wiki/standards.md) |

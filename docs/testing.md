@@ -32,12 +32,26 @@ tests/
 │   │   ├── queue/hook.test.ts           session_start
 │   │   ├── archive-reminder/hook.test.ts tool_result
 │   │   └── engine-bridge/bridge.test.ts the exec seam the hooks share
-│   └── access-guard/                one directory per policy, on a scratch project with
-│       │                            a live secret, its template, a vendored tree, symlinks
-│       ├── fixture.ts               the scratch project and the wired extension
-│       ├── sensitive/hook.test.ts   tool_call — secret-bearing files, every tool
-│       ├── vendored/hook.test.ts    tool_call — generated trees, writes only
-│       └── toggle/command.test.ts   /access-guard session toggle
+│   ├── access-guard/                one directory per policy, on a scratch project with
+│   │   │                            a live secret, its template, a vendored tree, symlinks
+│   │   ├── fixture.ts               the scratch project and the wired extension
+│   │   ├── sensitive/hook.test.ts   tool_call — secret-bearing files, every tool
+│   │   ├── vendored/hook.test.ts    tool_call — generated trees, writes only
+│   │   └── toggle/command.test.ts   /access-guard session toggle
+│   └── fast-search/                 the grep and find tools with both seams scripted
+│       ├── fixture.ts               scripted probe and runner, the wired extension
+│       ├── grep/tool.test.ts        params → ripgrep argv, rows, limits, errors
+│       ├── find/tool.test.ts        params → fd argv, rows, limits, errors
+│       ├── binaries/probe.test.ts   session_start status, /fast-search, resolution order
+│       └── live/binaries.test.ts    the real rg and fd on a scratch repo; skipped when absent
+│   └── destructive-guard/           one directory per layer, on a scratch workspace with
+│       │                            .git, src/, node_modules/, a home, and an escaping symlink
+│       ├── fixture.ts               the workspace, a scriptable select dialog, the wired extension
+│       ├── parser/normalize.test.ts N1–N7  quotes · separators · wrappers · sh -c · # why:
+│       ├── paths/classify.test.ts   P1–P8  roots · critical files · variables · workspace · symlinks
+│       ├── engine/verdict.test.ts   V1–V7  every rule's deny / ask / allow rows · config overrides
+│       ├── config/parse.test.ts     C1–C6  .pi/destructive-guard.json · findWorkspace
+│       └── hook/tool_call.test.ts   H1–H10 dialog flow · headless · audit · write/edit · /destructive-guard
 └── scripts/
     └── llm-wiki/                    pytest — the engine, driven through its CLI on a scratch vault
         ├── conftest.py              Vault: run a verb, read ledgers/views/audit as bytes
@@ -63,6 +77,9 @@ Every test file opens with its numbered contract; every case is named
 | `bun test` | every TS test (`bunfig.toml` roots discovery at `tests/`) |
 | `bun test tests/pi/llm-wiki` | KB extension |
 | `bun test tests/pi/access-guard` | Access guard: sensitive, vendored, and toggle contracts |
+| `bun test tests/pi/fast-search` | grep and find tools, binary resolution, and the live rg/fd contracts |
+| `bun test tests/pi/destructive-guard` | Destructive guard: parser, paths, catalog, config, and hook contracts |
+| `bun test tests/pi/destructive-guard/engine` | The rule catalog alone — run after adding or changing a rule |
 | `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
 | `bun test tests/docs` | Local documentation links and heading targets |
 | `bun run architecture:check` | Generated map matches the current projected tree; no repairs |

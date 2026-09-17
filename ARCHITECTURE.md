@@ -36,10 +36,12 @@ ai-native-startup/
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── access-guard/ — Sensitive-file and vendored-path access guard on every tool call
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
+│   │   ├── destructive-guard/ — Deny/ask gate on destructive bash, write, and edit calls
+│   │   ├── fast-search/ — ripgrep and fd as the grep and find tools, spawned directly
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
 │   │   └── ui-customization-soriza/ — Pi chrome: S/Z header, theme picker, and the emoji statusline
 │   ├── themes/ — Pi colour themes (disler's set plus deep-purple)
-│   └── settings.json — Persistent agent model overrides
+│   └── settings.json — Default tool set and persistent agent model overrides
 ├── docs/ — Task-specific operating references
 │   └── llm-wiki/ — KB standards, contracts, and operations
 ├── llm-wiki/ — Evidence-backed knowledge base
@@ -57,6 +59,8 @@ ai-native-startup/
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── access-guard/ — Sensitive, vendored, and toggle contract tests
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
+│   │   ├── destructive-guard/ — Parser, path, catalog, config, and hook contract tests
+│   │   ├── fast-search/ — grep, find, binary resolution, and live rg/fd contracts
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
 │   │   └── ui-customization-soriza/ — Header, picker, terminal sync, statusline, and theme file contracts
 │   └── scripts/ — Python CLI contract tests
@@ -84,6 +88,26 @@ ai-native-startup/
   command rewrites). Sensitive files are denied to every tool and cannot be toggled;
   vendored trees are denied to writes only, with a user-typed session toggle. It is
   a tripwire on tool inputs, not a sandbox, and fails open on its own errors.
+- **Destructive-guard extension:** `index.ts` wires `tool_call` (bash, write, edit),
+  `before_agent_start`, `session_start`, and the `/destructive-guard` command;
+  `engine.ts` is the pure verdict; `normalize.ts` reads shell text into segments
+  (wrappers peeled, `sh -c` and `eval` bodies parsed); `paths.ts` classifies a target
+  by recoverability and blast radius; `rules/` holds the catalog as data, one file per
+  family, with `rm`/`find`/`mv`/`chmod` refined by target; `prompt.ts` writes the
+  approval card and the block reasons; `session.ts`, `audit.ts`, `config.ts`,
+  `inspect.ts` are the session memory, the JSONL trail, `.pi/destructive-guard.json`,
+  and the git recovery hint. Deny never runs from an agent; ask is a dialog, or a
+  block with nobody present. Policy in [docs/destructive-guard.md](docs/destructive-guard.md).
+- **Fast-search extension:** `index.ts` registers `grep` and `find` over Pi's built-in
+  tools of the same name and owns the `session_start` probe and `/fast-search`;
+  `binaries.ts` resolves ripgrep and fd (Pi's managed `~/.pi/agent/bin`, then PATH,
+  `fdfind` included); `run.ts` is the one spawn, streamed and stopped at the result
+  limit; `grep/` and `find/` each hold the schema, the pure argv planner, and the tool;
+  `output.ts` applies the shared byte cap and notices. The tools expose the binaries'
+  real options under the names the harness already uses, keep the built-in result
+  shapes so the built-in renderers apply, and fail with an install hint when a binary
+  is missing rather than searching nothing. `.pi/settings.json` enables `grep`, `find`,
+  and `ls` for this project.
 - **Architecture extension:** `tree.ts` is the shared generator and bounded writer;
   `cli.ts` exposes it through Bun; `index.ts` supplies commands and optional
   `agent_settled` synchronization. It owns only the marked block above and never
