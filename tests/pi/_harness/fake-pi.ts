@@ -4,7 +4,11 @@
 // instead of passing by silence — the same shape Pi's own createExtensionRuntime
 // uses for unbound actions.
 
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+  ToolDefinition,
+} from "@earendil-works/pi-coding-agent";
 
 export type Handler = (event: unknown, ctx: ExtensionContext) => Promise<unknown> | unknown;
 export type ExecCall = { command: string; args: string[]; options?: unknown };
@@ -19,6 +23,7 @@ export interface FakePi {
   execCalls: ExecCall[];
   commands: Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>;
   shortcuts: Map<string, Parameters<ExtensionAPI["registerShortcut"]>[1]>;
+  tools: Map<string, ToolDefinition>;
   entries: Array<{ customType: string; data: unknown }>;
   /** Fire one event through every handler registered for it; the first defined result wins. */
   emit(event: string, payload: Record<string, unknown>, ctx: ExtensionContext): Promise<unknown>;
@@ -37,6 +42,7 @@ export function createFakePi(
   const execCalls: ExecCall[] = [];
   const commands = new Map<string, Parameters<ExtensionAPI["registerCommand"]>[1]>();
   const shortcuts = new Map<string, Parameters<ExtensionAPI["registerShortcut"]>[1]>();
+  const tools = new Map<string, ToolDefinition>();
   const entries: Array<{ customType: string; data: unknown }> = [];
   const flags: Record<string, unknown> = { ...options.flags };
 
@@ -57,6 +63,9 @@ export function createFakePi(
     },
     registerShortcut(key: string, shortcut: Parameters<ExtensionAPI["registerShortcut"]>[1]) {
       shortcuts.set(key, shortcut);
+    },
+    registerTool(tool: ToolDefinition) {
+      tools.set(tool.name, tool);
     },
     registerFlag(name: string, flag: { default?: unknown }) {
       if (!(name in flags)) flags[name] = flag.default;
@@ -82,6 +91,7 @@ export function createFakePi(
     execCalls,
     commands,
     shortcuts,
+    tools,
     entries,
     async emit(event, payload, ctx) {
       for (const handler of handlers.get(event) ?? []) {

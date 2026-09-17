@@ -49,7 +49,8 @@ and it writes nothing:
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
-for bin in uv bun qmd direnv pi git; do printf '%-8s %s\n' "$bin" "$(command -v $bin || echo MISSING)"; done
+for bin in uv bun qmd direnv pi git rg; do printf '%-8s %s\n' "$bin" "$(command -v $bin || echo MISSING)"; done
+printf '%-8s %s\n' "fd" "$(command -v fd || command -v fdfind || ls ~/.pi/agent/bin/fd 2>/dev/null || echo MISSING)"
 printf '%-8s %s\n' ".env" "$([ -e .env ] || [ -L .env ] && echo present || echo MISSING)"
 printf '%-8s %s\n' "sample" "$([ -f .env.sample ] && echo present || echo MISSING)"
 printf '%-8s %s\n' "deps" "$([ -d node_modules ] && echo node_modules || echo no-node_modules) $([ -d .venv ] && echo .venv || echo no-.venv)"
@@ -70,7 +71,16 @@ bun install -g @tobilu/qmd                        # qmd — needs bun first
 ```
 
 `direnv` comes from the OS package manager (`sudo apt install direnv`,
-`brew install direnv`). `pi` is the coding agent this repo is built for; install
+`brew install direnv`). `rg` and `fd` are the search binaries behind the
+`grep` and `find` tools (`.pi/extensions/fast-search`); without them those
+tools fail with an install hint instead of searching:
+
+```bash
+sudo apt install ripgrep fd-find   # Debian/Ubuntu — fd is installed as `fdfind`, which is found
+brew install ripgrep fd            # macOS
+```
+
+`pi` is the coding agent this repo is built for; install
 it per <https://pi.dev>, then the three packages the harness expects, globally:
 
 ```bash
@@ -219,8 +229,12 @@ Plus the tools themselves:
 ```bash
 uv run python -c "import sys; print(sys.version)"
 bun --version && qmd --version
+rg --version | head -1; (fd --version || fdfind --version) 2>/dev/null   # grep/find backends
 uv run scripts/llm-wiki/state.py status   # ledgers load and report counts
 ```
+
+Inside Pi, `/fast-search` reports which `rg` and `fd` the `grep` and `find`
+tools resolved, with install hints for any gap.
 
 Do **not** run the expensive suites as part of setup. `bun run check`,
 `uv run pytest`, and `bun run eval:retrieval` belong to a code change, not to an
@@ -231,7 +245,7 @@ install; name them as available and let the user choose
 
 ```text
 Setup status for <repo path>
-  ✓ toolchain     uv 0.9.x · bun 1.4.x · qmd 2.8.3 · direnv · pi
+  ✓ toolchain     uv 0.9.x · bun 1.4.x · qmd 2.8.3 · direnv · pi · rg 15.x · fd 10.x
   ⚠ .env          missing — you must run: cp .env.sample .env
                   QMD_LLAMA_GPU=cuda
                   LD_LIBRARY_PATH=/home/you/miniconda3/envs/llm/targets/x86_64-linux/lib
@@ -269,6 +283,10 @@ of five things to do in an unspecified order.
   the whole vault. Re-running the setup script is what applies a model edit.
 - **A freshly installed binary may not be on `PATH` yet.** Say "reopen your
   shell" instead of re-running the installer.
+- **`fd` is `fdfind` on Debian/Ubuntu.** The fast-search extension resolves
+  that name, and Pi's own download under `~/.pi/agent/bin/` too; the survey
+  line accepts all three. Do not symlink or alias just to satisfy
+  `command -v fd`.
 - **Project skills are silently absent until the project is trusted** — and
   non-interactive runs never prompt. Missing `/skill:*` commands mean trust, not
   a broken skill.
