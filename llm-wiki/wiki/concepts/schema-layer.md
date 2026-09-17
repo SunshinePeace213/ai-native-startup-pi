@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/steering-claude-code-skills-hooks-rules-subagents-and-more.md, title: "Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents", id: src_93a1e6058bf1}
   - {resource: llm-wiki/raw/articles/anthropic/the-ai-native-sdlc-playbook.md, title: "The AI-Native SDLC playbook", id: src_c65435745c66}
@@ -22,12 +22,12 @@ sources:
   - {resource: llm-wiki/raw/docs/claude-code/skills.md, title: "Extend Claude with skills", id: src_07950e24c4ee}
   - {resource: llm-wiki/raw/docs/claude-code/sub-agents.md, title: "Create custom subagents", id: src_5671f6c73f3d}
   - {resource: llm-wiki/raw/notes/llm-wiki-review-2026-08-22.md, title: "llm-wiki review — 2026-08-22", id: src_af0433facf9d}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_schema_layer]
-claim_ids: [clm_783a8d83a795, clm_6ef07a9ab4ea, clm_64cae6b2f5df, clm_f964c916a3ac, clm_8be3bd552948, clm_d6db5eb024a3, clm_1d63b8bcc9f0, clm_00214cae00e1, clm_e7b69d4a42b4, clm_7e83c9cc911e, clm_b83cb09bdf7b, clm_a02b62bcf985, clm_8bb2293a40b7, clm_9a6a56d1d7eb, clm_66dbb26cde8a, clm_79a68b09eff3, clm_198fc635f5f4, clm_15772370d59a, clm_a5d9ea4f9972, clm_023cf54f8d66, clm_08f5d95a4539, clm_18d10b22c6d8, clm_0e3aa800f1e4, clm_79c2e7c5e29b, clm_a53d87e1c13c, clm_d9fe1d507413, clm_44e43066d79a]
+claim_ids: [clm_783a8d83a795, clm_6ef07a9ab4ea, clm_64cae6b2f5df, clm_f964c916a3ac, clm_8be3bd552948, clm_d6db5eb024a3, clm_1d63b8bcc9f0, clm_00214cae00e1, clm_e7b69d4a42b4, clm_7e83c9cc911e, clm_b83cb09bdf7b, clm_a02b62bcf985, clm_8bb2293a40b7, clm_9a6a56d1d7eb, clm_66dbb26cde8a, clm_79a68b09eff3, clm_198fc635f5f4, clm_a5d9ea4f9972, clm_15772370d59a, clm_023cf54f8d66, clm_79c2e7c5e29b, clm_08f5d95a4539, clm_a53d87e1c13c, clm_18d10b22c6d8, clm_0e3aa800f1e4, clm_d9fe1d507413, clm_44e43066d79a]
 confidence: 0.91
 stale_after: 2027-01-17
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -54,14 +54,14 @@ review_required: false
 - The system-prompt flags apply only to the invocation that passes them; a persona meant to persist and be shared across a project belongs in an output style, and conventions Claude should always follow belong in CLAUDE.md (0.93)
 - A single CLAUDE.md at the root of a large codebase either grows to cover every subsystem's conventions, spending context on instructions unrelated to the current task, or stays too generic to be useful (0.93)
 - Explore and Plan are the only Claude Code subagents that start without CLAUDE.md files and git status, and no frontmatter field or setting changes which subagents skip them (0.92)
-- A CLAUDE.md import resolves a relative path against the file containing the import rather than the working directory, and imported files can recursively import others to a maximum depth of four hops (0.91)
-- A teammate loads the same project context as a regular session — CLAUDE.md, MCP servers, and skills — plus the lead's spawn prompt, but inherits none of the lead's conversation history (0.91)
+- A teammate loads the same project context as a regular session — CLAUDE.md, MCP servers, and skills — plus the lead's spawn prompt, but inherits none of the lead's conversation history (0.90)
+- A CLAUDE.md import resolves a relative path against the file containing the import rather than the working directory, and imported files can recursively import others to a maximum depth of four hops (0.90)
 - Persistent context is what keeps AI a force multiplier instead of a source of entropy: founders who skip specs, architectural decisions, and context files like CLAUDE.md hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision (0.84)
+- The working rule for CLAUDE.md is that when Claude makes a mistake twice the correction goes into the file, and it stays under a page because Claude reads all of it at session start and anything stale takes up context for no benefit (0.83)
 - The working principle of schema design is that explicit schema stays minimal and structural, implicit charters carry judgment and culture, and explicit triggers connect the two at the right moment in the workflow — never passively loaded, always invoked on demand (0.83)
+- A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system (0.83)
 - Implicit instructions drift under context pressure: broad behavioral guidance goes cold as the context fills, the model stops attending to it, and the behavior disappears quietly, usually right when it matters most (0.83)
 - The graph schema is deliberately a small, fixed, generic vocabulary of node labels and relationship types enforced by database constraints: it trades domain expressiveness for query simplicity, and domain nuance lives in node properties rather than in new labels (0.83)
-- The working rule for CLAUDE.md is that when Claude makes a mistake twice the correction goes into the file, and it stays under a page because Claude reads all of it at session start and anything stale takes up context for no benefit (0.83)
-- A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system (0.83)
 - The system is built in seven incremental phases — Phase 0 a minimal v1-style wiki, Phase 1 observations and claim state, Phase 2 confidence and transitions, Phase 3 the graph layer, Phase 4 hybrid retrieval, Phase 5 automation, Phase 6 governance and collaboration — each carrying its own goal, Phase 1's being to separate source, observation, belief, and rendered page (0.81)
 - In a shared repository CLAUDE.md grows the way any unowned config file does, and because every line loads into every session for every engineer whether relevant or not, it consumes tokens and dilutes adherence to the instructions that actually matter (0.81)
 
@@ -111,22 +111,22 @@ review_required: false
   - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "In a large codebase, a single CLAUDE.md at the repository root tends to either grow to cover every subsystem's conventions, costing context on instructions unrelated to the current task, or stay too generic to be useful."
 - `clm_198fc635f5f4` — "Explore and Plan are the only Claude Code subagents that start without CLAUDE.md files and git status, and no frontmatter field or setting changes which subagents skip them." · p 0.92 · active · 1 support · 0 contradict
   - `src_5671f6c73f3d` Create custom subagents: "Explore and Plan are the only subagents that omit CLAUDE.md and git status. There is no frontmatter field or per-agent setting to change which agents skip them."
-- `clm_15772370d59a` — "A CLAUDE.md import resolves a relative path against the file containing the import rather than the working directory, and imported files can recursively import others to a maximum depth of four hops." · p 0.91 · active · 1 support · 0 contradict
-  - `src_e698013f1182` How Claude remembers your project: "Both relative and absolute paths are allowed. Relative paths resolve relative to the file containing the import, not the working directory. Imported files can recursively import other files, with a maximum depth of four hops."
-- `clm_a5d9ea4f9972` — "A teammate loads the same project context as a regular session — CLAUDE.md, MCP servers, and skills — plus the lead's spawn prompt, but inherits none of the lead's conversation history." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+- `clm_a5d9ea4f9972` — "A teammate loads the same project context as a regular session — CLAUDE.md, MCP servers, and skills — plus the lead's spawn prompt, but inherits none of the lead's conversation history." · p 0.90 · active · 1 support · 0 contradict · when: for experimental agent teams
   - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Each teammate has its own context window. When spawned, a teammate loads the same project context as a regular session: CLAUDE.md, MCP servers, and skills. It also receives the spawn prompt from the lead."
+- `clm_15772370d59a` — "A CLAUDE.md import resolves a relative path against the file containing the import rather than the working directory, and imported files can recursively import others to a maximum depth of four hops." · p 0.90 · active · 1 support · 0 contradict
+  - `src_e698013f1182` How Claude remembers your project: "Both relative and absolute paths are allowed. Relative paths resolve relative to the file containing the import, not the working directory. Imported files can recursively import other files, with a maximum depth of four hops."
 - `clm_023cf54f8d66` — "Persistent context is what keeps AI a force multiplier instead of a source of entropy: founders who skip specs, architectural decisions, and context files like CLAUDE.md hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision" · p 0.84 · active · 1 support · 0 contradict
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "Founders who skip specs, architectural decisions, and context files (like CLAUDE.md) hit a predictable wall where every new session requires re-explaining the codebase and AI-generated changes drift from the original vision."
+- `clm_79c2e7c5e29b` — "The working rule for CLAUDE.md is that when Claude makes a mistake twice the correction goes into the file, and it stays under a page because Claude reads all of it at session start and anything stale takes up context for no benefit" · p 0.83 · active · 1 support · 0 contradict
+  - `src_c65435745c66` The AI-Native SDLC playbook: "A working rule helps here. When Claude makes a mistake twice, the correction goes into `CLAUDE.md`."
 - `clm_08f5d95a4539` — "The working principle of schema design is that explicit schema stays minimal and structural, implicit charters carry judgment and culture, and explicit triggers connect the two at the right moment in the workflow — never passively loaded, always invoked on demand." · p 0.83 · active · 1 support · 0 contradict
   - `src_b585de1a26bb` LLM Wiki V3: Segmentation: "The working principle: explicit schema stays minimal and structural. Implicit charters carry judgment and culture. Explicit triggers connect the two at the right moment in the workflow. Never passively loaded. Always invoked on demand."
+- `clm_a53d87e1c13c` — "A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system" · p 0.83 · active · 1 support · 0 contradict
+  - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "Keep your CLAUDE.md lightweight and briefly describe what your repo is for, but spend most of the tokens on gotchas inside of the codebase."
 - `clm_18d10b22c6d8` — "Implicit instructions drift under context pressure: broad behavioral guidance goes cold as the context fills, the model stops attending to it, and the behavior disappears quietly, usually right when it matters most." · p 0.83 · active · 1 support · 0 contradict
   - `src_b585de1a26bb` LLM Wiki V3: Segmentation: "**Implicit instructions drift.** Broad behavioral guidance goes cold as context fills. The model stops attending to it. The behavior disappears quietly, usually right when it matters most."
 - `clm_0e3aa800f1e4` — "The graph schema is deliberately a small, fixed, generic vocabulary of node labels and relationship types enforced by database constraints: it trades domain expressiveness for query simplicity, and domain nuance lives in node properties rather than in new labels." · p 0.83 · active · 1 support · 0 contradict
   - `src_09c828d1c803` graphwiki: an LLM Wiki pattern for graph databases: "**Schema** — a small, fixed set of node labels and relationship types (below), enforced with Neo4j constraints."
-- `clm_79c2e7c5e29b` — "The working rule for CLAUDE.md is that when Claude makes a mistake twice the correction goes into the file, and it stays under a page because Claude reads all of it at session start and anything stale takes up context for no benefit" · p 0.83 · active · 1 support · 0 contradict
-  - `src_c65435745c66` The AI-Native SDLC playbook: "A working rule helps here. When Claude makes a mistake twice, the correction goes into `CLAUDE.md`."
-- `clm_a53d87e1c13c` — "A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system" · p 0.83 · active · 1 support · 0 contradict
-  - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "Keep your CLAUDE.md lightweight and briefly describe what your repo is for, but spend most of the tokens on gotchas inside of the codebase."
 - `clm_d9fe1d507413` — "The system is built in seven incremental phases — Phase 0 a minimal v1-style wiki, Phase 1 observations and claim state, Phase 2 confidence and transitions, Phase 3 the graph layer, Phase 4 hybrid retrieval, Phase 5 automation, Phase 6 governance and collaboration — each carrying its own goal, Phase 1's being to separate source, observation, belief, and rendered page" · p 0.81 · active · 1 support · 0 contradict
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "Separate source, observation, belief, and rendered page."
 - `clm_44e43066d79a` — "In a shared repository CLAUDE.md grows the way any unowned config file does, and because every line loads into every session for every engineer whether relevant or not, it consumes tokens and dilutes adherence to the instructions that actually matter" · p 0.81 · active · 1 support · 0 contradict · when: in a shared repository

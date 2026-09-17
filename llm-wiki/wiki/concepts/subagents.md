@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/a-harness-for-every-task-dynamic-workflows-in-claude-code.md, title: "A harness for every task: dynamic workflows in Claude Code", id: src_7415e8608f3c}
   - {resource: llm-wiki/raw/articles/anthropic/steering-claude-code-skills-hooks-rules-subagents-and-more.md, title: "Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents", id: src_93a1e6058bf1}
@@ -27,18 +27,18 @@ sources:
   - {resource: llm-wiki/raw/docs/claude-code/worktrees.md, title: "Run parallel sessions with worktrees", id: src_0979d158a4cf}
   - {resource: llm-wiki/raw/docs/pi/usage.md, title: "Using Pi", id: src_ab670f25c35e}
   - {resource: llm-wiki/raw/papers/graph-engineering-andrew-ng-playbook/index.md, title: "Graph Engineering for Multi-Agentic Systems: The Andrew Ng Playbook", id: src_363b13dc0870}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_subagents]
-claim_ids: [clm_b538f92510e2, clm_a5e46d967548, clm_1691eac7dbb3, clm_7da30002a7c7, clm_b4a4dce90006, clm_0b9ff75db6fc, clm_e08ab1bdbc30, clm_3c7492d09031, clm_0e89a8901cee, clm_f6f929cedc0a, clm_5ca433e00ea6, clm_a02b62bcf985, clm_3313bc585301, clm_45fbc544515a, clm_66b7f6ded709, clm_cb95dc403e93, clm_798c31b3b963, clm_7c3de0c5639e, clm_e5ff207092fb, clm_f395b23fc4e7, clm_95dd4d28d6cd, clm_e0310c5f4dec, clm_198fc635f5f4, clm_64b87a2b64e4, clm_c54b34646d07, clm_e90a14b6f054, clm_5379e62f099f, clm_ab1aa0679c1d, clm_ad6abaac0af5, clm_ce32f59798b3, clm_39423a40f88e, clm_f636b711007c, clm_cdc37e66617c, clm_1631e452feb8, clm_71598d00ebbf, clm_b8c4a4ce61d2, clm_874d9cfdb703, clm_fba2df5be733, clm_2790bc8fcda1]
-confidence: 0.92
+claim_ids: [clm_b538f92510e2, clm_a5e46d967548, clm_1691eac7dbb3, clm_7da30002a7c7, clm_b4a4dce90006, clm_0b9ff75db6fc, clm_e08ab1bdbc30, clm_3c7492d09031, clm_0e89a8901cee, clm_f6f929cedc0a, clm_5ca433e00ea6, clm_a02b62bcf985, clm_3313bc585301, clm_45fbc544515a, clm_66b7f6ded709, clm_cb95dc403e93, clm_798c31b3b963, clm_7c3de0c5639e, clm_e5ff207092fb, clm_f395b23fc4e7, clm_95dd4d28d6cd, clm_e0310c5f4dec, clm_198fc635f5f4, clm_64b87a2b64e4, clm_c54b34646d07, clm_e90a14b6f054, clm_ce32f59798b3, clm_1631e452feb8, clm_5379e62f099f, clm_ab1aa0679c1d, clm_ad6abaac0af5, clm_39423a40f88e, clm_f636b711007c, clm_cdc37e66617c, clm_71598d00ebbf, clm_b8c4a4ce61d2, clm_874d9cfdb703, clm_fba2df5be733, clm_2790bc8fcda1]
+confidence: 0.91
 stale_after: 2027-01-17
-last_rendered: 2026-09-11T19:57:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # subagents
 
-> **In here:** Claude Opus 5 delegates to subagents more readily than prior models, and delegation pays off only on genuinely independent, sizeable tracks of work — applied to small tasks it multiplies cost and time · 39 claims, confidence 0.92.
+> **In here:** Claude Opus 5 delegates to subagents more readily than prior models, and delegation pays off only on genuinely independent, sizeable tracks of work — applied to small tasks it multiplies cost and time · 39 claims, confidence 0.91.
 
 ## Current understanding
 
@@ -68,19 +68,19 @@ review_required: false
 - A parent session running in bypassPermissions, acceptEdits, or auto mode takes precedence over whatever permission mode a subagent declares in its own frontmatter (0.92)
 - Goal evaluation is skipped for any turn that ends while a subagent or background shell command is still running, and resumes at the end of the next turn that finishes with no background work (0.92)
 - Setting `run_in_background: true` on a Bash command starts it as a background task Claude can keep working alongside, and a command a foreground subagent started ends when that subagent gives its final response (0.92)
-- A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list (0.91)
-- Subagents can run in their own worktrees so parallel edits don't conflict, either by asking Claude to use worktrees for its agents or by adding `isolation: worktree` to a custom subagent's frontmatter (0.91)
-- The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit` (0.91)
-- Claude reaches other agents with two tools — `ListAgents` to discover which agents it can reach and `SendMessage` to deliver a message to one of them by name — and the same `SendMessage` tool also addresses subagents and agent-team teammates (0.91)
-- Subagents fit quick, focused workers that report a result back, while agent teams fit work where the workers must share findings, challenge each other, and coordinate on their own (0.91)
-- While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work (0.91)
-- An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call (0.91)
+- Claude reaches other agents with two tools — `ListAgents` to discover which agents it can reach and `SendMessage` to deliver a message to one of them by name — and the same `SendMessage` tool also addresses subagents and agent-team teammates (0.90)
 - Every multi-agent handoff needs an artifact contract — the researcher returns claims with sources, the planner typed steps, the coder code and assumptions, the evaluator defects and a decision — with agents communicating through artifacts and shared state rather than unlimited conversational history, which is the constraint that prepares the system for graph architecture (0.90)
+- A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list (0.90)
+- Subagents can run in their own worktrees so parallel edits don't conflict, either by asking Claude to use worktrees for its agents or by adding `isolation: worktree` to a custom subagent's frontmatter (0.90)
+- The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit` (0.90)
+- Subagents fit quick, focused workers that report a result back, while agent teams fit work where the workers must share findings, challenge each other, and coordinate on their own (0.90)
+- While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work (0.90)
+- An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call (0.90)
 - The feedback loop and the verifier subagent are different things: the loop runs through the whole task as many times as the work needs, while the verifier packages the final check in a fresh context window once the session believes it is done, so the verdict is not colored by the assumptions that produced the code (0.83)
 - Two or three parallel Claude Code sessions is a sensible starting point, and the practical ceiling is how many streams one person can review properly — so sessions are added only while review is keeping up (0.83)
-- Subagents handle complex sub-tasks with clean context windows while a todo list tracks progress across a long run (0.80)
-- A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution (0.78)
-- The filesystem is a natural collaboration surface because multiple agents and humans coordinate through shared files (0.77)
+- Subagents handle complex sub-tasks with clean context windows while a todo list tracks progress across a long run (0.79)
+- A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution (0.77)
+- The filesystem is a natural collaboration surface because multiple agents and humans coordinate through shared files (0.76)
 
 ## Evidence
 
@@ -142,31 +142,31 @@ review_required: false
   - `src_5229aa475d30` Keep Claude working toward a goal: "If a subagent or a background shell command is still running when a turn ends, Claude Code skips the evaluation for that turn. It evaluates at the end of the next turn that finishes with no background work running."
 - `clm_e90a14b6f054` — "Setting `run_in_background: true` on a Bash command starts it as a background task Claude can keep working alongside, and a command a foreground subagent started ends when that subagent gives its final response." · p 0.92 · active · 1 support · 0 contradict
   - `src_ab9f8f38615f` Tools reference: "For long-running processes such as dev servers or watch builds, Claude can set `run_in_background: true` to start the command as a background task and continue working while it runs. List and stop background tasks with `/tasks`."
-- `clm_5379e62f099f` — "A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list." · p 0.91 · active · 1 support · 0 contradict
-  - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "The body is plain JavaScript with top-level `await`. `agent()` spawns one subagent and `pipeline()` runs one per item in a list."
-- `clm_ab1aa0679c1d` — "Subagents can run in their own worktrees so parallel edits don't conflict, either by asking Claude to use worktrees for its agents or by adding `isolation: worktree` to a custom subagent's frontmatter." · p 0.91 · active · 1 support · 0 contradict
-  - `src_0979d158a4cf` Run parallel sessions with worktrees: "Subagents can run in their own worktrees so parallel edits don't conflict."
-- `clm_ad6abaac0af5` — "The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit`." · p 0.91 · active · 1 support · 0 contradict
-  - `src_a959e4684753` Model configuration: "The model Claude Code uses for all [subagents](/docs/en/sub-agents#choose-a-model), [agent teams](/docs/en/agent-teams), and agents in a [workflow](/docs/en/workflows)."
-- `clm_ce32f59798b3` — "Claude reaches other agents with two tools — `ListAgents` to discover which agents it can reach and `SendMessage` to deliver a message to one of them by name — and the same `SendMessage` tool also addresses subagents and agent-team teammates." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+- `clm_ce32f59798b3` — "Claude reaches other agents with two tools — `ListAgents` to discover which agents it can reach and `SendMessage` to deliver a message to one of them by name — and the same `SendMessage` tool also addresses subagents and agent-team teammates." · p 0.90 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
   - `src_10e9043d62f0` Message your other Claude Code sessions: "Claude uses two tools for this: `ListAgents` to discover which agents it can reach, and `SendMessage` to deliver a message to one of them by name."
-- `clm_39423a40f88e` — "Subagents fit quick, focused workers that report a result back, while agent teams fit work where the workers must share findings, challenge each other, and coordinate on their own." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
-  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Use subagents when you need quick, focused workers that report back. Use agent teams when teammates need to share findings, challenge each other, and coordinate on their own."
-- `clm_f636b711007c` — "While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
-  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Claude launches a teammate when it calls the [Agent tool](/docs/en/tools-reference) with a [`name`](/docs/en/sub-agents#subagent-names) while agent teams are enabled, and Claude Code doesn't ask you to confirm."
-- `clm_cdc37e66617c` — "An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call." · p 0.91 · active · 1 support · 0 contradict
-  - `src_3466a5945e1e` Automate actions with hooks: "When verification requires inspecting files or running commands, use `type: "agent"` hooks."
 - `clm_1631e452feb8` — "Every multi-agent handoff needs an artifact contract — the researcher returns claims with sources, the planner typed steps, the coder code and assumptions, the evaluator defects and a decision — with agents communicating through artifacts and shared state rather than unlimited conversational history, which is the constraint that prepares the system for graph architecture" · p 0.90 · active · 1 support · 0 contradict
   - `src_363b13dc0870` Graph Engineering for Multi-Agentic Systems: The Andrew Ng Playbook: "The practical tip: define an artifact contract for every handoff. The researcher returns claims with sources. The planner returns typed steps. The coder returns code and assumptions. The evaluator returns defects and a decision."
+- `clm_5379e62f099f` — "A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list." · p 0.90 · active · 1 support · 0 contradict
+  - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "The body is plain JavaScript with top-level `await`. `agent()` spawns one subagent and `pipeline()` runs one per item in a list."
+- `clm_ab1aa0679c1d` — "Subagents can run in their own worktrees so parallel edits don't conflict, either by asking Claude to use worktrees for its agents or by adding `isolation: worktree` to a custom subagent's frontmatter." · p 0.90 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "Subagents can run in their own worktrees so parallel edits don't conflict."
+- `clm_ad6abaac0af5` — "The `CLAUDE_CODE_SUBAGENT_MODEL` environment variable sets the model for every subagent, agent team, and workflow agent, overriding both the per-invocation `model` parameter and a subagent definition's `model` frontmatter unless set to `inherit`." · p 0.90 · active · 1 support · 0 contradict
+  - `src_a959e4684753` Model configuration: "The model Claude Code uses for all [subagents](/docs/en/sub-agents#choose-a-model), [agent teams](/docs/en/agent-teams), and agents in a [workflow](/docs/en/workflows)."
+- `clm_39423a40f88e` — "Subagents fit quick, focused workers that report a result back, while agent teams fit work where the workers must share findings, challenge each other, and coordinate on their own." · p 0.90 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Use subagents when you need quick, focused workers that report back. Use agent teams when teammates need to share findings, challenge each other, and coordinate on their own."
+- `clm_f636b711007c` — "While agent teams are enabled, any subagent Claude spawns with a name launches as a teammate without a confirmation prompt, so a team can form during delegation the user never framed as team work." · p 0.90 · active · 1 support · 0 contradict · when: for experimental agent teams
+  - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Claude launches a teammate when it calls the [Agent tool](/docs/en/tools-reference) with a [`name`](/docs/en/sub-agents#subagent-names) while agent teams are enabled, and Claude Code doesn't ask you to confirm."
+- `clm_cdc37e66617c` — "An agent hook spawns a subagent that can read files, search code, and use tools to verify a condition before returning its decision, unlike a prompt hook's single LLM call." · p 0.90 · active · 1 support · 0 contradict
+  - `src_3466a5945e1e` Automate actions with hooks: "When verification requires inspecting files or running commands, use `type: "agent"` hooks."
 - `clm_71598d00ebbf` — "The feedback loop and the verifier subagent are different things: the loop runs through the whole task as many times as the work needs, while the verifier packages the final check in a fresh context window once the session believes it is done, so the verdict is not colored by the assumptions that produced the code" · p 0.83 · active · 1 support · 0 contradict
   - `src_c65435745c66` The AI-Native SDLC playbook: "The verifier subagent, on the other hand, is one way to package the final check by running a fresh context window once the session believes the work is done. This way the verdict is not colored by the assumptions that produced the code."
 - `clm_b8c4a4ce61d2` — "Two or three parallel Claude Code sessions is a sensible starting point, and the practical ceiling is how many streams one person can review properly — so sessions are added only while review is keeping up" · p 0.83 · active · 1 support · 0 contradict
   - `src_c65435745c66` The AI-Native SDLC playbook: "Two or three sessions is a sensible starting point. The practical ceiling is how many streams one person can review properly, so add sessions only while review is keeping up."
-- `clm_874d9cfdb703` — "Subagents handle complex sub-tasks with clean context windows while a todo list tracks progress across a long run." · p 0.80 · active · 1 support · 0 contradict
+- `clm_874d9cfdb703` — "Subagents handle complex sub-tasks with clean context windows while a todo list tracks progress across a long run." · p 0.79 · active · 1 support · 0 contradict
   - `src_f7dcee3b42fc` How to Build a Custom Agent Harness: "| Delegate tasks | Subagents handle complex sub-tasks with clean context windows. A todo list tracks progress across a long run. | SubAgentMiddleware, AsyncSubAgentMiddleware, TodoListMiddleware |"
-- `clm_fba2df5be733` — "A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution." · p 0.78 · active · 1 support · 0 contradict
+- `clm_fba2df5be733` — "A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution." · p 0.77 · active · 1 support · 0 contradict
   - `src_be6da1f4f37a` The Anatomy of an Agent Harness: "- System Prompts - Tools, Skills, MCPs and their descriptions - Bundled Infrastructure (filesystem, sandbox, browser) - Orchestration Logic (subagent spawning, handoffs, model routing) - Hooks/Middleware for deterministic execution…"
-- `clm_2790bc8fcda1` — "The filesystem is a natural collaboration surface because multiple agents and humans coordinate through shared files." · p 0.77 · active · 1 support · 0 contradict
+- `clm_2790bc8fcda1` — "The filesystem is a natural collaboration surface because multiple agents and humans coordinate through shared files." · p 0.76 · active · 1 support · 0 contradict
   - `src_be6da1f4f37a` The Anatomy of an Agent Harness: "**The filesystem is a natural collaboration surface.** Multiple agents and humans coordinate through shared files"
 
 ## Timeline

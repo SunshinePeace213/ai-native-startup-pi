@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-09-02
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
   - {resource: llm-wiki/raw/articles/llm-wiki/karpathy/llm-wiki.md, title: "LLM Wiki", id: src_6711dfc0cddd}
@@ -10,18 +10,18 @@ sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/rohitg00/llm-wiki.md, title: "LLM Wiki v2", id: src_48f57237f6ef}
   - {resource: llm-wiki/raw/docs/anthropic/increase-consistency.md, title: "increase-consistency", id: src_1dce2e527884}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
-generated: {by: process:llm-wiki-render, at: 2026-09-02}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_rag]
 claim_ids: [clm_11592f0abfb3, clm_a645efcafb39, clm_4f2426d16440, clm_511e5a08009b]
-confidence: 0.93
+confidence: 0.92
 stale_after: 2028-05-04
-last_rendered: 2026-09-02T10:16:55Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # RAG
 
-> **In here:** RAG retrieves chunks at query time and so rediscovers knowledge from scratch on every question, accumulating nothing between queries · 4 claims, confidence 0.93.
+> **In here:** RAG retrieves chunks at query time and so rediscovers knowledge from scratch on every question, accumulating nothing between queries · 4 claims, confidence 0.92.
 
 ## Current understanding
 

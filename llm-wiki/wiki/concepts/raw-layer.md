@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/ahumanft/llm-wiki-v3.md, title: "LLM Wiki V3: Segmentation", id: src_b585de1a26bb}
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
@@ -12,26 +12,26 @@ sources:
   - {resource: llm-wiki/raw/chats/llm-wiki-engine-layout-refactor.md, title: "Moving the llm-wiki engine under scripts/llm-wiki and splitting its tests out of the harness layer", id: src_157432f58354}
   - {resource: llm-wiki/raw/chats/llm-wiki-phase-5-automation-build.md, title: "llm-wiki Phase 5 automation build — what the session asked, found, and decided", id: src_e261dc10ac79}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_raw_layer]
 claim_ids: [clm_68d42ae34cc5, clm_64cae6b2f5df, clm_9e583518b455, clm_826354f2bdf0, clm_e4478d9f00c6, clm_2bb1cab4a5e8, clm_ccececdb9e58, clm_278b40546c75]
-confidence: 0.89
+confidence: 0.88
 stale_after: 2027-01-02
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # raw layer
 
-> **In here:** The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it · 8 claims, confidence 0.89.
+> **In here:** The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it · 8 claims, confidence 0.88.
 
 ## Current understanding
 
 - The wiki is a persistent, compounding artifact: its cross-references already exist and its synthesis already reflects every source read, so a question is answered from compiled knowledge rather than re-derived from raw documents (0.99)
 - The pattern has three layers — the raw sources, the wiki, and the schema (0.99)
 - Useful exploratory work is crystallized back into the knowledge base as a source rather than written straight into a page — a debugging session, research thread, or architecture conversation becomes a raw source, which yields a summary, then observations, then claim updates, and only then new or updated wiki pages (0.96)
-- The retriever's graph stream seeds the shortest path between the question's named entities, so a direct edge bypasses the entity on the longer chain: the live graph's direct wiki layer to raw layer edge leaves the state layer unseeded for what sits between the raw layer and the wiki layer, and the connective claim answers only at rank ten through the endpoints' own claims (0.89)
-- The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it (0.84)
+- The retriever's graph stream seeds the shortest path between the question's named entities, so a direct edge bypasses the entity on the longer chain: the live graph's direct wiki layer to raw layer edge leaves the state layer unseeded for what sits between the raw layer and the wiki layer, and the connective claim answers only at rank ten through the endpoints' own claims (0.87)
+- The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it (0.83)
 - An observation is a structured claim the LLM extracts from a source — a noisy semantic measurement of what that source says, never truth — so it may be wrong and is filed with full attribution: source id, verbatim evidence span, confidence, extractor model and prompt version, timestamp, claim key, stance, entities, and relationships (0.83)
 - The LLM does not write the wiki: it observes evidence, the state model updates belief, and the wiki renders the current understanding — markdown pages are human-readable renderings of the belief state rather than the primary source of truth, which is raw immutable evidence plus structured observations, probabilistic belief state, transition history, and graph relationships (0.83)
 - A rename that moves engine files leaves the historical layers quoting the old paths: spec markdown and pilot reports are evidence of what was true when written, and the wiki's own pages are state-layer owned, so they follow through a crystallize and a re-render rather than a hand edit (0.75)
@@ -49,10 +49,10 @@ review_required: false
 - `clm_9e583518b455` — "Useful exploratory work is crystallized back into the knowledge base as a source rather than written straight into a page — a debugging session, research thread, or architecture conversation becomes a raw source, which yields a summary, then observations, then claim updates, and only then new or updated wiki pages" · p 0.96 · active · 2 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "The important insight: **good answers can be filed back into the wiki as new pages.** A comparison you asked for, an analysis, a connection you discovered — these are valuable and shouldn't disappear into chat history."
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "A debugging session, research thread, or architecture conversation becomes a source."
-- `clm_826354f2bdf0` — "The retriever's graph stream seeds the shortest path between the question's named entities, so a direct edge bypasses the entity on the longer chain: the live graph's direct wiki layer to raw layer edge leaves the state layer unseeded for what sits between the raw layer and the wiki layer, and the connective claim answers only at rank ten through the endpoints' own claims" · p 0.89 · active · 2 support · 0 contradict
+- `clm_826354f2bdf0` — "The retriever's graph stream seeds the shortest path between the question's named entities, so a direct edge bypasses the entity on the longer chain: the live graph's direct wiki layer to raw layer edge leaves the state layer unseeded for what sits between the raw layer and the wiki layer, and the connective claim answers only at rank ten through the endpoints' own claims" · p 0.87 · active · 2 support · 0 contradict
   - `src_21d1317cc326` Phase 5 build findings — what the retune and the loops measured: "Path seeds follow the shortest path between the question's named entities."
   - `src_e261dc10ac79` llm-wiki Phase 5 automation build — what the session asked, found, and decided: "How path seeds should treat a graph that holds a direct edge beside the chain it summarises: the shortest path between the raw layer and the wiki layer is one hop, so the state layer is never seeded and the connective claim answers at…"
-- `clm_e4478d9f00c6` — "The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it" · p 0.84 · active · 1 support · 0 contradict
+- `clm_e4478d9f00c6` — "The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it" · p 0.83 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "These are immutable — the LLM reads from them but never modifies them. This is your source of truth."
 - `clm_2bb1cab4a5e8` — "An observation is a structured claim the LLM extracts from a source — a noisy semantic measurement of what that source says, never truth — so it may be wrong and is filed with full attribution: source id, verbatim evidence span, confidence, extractor model and prompt version, timestamp, claim key, stance, entities, and relationships" · p 0.83 · active · 1 support · 0 contradict
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "A structured claim extracted by the LLM from a source. It is a noisy semantic measurement, not truth."

@@ -2,16 +2,16 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/getting-started-with-loops.md, title: "Loop engineering: Getting started with loops", id: src_d0a8a3247101}
   - {resource: llm-wiki/raw/docs/claude-code/goal.md, title: "Keep Claude working toward a goal", id: src_5229aa475d30}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_goal_command]
 claim_ids: [clm_62d0421c8691, clm_cf409a883dc9, clm_ddd5deba5af8, clm_3072c56e3d0e, clm_a9f8de81c140, clm_1b37e536a50d]
 confidence: 0.93
 stale_after: 2027-01-06
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -26,7 +26,7 @@ review_required: false
 - The /goal command sets a completion condition and Claude Code keeps working toward it turn after turn, starting a new turn instead of returning control whenever the condition does not yet hold (0.93)
 - A turn that fails on an error which will not clear until you fix it ends the active goal, with a warning naming the cause and telling you to run /goal again once it is fixed (0.93)
 - Only one goal can be active per Claude Code session, and the same /goal command sets, checks, and clears it depending on the argument given (0.93)
-- /goal rides on the hooks system, so it follows the same workspace-trust rule as hooks in settings files and is unavailable wherever disableAllHooks or allowManagedHooksOnly is in force (0.90)
+- /goal rides on the hooks system, so it follows the same workspace-trust rule as hooks in settings files and is unavailable wherever disableAllHooks or allowManagedHooksOnly is in force (0.88)
 
 ## Evidence
 
@@ -41,7 +41,7 @@ review_required: false
   - `src_5229aa475d30` Keep Claude working toward a goal: "If a turn fails on an error that won't clear until you fix it, Claude Code clears the goal and prints a warning naming the cause."
 - `clm_a9f8de81c140` — "Only one goal can be active per Claude Code session, and the same /goal command sets, checks, and clears it depending on the argument given." · p 0.93 · active · 1 support · 0 contradict
   - `src_5229aa475d30` Keep Claude working toward a goal: "One goal can be active per session. The same command sets, checks, and clears it depending on the argument."
-- `clm_1b37e536a50d` — "/goal rides on the hooks system, so it follows the same workspace-trust rule as hooks in settings files and is unavailable wherever disableAllHooks or allowManagedHooksOnly is in force." · p 0.90 · active · 1 support · 0 contradict
+- `clm_1b37e536a50d` — "/goal rides on the hooks system, so it follows the same workspace-trust rule as hooks in settings files and is unavailable wherever disableAllHooks or allowManagedHooksOnly is in force." · p 0.88 · active · 1 support · 0 contradict
   - `src_5229aa475d30` Keep Claude working toward a goal: "Claude Code makes `/goal` available under the same [workspace trust rule as hooks in settings files](/docs/en/permissions#what-runs-before-you-trust-a-folder), because the evaluator is part of the hooks system."
 
 ## Timeline

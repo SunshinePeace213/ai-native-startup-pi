@@ -2,7 +2,7 @@
 type: system
 status: current
 created: 2026-09-12
-updated: 2026-09-14
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/artificial-analysis/benchmarking-gpt-6-astra.md, title: "Benchmarking GPT-6 Astra", id: src_1a690917c61d}
   - {resource: llm-wiki/raw/articles/artificial-analysis/gpt-5-6-has-landed.md, title: "GPT-5.6 benchmarks across Intelligence, Speed and Cost", id: src_c49e34d6a671}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/articles/openai/gpt-5-6.md, title: "gpt-5-6", id: src_6556cffbfc4e}
   - {resource: llm-wiki/raw/docs/openai/guides-reasoning.md, title: "Reasoning models", id: src_7fcd56977d57}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-5-6-sol.md, title: "GPT-5.6 Sol", id: src_2799e7222597}
-generated: {by: process:llm-wiki-render, at: 2026-09-14}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_gpt_5_6_sol]
-claim_ids: [clm_094644aafda5, clm_3d8a0aa2d11b, clm_37bde4514ecc, clm_f555a40cd92e, clm_dabd79929390, clm_60ac29d854e8, clm_c9de5ea3f012, clm_bd0ee904fec9, clm_94f937808acc, clm_3cf4d9ede51e, clm_a50b6a0ab8de, clm_d79a4bcae597, clm_e4d11c464ecb, clm_f527db1617d8, clm_34a7772523ea, clm_f16689ccb5bd, clm_10eddef12f8d]
+claim_ids: [clm_094644aafda5, clm_3d8a0aa2d11b, clm_37bde4514ecc, clm_dabd79929390, clm_60ac29d854e8, clm_c9de5ea3f012, clm_f555a40cd92e, clm_bd0ee904fec9, clm_94f937808acc, clm_3cf4d9ede51e, clm_a50b6a0ab8de, clm_d79a4bcae597, clm_e4d11c464ecb, clm_f527db1617d8, clm_34a7772523ea, clm_f16689ccb5bd, clm_10eddef12f8d]
 confidence: 0.85
 stale_after: 2026-11-21
-last_rendered: 2026-09-14T19:58:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -29,10 +29,10 @@ review_required: false
 - On Terminal-Bench v4.0 GPT-6 Astra at xhigh scores 59.6% and at max 59.1%, ahead of Claude Fable 5.1 at xhigh effort on 55.1% (0.96)
 - GPT-6 Astra's hallucination rate on AA-Omniscience fell to 51% at max effort from GPT-5.6 Sol's 92%, while accuracy also rose (0.95)
 - GPT-5.6 Sol is the flagship of the GPT-5.6 family and corresponds to the unsuffixed model tier of earlier GPT-5 families; the gpt-5.6 alias routes to it (0.92)
-- GPT-5.6 Sol costs $4 per million input tokens, $0.40 cached input, and $20 per million output tokens under promotional pricing guaranteed at least through November 21, 2026 (0.92)
 - Every GPT-5.6 model — Sol, Terra, and Luna — carries a 1,050,000-token context window, 128,000 max output tokens, and a February 16, 2026 knowledge cutoff (0.92)
 - GPT-5.6 Sol, Terra, and Luna accept reasoning.effort none, low, medium, high, xhigh, and max, with medium as the default (0.92)
 - On GPT-5.6 models an omitted reasoning.effort defaults to medium, which OpenAI calls the default configuration for most workloads and a well-balanced point on the latency, performance, and cost curve (0.92)
+- GPT-5.6 Sol costs $4 per million input tokens, $0.40 cached input, and $20 per million output tokens under promotional pricing guaranteed at least through November 21, 2026 (0.91)
 - The GPT-5.6 family is three tiers: Sol the flagship, Terra a balanced model for everyday work, and Luna the most cost-efficient model (0.83)
 - GPT-6 Astra gains about 90 Elo on AA-Briefcase long-horizon knowledge work over GPT-5.6 Sol but loses Presentation Quality Elo, where Sol at max still leads every model (0.81)
 - On the Artificial Analysis Coding Agent Index GPT-6 Astra scores 62, level with Claude Fable 5.1 (62) and ahead of Claude Opus 5 (60), GPT-5.6 Sol (55), and Muse Spark 1.3 (54) (0.81)
@@ -42,7 +42,7 @@ review_required: false
 - On Artificial Analysis Intelligence Index v4.1 GPT-5.6 Sol at max scores 59, one point below Claude Fable 5, at about one third of the cost per task ($1.04); Terra and Luna score 55 and 51 at $0.55 and $0.21 per task (0.80)
 - On Agents' Last Exam, a benchmark of long-running professional workflows across 55 fields, OpenAI reports GPT-5.6 Sol at 53.6, 13.1 points above Claude Fable 5, and 11.4 points above it even at medium effort at about a quarter of the estimated cost (0.79)
 - On Artificial Analysis Coding Agent Index v1.1 GPT-5.6 Sol at max in Codex scores 80, leading all three evaluations, with Terra and Luna at 77 and 75 at about 60% and 80% lower per-task cost — an earlier index version whose scores are not comparable with the later Astra-era index (0.79)
-- GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input (0.78)
+- GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input (0.77)
 
 ## Evidence
 
@@ -54,14 +54,14 @@ review_required: false
   - `src_c197533a04c8` AA-Omniscience: Knowledge and Hallucination Benchmark: "| GPT-6 Astra (high) | 44.8% | | GPT-6 Astra (medium) | 46.5% | | GPT-6 Astra (xhigh) | 48.3% | | GPT-6 Astra (max) | 51.3% |"
 - `clm_37bde4514ecc` — "GPT-5.6 Sol is the flagship of the GPT-5.6 family and corresponds to the unsuffixed model tier of earlier GPT-5 families; the gpt-5.6 alias routes to it." · p 0.92 · active · 1 support · 0 contradict
   - `src_2799e7222597` GPT-5.6 Sol: "GPT-5.6 Sol is a flagship model in the GPT-5.6 family. It roughly corresponds to the unsuffixed model tier used in earlier GPT-5 families."
-- `clm_f555a40cd92e` — "GPT-5.6 Sol costs $4 per million input tokens, $0.40 cached input, and $20 per million output tokens under promotional pricing guaranteed at least through November 21, 2026." · p 0.92 · active · 1 support · 0 contradict · when: promotional pricing through 2026-11-21
-  - `src_2799e7222597` GPT-5.6 Sol: "GPT-5.6 Sol costs $4 per million input tokens and $20 per million output tokens, a 20% reduction in input pricing and a 33% reduction in output pricing. GPT-5.6 Sol's promotional pricing is available at least through November 21, 2026."
 - `clm_dabd79929390` — "Every GPT-5.6 model — Sol, Terra, and Luna — carries a 1,050,000-token context window, 128,000 max output tokens, and a February 16, 2026 knowledge cutoff." · p 0.92 · active · 1 support · 0 contradict
   - `src_2799e7222597` GPT-5.6 Sol: "- Feb 16, 2026 knowledge cutoff"
 - `clm_60ac29d854e8` — "GPT-5.6 Sol, Terra, and Luna accept reasoning.effort none, low, medium, high, xhigh, and max, with medium as the default." · p 0.92 · active · 1 support · 0 contradict
   - `src_2799e7222597` GPT-5.6 Sol: "Reasoning.effort supports: none, low, medium (default), high, xhigh, and max."
 - `clm_c9de5ea3f012` — "On GPT-5.6 models an omitted reasoning.effort defaults to medium, which OpenAI calls the default configuration for most workloads and a well-balanced point on the latency, performance, and cost curve." · p 0.92 · active · 1 support · 0 contradict
   - `src_7fcd56977d57` Reasoning models: "If you omit `reasoning.effort`, GPT-5.6 defaults to `medium` in both modes."
+- `clm_f555a40cd92e` — "GPT-5.6 Sol costs $4 per million input tokens, $0.40 cached input, and $20 per million output tokens under promotional pricing guaranteed at least through November 21, 2026." · p 0.91 · active · 1 support · 0 contradict · when: promotional pricing through 2026-11-21
+  - `src_2799e7222597` GPT-5.6 Sol: "GPT-5.6 Sol costs $4 per million input tokens and $20 per million output tokens, a 20% reduction in input pricing and a 33% reduction in output pricing. GPT-5.6 Sol's promotional pricing is available at least through November 21, 2026."
 - `clm_bd0ee904fec9` — "The GPT-5.6 family is three tiers: Sol the flagship, Terra a balanced model for everyday work, and Luna the most cost-efficient model." · p 0.83 · active · 1 support · 0 contradict
   - `src_6556cffbfc4e` gpt-5-6: "our new flagship, **Sol**, alongside **Terra**, a balanced model for everyday work, and **Luna**, our most cost-efficient model."
 - `clm_94f937808acc` — "GPT-6 Astra gains about 90 Elo on AA-Briefcase long-horizon knowledge work over GPT-5.6 Sol but loses Presentation Quality Elo, where Sol at max still leads every model." · p 0.81 · active · 1 support · 0 contradict
@@ -80,7 +80,7 @@ review_required: false
   - `src_6556cffbfc4e` gpt-5-6: "GPT‑5.6 Sol sets a new high of 53.6, eclipsing Claude Fable 5 (adaptive reasoning) by 13.1 points. Even at medium reasoning, it beats Fable 5 by 11.4 points at roughly one-quarter the estimated cost."
 - `clm_f16689ccb5bd` — "On Artificial Analysis Coding Agent Index v1.1 GPT-5.6 Sol at max in Codex scores 80, leading all three evaluations, with Terra and Luna at 77 and 75 at about 60% and 80% lower per-task cost — an earlier index version whose scores are not comparable with the later Astra-era index." · p 0.79 · active · 1 support · 0 contradict · when: Coding Agent Index v1.1, pre-Astra
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "GPT-5.6 Sol (max) in Codex scores 80 in the Index, leading in all three evaluations"
-- `clm_10eddef12f8d` — "GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input." · p 0.78 · active · 1 support · 0 contradict · when: list price before the July 2026 cuts and the Sol promotion
+- `clm_10eddef12f8d` — "GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input." · p 0.77 · active · 1 support · 0 contradict · when: list price before the July 2026 cuts and the Sol promotion
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "Sol, Terra, and Luna are priced at $5/$30, $2.5/$15, and $1/$6 respectively per million input/output tokens."
 
 ## Timeline

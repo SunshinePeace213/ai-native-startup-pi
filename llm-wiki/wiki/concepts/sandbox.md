@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/langchain/the-anatomy-of-an-agent-harness.md, title: "The Anatomy of an Agent Harness", id: src_be6da1f4f37a}
   - {resource: llm-wiki/raw/docs/anthropic/mitigate-jailbreaks.md, title: "Mitigate jailbreaks and prompt injections", id: src_ba6d75fadd1b}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/docs/pi/extensions.md, title: "Extensions", id: src_a49af96a95e8}
   - {resource: llm-wiki/raw/docs/pi/packages.md, title: "Pi Packages", id: src_1589290f55f3}
   - {resource: llm-wiki/raw/docs/pi/security.md, title: "Security", id: src_38afec4a51af}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_sandbox]
 claim_ids: [clm_a9cd0f68d4eb, clm_ad0fdc5c03ce, clm_385d1519d31d, clm_918dd20a3e91, clm_11421224af57, clm_cfe96221e72b, clm_b89352b18fc5, clm_c381a5766221, clm_d417dcb427ab, clm_a52988da66af, clm_ea3893719806, clm_fba2df5be733]
 confidence: 0.90
 stale_after: 2027-01-29
-last_rendered: 2026-09-11T20:02:51Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -34,10 +34,10 @@ review_required: false
 - Pi extensions run with the user's full system permissions and can execute arbitrary code, so only trusted sources should be installed (0.93)
 - Pi omits an in-process sandbox deliberately, on the reasoning that a partial one reads as a security boundary while still depending on the host shell, filesystem, package managers, credentials, and extension code, so real isolation has to come from the OS or a virtualization boundary (0.93)
 - Read and Edit deny rules reach only the file commands Claude Code recognizes inside Bash, not arbitrary subprocesses that open files themselves, so OS-level enforcement across every process requires enabling the sandbox (0.93)
-- Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com (0.93)
-- Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container (0.92)
-- Sandboxes give agents safe operating environments: rather than executing locally, the harness connects to a sandbox to run code, inspect files, and install dependencies in isolation (0.78)
-- A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution (0.78)
+- Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com (0.92)
+- Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container (0.91)
+- Sandboxes give agents safe operating environments: rather than executing locally, the harness connects to a sandbox to run code, inspect files, and install dependencies in isolation (0.77)
+- A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution (0.77)
 
 ## Evidence
 
@@ -57,13 +57,13 @@ review_required: false
   - `src_38afec4a51af` Security: "A partial in-process sandbox would be easy to misunderstand as a security boundary while still depending on the host shell, filesystem, package managers, credentials, and extension code."
 - `clm_c381a5766221` — "Read and Edit deny rules reach only the file commands Claude Code recognizes inside Bash, not arbitrary subprocesses that open files themselves, so OS-level enforcement across every process requires enabling the sandbox." · p 0.93 · active · 1 support · 0 contradict
   - `src_ab9f8f38615f` Tools reference: "[Read and Edit deny rules](/docs/en/permissions#tool-specific-permission-rules) also apply to file commands Claude Code recognizes in Bash, such as `cat`, `head`, `tail`, `sed`, and `grep`, but not to arbitrary subprocesses that read or…"
-- `clm_d417dcb427ab` — "Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com." · p 0.93 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
+- `clm_d417dcb427ab` — "Docker Sandboxes keeps the provider credential off the container: the sandbox holds only a sentinel value and the sbx proxy swaps in the real credential on egress to api.anthropic.com." · p 0.92 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
   - `src_02faa5c62172` Containerization: "Unlike the Plain Docker pattern above, the provider credential is not passed into the container. The sandbox receives a sentinel value instead, and the `sbx` proxy substitutes the real credential on egress to `api.anthropic.com`."
-- `clm_a52988da66af` — "Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container." · p 0.92 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
+- `clm_a52988da66af` — "Authenticating from inside a Docker Sandboxes sandbox defeats the credential-proxy model, because /login writes a real token into the container." · p 0.91 · active · 1 support · 0 contradict · when: under the Docker Sandboxes pattern
   - `src_02faa5c62172` Containerization: "Do not authenticate from inside the sandbox: `/login` there writes a real token into the container and defeats the proxy model."
-- `clm_ea3893719806` — "Sandboxes give agents safe operating environments: rather than executing locally, the harness connects to a sandbox to run code, inspect files, and install dependencies in isolation." · p 0.78 · active · 1 support · 0 contradict
+- `clm_ea3893719806` — "Sandboxes give agents safe operating environments: rather than executing locally, the harness connects to a sandbox to run code, inspect files, and install dependencies in isolation." · p 0.77 · active · 1 support · 0 contradict
   - `src_be6da1f4f37a` The Anatomy of an Agent Harness: "**Sandboxes give agents safe operating environments.** Instead of executing locally, the harness connects to a sandbox to run code, inspect files, install dependencies, and complete tasks. This creates secure, isolated execution."
-- `clm_fba2df5be733` — "A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution." · p 0.78 · active · 1 support · 0 contradict
+- `clm_fba2df5be733` — "A harness comprises system prompts, tools and their descriptions, bundled infrastructure such as filesystem, sandbox and browser, orchestration logic for subagent spawning and model routing, and hooks or middleware for deterministic execution." · p 0.77 · active · 1 support · 0 contradict
   - `src_be6da1f4f37a` The Anatomy of an Agent Harness: "- System Prompts - Tools, Skills, MCPs and their descriptions - Bundled Infrastructure (filesystem, sandbox, browser) - Orchestration Logic (subagent spawning, handoffs, model routing) - Hooks/Middleware for deterministic execution…"
 
 ## Timeline

@@ -2,7 +2,7 @@
 type: system
 status: current
 created: 2026-09-02
-updated: 2026-09-14
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/artificial-analysis/benchmarking-gpt-6-astra.md, title: "Benchmarking GPT-6 Astra", id: src_1a690917c61d}
   - {resource: llm-wiki/raw/articles/artificial-analysis/omniscience.md, title: "AA-Omniscience: Knowledge and Hallucination Benchmark", id: src_c197533a04c8}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/docs/anthropic/models-overview.md, title: "Models overview", id: src_963229517470}
   - {resource: llm-wiki/raw/docs/anthropic/pricing.md, title: "pricing", id: src_41365e6aef45}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5-1.md, title: "Delivering work", id: src_9f2ae1e705ce}
-generated: {by: process:llm-wiki-render, at: 2026-09-14}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_claude_fable_5_1]
-claim_ids: [clm_094644aafda5, clm_a6d1086c1ed4, clm_830c5ae30594, clm_2ef013ac2702, clm_3313bc585301, clm_3998bab92a34, clm_3c016c102ee5, clm_486ba5592791, clm_5bae95a20dd2, clm_8b4e7965fc9f, clm_bcaacdc975c2, clm_de413e5598d2, clm_9c0d8265daab, clm_34fc0b797675, clm_41f9da71e4cf, clm_99361b6ce5ac, clm_a6168419f5b5, clm_b912dae9bece, clm_fb52a42c5df4, clm_13f4f5cb2042, clm_624be223e15d, clm_4ed7faf79e21, clm_b33fcb0a8223, clm_2b15ffa95160, clm_3cf4d9ede51e, clm_a50b6a0ab8de, clm_23530aed6e2b]
+claim_ids: [clm_094644aafda5, clm_a6d1086c1ed4, clm_830c5ae30594, clm_2ef013ac2702, clm_3313bc585301, clm_3998bab92a34, clm_3c016c102ee5, clm_486ba5592791, clm_5bae95a20dd2, clm_8b4e7965fc9f, clm_bcaacdc975c2, clm_de413e5598d2, clm_9c0d8265daab, clm_34fc0b797675, clm_41f9da71e4cf, clm_a6168419f5b5, clm_b912dae9bece, clm_fb52a42c5df4, clm_99361b6ce5ac, clm_13f4f5cb2042, clm_624be223e15d, clm_4ed7faf79e21, clm_b33fcb0a8223, clm_2b15ffa95160, clm_3cf4d9ede51e, clm_a50b6a0ab8de, clm_23530aed6e2b]
 confidence: 0.89
 stale_after: 2026-12-07
-last_rendered: 2026-09-14T19:58:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -41,10 +41,10 @@ review_required: false
 - Fable 5.1 is the escalation from Opus 5: Anthropic names the trigger as evals on Claude Opus 5 at higher effort still falling short (0.93)
 - Anthropic's comparative latency ladder runs Fable 5.1 slower, Opus 5 moderate, Sonnet 5 fast, Haiku 4.5 fastest (0.93)
 - Claude Haiku 4.5 has a 200K-token context window, 64K max output, and a reliable knowledge cutoff of February 2025, against 1M context, 128K output, and 2026 cutoffs for Sonnet 5, Opus 5, and Fable 5.1 (0.93)
-- Claude API list prices per million input/output tokens are Fable 5.1 $10/$50, Opus 5 $5/$25, Sonnet 5 $2/$10, and Haiku 4.5 $1/$5 (0.93)
 - Anthropic positions Fable 5.1 for demanding reasoning and long-horizon agentic work, Opus 5 for complex agentic coding and enterprise work, Sonnet 5 as the best combination of speed and intelligence, and Haiku 4.5 as the fastest model with near-frontier intelligence (0.93)
 - At xhigh and especially max effort Claude Fable 5.1 can think for longer before writing, drafting much of a long deliverable in its thinking and then writing it out again as the reply, so requests for long deliverables are better run at high unless a quality gain has been measured (0.92)
 - Claude Fable 5.1 executes very long tasks without much guidance on methodology when the goal is clear, but on complex asynchronous workloads it needs a nudge not to end its turn before the work is done (0.92)
+- Claude API list prices per million input/output tokens are Fable 5.1 $10/$50, Opus 5 $5/$25, Sonnet 5 $2/$10, and Haiku 4.5 $1/$5 (0.92)
 - On the AA-Omniscience Index GPT-6 Astra (high) leads at 43.73, with Claude Fable 5.1 (max with fallback) at 43.45 and two further GPT-6 Astra settings at 43.42 and 43.40 — the top four inside a third of a point (0.81)
 - On APEX-Agents 1.1 Claude Fable 5.1 leads Pass@1 at 68.6 while Gemini 3.7 Flash leads Mean Score at 79.4, so the benchmark's two metrics put different models first (0.81)
 - At max effort GPT-6 Astra uses about 27k output tokens per Intelligence Index task, roughly a third of Claude Fable 5.1's 78k for the same score (0.81)
@@ -87,14 +87,14 @@ review_required: false
   - `src_963229517470` Models overview: "| Comparative latency | Slower | Moderate | Fast | Fastest |"
 - `clm_41f9da71e4cf` — "Claude Haiku 4.5 has a 200K-token context window, 64K max output, and a reliable knowledge cutoff of February 2025, against 1M context, 128K output, and 2026 cutoffs for Sonnet 5, Opus 5, and Fable 5.1." · p 0.93 · active · 1 support · 0 contradict
   - `src_963229517470` Models overview: "| Reliable knowledge cutoff | Jun 2026 | May 2026 | Jan 2026 | Feb 2025 |"
-- `clm_99361b6ce5ac` — "Claude API list prices per million input/output tokens are Fable 5.1 $10/$50, Opus 5 $5/$25, Sonnet 5 $2/$10, and Haiku 4.5 $1/$5." · p 0.93 · active · 1 support · 0 contradict
-  - `src_41365e6aef45` pricing: "| Claude Opus 5 | $5 / MTok | $6.25 / MTok | $10 / MTok | $0.50 / MTok | $25 / MTok |"
 - `clm_a6168419f5b5` — "Anthropic positions Fable 5.1 for demanding reasoning and long-horizon agentic work, Opus 5 for complex agentic coding and enterprise work, Sonnet 5 as the best combination of speed and intelligence, and Haiku 4.5 as the fastest model with near-frontier intelligence." · p 0.93 · active · 1 support · 0 contradict
   - `src_963229517470` Models overview: "For demanding reasoning and long-horizon agentic work | For complex agentic coding and enterprise work | The best combination of speed and intelligence | The fastest model with near-frontier intelligence"
 - `clm_b912dae9bece` — "At xhigh and especially max effort Claude Fable 5.1 can think for longer before writing, drafting much of a long deliverable in its thinking and then writing it out again as the reply, so requests for long deliverables are better run at high unless a quality gain has been measured." · p 0.92 · active · 1 support · 0 contradict · when: at xhigh and max effort
   - `src_9f2ae1e705ce` Delivering work: "At `xhigh` and especially `max` effort, Claude Fable 5.1 can think for longer before it starts writing its reply."
 - `clm_fb52a42c5df4` — "Claude Fable 5.1 executes very long tasks without much guidance on methodology when the goal is clear, but on complex asynchronous workloads it needs a nudge not to end its turn before the work is done." · p 0.92 · active · 1 support · 0 contradict · when: on complex asynchronous workloads
   - `src_9f2ae1e705ce` Delivering work: "Claude Fable 5.1 can execute very long tasks without much guidance on methodology, especially when the goal is clear. On complex asynchronous workloads, though, nudge it not to end its turn before the work is done."
+- `clm_99361b6ce5ac` — "Claude API list prices per million input/output tokens are Fable 5.1 $10/$50, Opus 5 $5/$25, Sonnet 5 $2/$10, and Haiku 4.5 $1/$5." · p 0.92 · active · 1 support · 0 contradict
+  - `src_41365e6aef45` pricing: "| Claude Opus 5 | $5 / MTok | $6.25 / MTok | $10 / MTok | $0.50 / MTok | $25 / MTok |"
 - `clm_13f4f5cb2042` — "On the AA-Omniscience Index GPT-6 Astra (high) leads at 43.73, with Claude Fable 5.1 (max with fallback) at 43.45 and two further GPT-6 Astra settings at 43.42 and 43.40 — the top four inside a third of a point." · p 0.81 · active · 1 support · 0 contradict
   - `src_c197533a04c8` AA-Omniscience: Knowledge and Hallucination Benchmark: "| GPT-6 Astra (high) | 43.73 | | Claude Fable 5.1 (max with fallback) | 43.45 | | GPT-6 Astra (xhigh) | 43.42 | | GPT-6 Astra (max) | 43.40 |"
 - `clm_624be223e15d` — "On APEX-Agents 1.1 Claude Fable 5.1 leads Pass@1 at 68.6 while Gemini 3.7 Flash leads Mean Score at 79.4, so the benchmark's two metrics put different models first." · p 0.81 · active · 1 support · 0 contradict

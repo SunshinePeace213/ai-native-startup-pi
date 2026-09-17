@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
   - {resource: llm-wiki/raw/articles/llm-wiki/karpathy/llm-wiki.md, title: "LLM Wiki", id: src_6711dfc0cddd}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-6-governance-build-notes.md, title: "Phase 6 governance build notes — the fold key, the guards, and what the loops measured", id: src_4863372048fa}
   - {resource: llm-wiki/raw/papers/graph-engineering-andrew-ng-playbook/index.md, title: "Graph Engineering for Multi-Agentic Systems: The Andrew Ng Playbook", id: src_363b13dc0870}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_knowledge_graph]
 claim_ids: [clm_f3c9a3215ea4, clm_11592f0abfb3, clm_64cae6b2f5df, clm_388d45acd4c5, clm_8268e86d6097, clm_804caacdb245, clm_a286eb2a1892, clm_4e9c001d7b2e, clm_a37a7b28e462, clm_0e3aa800f1e4, clm_4c34c8aabbe3]
 confidence: 0.91
 stale_after: 2026-10-16
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -36,7 +36,7 @@ review_required: false
 - A knowledge graph is justified only when the same entity or relationship is queried by more than one agent or across more than one session; a graph written to once and never queried is a database table with extra overhead (0.90)
 - No cosine-similarity threshold cleanly separates same-entity mentions from related-but-distinct ones — the best achievable was F1 0.667 at threshold 0.72 — because semantic-similarity embeddings measure same topic, not same real-world entity, which is a different task than identity resolution (0.83)
 - The graph schema is deliberately a small, fixed, generic vocabulary of node labels and relationship types enforced by database constraints: it trades domain expressiveness for query simplicity, and domain nuance lives in node properties rather than in new labels (0.83)
-- Sorting the ledger readers moved only evidence lists on the live vault — 20 of 44 entity rows and 11 of 100 relationship rows, each the same multiset re-ordered — while the claims, unresolved-conflicts, and snapshot views stayed byte-identical and no entity resolution moved (0.76)
+- Sorting the ledger readers moved only evidence lists on the live vault — 20 of 44 entity rows and 11 of 100 relationship rows, each the same multiset re-ordered — while the claims, unresolved-conflicts, and snapshot views stayed byte-identical and no entity resolution moved (0.74)
 
 ## Evidence
 
@@ -70,7 +70,7 @@ review_required: false
   - `src_09c828d1c803` graphwiki: an LLM Wiki pattern for graph databases: "No threshold cleanly separates the classes; best achievable was F1=0.667 (precision 0.542) at threshold 0.72. The 0.97 guessed in the original smoke test was never viable — at 0.97, recall is ~0."
 - `clm_0e3aa800f1e4` — "The graph schema is deliberately a small, fixed, generic vocabulary of node labels and relationship types enforced by database constraints: it trades domain expressiveness for query simplicity, and domain nuance lives in node properties rather than in new labels." · p 0.83 · active · 1 support · 0 contradict
   - `src_09c828d1c803` graphwiki: an LLM Wiki pattern for graph databases: "**Schema** — a small, fixed set of node labels and relationship types (below), enforced with Neo4j constraints."
-- `clm_4c34c8aabbe3` — "Sorting the ledger readers moved only evidence lists on the live vault — 20 of 44 entity rows and 11 of 100 relationship rows, each the same multiset re-ordered — while the claims, unresolved-conflicts, and snapshot views stayed byte-identical and no entity resolution moved" · p 0.76 · active · 1 support · 0 contradict
+- `clm_4c34c8aabbe3` — "Sorting the ledger readers moved only evidence lists on the live vault — 20 of 44 entity rows and 11 of 100 relationship rows, each the same multiset re-ordered — while the claims, unresolved-conflicts, and snapshot views stayed byte-identical and no entity resolution moved" · p 0.74 · active · 1 support · 0 contradict
   - `src_4863372048fa` Phase 6 governance build notes — the fold key, the guards, and what the loops measured: "On a scratch copy the diff was exact — 20 of 44 entity rows moved and 11 of 100 relationship rows moved, and in every case the only field that changed was an evidence list."
 
 ## Timeline

@@ -2,7 +2,7 @@
 type: system
 status: current
 created: 2026-09-12
-updated: 2026-09-12
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/artificial-analysis/gpt-5-6-has-landed.md, title: "GPT-5.6 benchmarks across Intelligence, Speed and Cost", id: src_c49e34d6a671}
   - {resource: llm-wiki/raw/articles/openai/gpt-5-6-price-performance.md, title: "Advancing the price-performance frontier with GPT‑5.6", id: src_5bc744d7e0e1}
@@ -10,12 +10,12 @@ sources:
   - {resource: llm-wiki/raw/docs/openai/guides-reasoning.md, title: "Reasoning models", id: src_7fcd56977d57}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-5-6-luna.md, title: "GPT-5.6 Luna", id: src_a38edb78de27}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-5-6-sol.md, title: "GPT-5.6 Sol", id: src_2799e7222597}
-generated: {by: process:llm-wiki-render, at: 2026-09-12}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_gpt_5_6_luna]
 claim_ids: [clm_a56776e4fbb9, clm_cceed88d4115, clm_6111a2f83575, clm_dabd79929390, clm_60ac29d854e8, clm_c9de5ea3f012, clm_bd0ee904fec9, clm_d921886ba1bb, clm_e4d11c464ecb, clm_f527db1617d8, clm_da97be70653e, clm_f16689ccb5bd, clm_10eddef12f8d]
 confidence: 0.85
 stale_after: 2026-11-21
-last_rendered: 2026-09-12T20:30:33Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -32,12 +32,12 @@ review_required: false
 - GPT-5.6 Sol, Terra, and Luna accept reasoning.effort none, low, medium, high, xhigh, and max, with medium as the default (0.92)
 - On GPT-5.6 models an omitted reasoning.effort defaults to medium, which OpenAI calls the default configuration for most workloads and a well-balanced point on the latency, performance, and cost curve (0.92)
 - The GPT-5.6 family is three tiers: Sol the flagship, Terra a balanced model for everyday work, and Luna the most cost-efficient model (0.83)
-- On July 30, 2026 OpenAI cut GPT-5.6 Luna's price by 80% and GPT-5.6 Terra's by 20%, and the cuts also apply to how Codex usage counts against subscriptions (0.82)
+- On July 30, 2026 OpenAI cut GPT-5.6 Luna's price by 80% and GPT-5.6 Terra's by 20%, and the cuts also apply to how Codex usage counts against subscriptions (0.81)
 - GPT-5.6 Terra is dominated: at every Terra effort level there is a Luna or Sol effort level that is more intelligent at no extra cost or equally intelligent at lower cost, because Luna and Sol are always on the Pareto frontier ahead of Terra (0.80)
 - On Artificial Analysis Intelligence Index v4.1 GPT-5.6 Sol at max scores 59, one point below Claude Fable 5, at about one third of the cost per task ($1.04); Terra and Luna score 55 and 51 at $0.55 and $0.21 per task (0.80)
 - GPT-5.6 Luna at max matches or exceeds GLM-5.2 at max and Gemini 3.5 Flash on the Intelligence Index at lower cost, scoring 51 at $0.21 per task (0.79)
 - On Artificial Analysis Coding Agent Index v1.1 GPT-5.6 Sol at max in Codex scores 80, leading all three evaluations, with Terra and Luna at 77 and 75 at about 60% and 80% lower per-task cost — an earlier index version whose scores are not comparable with the later Astra-era index (0.79)
-- GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input (0.78)
+- GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input (0.77)
 
 ## Evidence
 
@@ -55,7 +55,7 @@ review_required: false
   - `src_7fcd56977d57` Reasoning models: "If you omit `reasoning.effort`, GPT-5.6 defaults to `medium` in both modes."
 - `clm_bd0ee904fec9` — "The GPT-5.6 family is three tiers: Sol the flagship, Terra a balanced model for everyday work, and Luna the most cost-efficient model." · p 0.83 · active · 1 support · 0 contradict
   - `src_6556cffbfc4e` gpt-5-6: "our new flagship, **Sol**, alongside **Terra**, a balanced model for everyday work, and **Luna**, our most cost-efficient model."
-- `clm_d921886ba1bb` — "On July 30, 2026 OpenAI cut GPT-5.6 Luna's price by 80% and GPT-5.6 Terra's by 20%, and the cuts also apply to how Codex usage counts against subscriptions." · p 0.82 · active · 1 support · 0 contradict
+- `clm_d921886ba1bb` — "On July 30, 2026 OpenAI cut GPT-5.6 Luna's price by 80% and GPT-5.6 Terra's by 20%, and the cuts also apply to how Codex usage counts against subscriptions." · p 0.81 · active · 1 support · 0 contradict
   - `src_5bc744d7e0e1` Advancing the price-performance frontier with GPT‑5.6: "Starting today, GPT‑5.6 Luna, our fastest and most affordable model, will cost 80% less, while GPT‑5.6 Terra, our balanced model for everyday work, will cost 20% less."
 - `clm_e4d11c464ecb` — "GPT-5.6 Terra is dominated: at every Terra effort level there is a Luna or Sol effort level that is more intelligent at no extra cost or equally intelligent at lower cost, because Luna and Sol are always on the Pareto frontier ahead of Terra." · p 0.80 · active · 1 support · 0 contradict
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "Notably, Luna and Sol are always on the Pareto frontier ahead of Terra."
@@ -65,7 +65,7 @@ review_required: false
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "GPT-5.6 Luna (max) matches or exceeds the intelligence of GLM-5.2 (max) and Gemini 3.5 Flash at a lower cost."
 - `clm_f16689ccb5bd` — "On Artificial Analysis Coding Agent Index v1.1 GPT-5.6 Sol at max in Codex scores 80, leading all three evaluations, with Terra and Luna at 77 and 75 at about 60% and 80% lower per-task cost — an earlier index version whose scores are not comparable with the later Astra-era index." · p 0.79 · active · 1 support · 0 contradict · when: Coding Agent Index v1.1, pre-Astra
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "GPT-5.6 Sol (max) in Codex scores 80 in the Index, leading in all three evaluations"
-- `clm_10eddef12f8d` — "GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input." · p 0.78 · active · 1 support · 0 contradict · when: list price before the July 2026 cuts and the Sol promotion
+- `clm_10eddef12f8d` — "GPT-5.6's non-promotional list prices per million input/output tokens are Sol $5/$30, Terra $2.50/$15, and Luna $1/$6, with a 90% cache-read discount and OpenAI's first cache-write premium at 1.25x input." · p 0.77 · active · 1 support · 0 contradict · when: list price before the July 2026 cuts and the Sol promotion
   - `src_c49e34d6a671` GPT-5.6 benchmarks across Intelligence, Speed and Cost: "Sol, Terra, and Luna are priced at $5/$30, $2.5/$15, and $1/$6 respectively per million input/output tokens."
 
 ## Timeline

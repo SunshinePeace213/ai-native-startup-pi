@@ -625,3 +625,7 @@ rows: 1 · views: changed · rendered: none
 ## [2026-09-17] undo | run_9bcf5c8d8f0b | register | off-topic; user requested removal
 
 rows: 1 · views: changed · rendered: none
+
+## [2026-09-17] lint | 201 pages · 127 mechanical fixes · 38 findings for review
+
+missing-pages: none · mechanical-fixes: 127 · decay: 0/0

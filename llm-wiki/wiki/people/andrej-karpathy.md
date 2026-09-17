@@ -2,23 +2,23 @@
 type: person
 status: current
 created: 2026-08-20
-updated: 2026-08-23
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/ahumanft/llm-wiki-v3.md, title: "LLM Wiki V3: Segmentation", id: src_b585de1a26bb}
   - {resource: llm-wiki/raw/articles/llm-wiki/karpathy/llm-wiki.md, title: "LLM Wiki", id: src_6711dfc0cddd}
   - {resource: llm-wiki/raw/articles/llm-wiki/lucianfialho/graphwiki-pattern.md, title: "graphwiki: an LLM Wiki pattern for graph databases", id: src_09c828d1c803}
-generated: {by: process:llm-wiki-render, at: 2026-08-23}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_andrej_karpathy]
 claim_ids: [clm_68d42ae34cc5, clm_1036b815fa78]
-confidence: 0.92
+confidence: 0.91
 stale_after: 2028-08-11
-last_rendered: 2026-08-23T09:04:00Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # Andrej Karpathy
 
-> **In here:** Andrej Karpathy — 2 claims, confidence 0.92, 3 sources.
+> **In here:** Andrej Karpathy — 2 claims, confidence 0.91, 3 sources.
 
 ## Current understanding
 

@@ -2,23 +2,23 @@
 type: workflow
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/a-harness-for-every-task-dynamic-workflows-in-claude-code.md, title: "A harness for every task: dynamic workflows in Claude Code", id: src_7415e8608f3c}
   - {resource: llm-wiki/raw/articles/anthropic/getting-started-with-loops.md, title: "Loop engineering: Getting started with loops", id: src_d0a8a3247101}
   - {resource: llm-wiki/raw/docs/claude-code/workflows.md, title: "Orchestrate subagents at scale with dynamic workflows", id: src_d6586d5c5c4f}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_dynamic_workflows]
 claim_ids: [clm_1691eac7dbb3, clm_7da30002a7c7, clm_7ed354e5255b, clm_0097cfd2b5f8, clm_edfd83ab9d0b, clm_7c3de0c5639e, clm_e5ff207092fb, clm_f395b23fc4e7, clm_5379e62f099f, clm_e3e1d00b42dd, clm_73ef785dc390, clm_8e1ec1b60062, clm_d621eeb9b8ff, clm_7aa000c22eba, clm_9b8d653ab3e6, clm_174fcd481dc7]
-confidence: 0.90
+confidence: 0.89
 stale_after: 2027-01-17
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # dynamic workflows
 
-> **In here:** A static workflow written with the Agent SDK has to work for all edge cases and so ends up generic, whereas a dynamic workflow is a custom harness Claude writes tailor-made for the task at hand · 16 claims, confidence 0.90.
+> **In here:** A static workflow written with the Agent SDK has to work for all edge cases and so ends up generic, whereas a dynamic workflow is a custom harness Claude writes tailor-made for the task at hand · 16 claims, confidence 0.89.
 
 ## Current understanding
 
@@ -30,8 +30,8 @@ review_required: false
 - The subagents a dynamic workflow spawns always run in acceptEdits mode with file edits auto-approved and inherit the user's tool allowlist, whatever permission mode the session itself is in (0.93)
 - A dynamic workflow script holds the loop, the branching, and the intermediate results itself so Claude's context holds only the final answer, whereas with subagents, skills, and agent teams Claude orchestrates turn by turn and every result lands in a context window (0.93)
 - A dynamic workflow script accepts no mid-run user input, has no direct filesystem or shell access, and fails before the run starts if it contains import() — the agents it coordinates are what read, write, and run commands (0.93)
-- A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list (0.91)
-- The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run (0.91)
+- A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list (0.90)
+- The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run (0.90)
 - Sorting a long list in one prompt degrades in quality and will not fit in context, so the workflow answer is a tournament, a pipeline of pairwise-comparison agents, or parallel bucket-ranking then a merge — comparative judgment being more reliable than absolute scoring (0.83)
 - A static workflow written with the Agent SDK has to work for all edge cases and so ends up generic, whereas a dynamic workflow is a custom harness Claude writes tailor-made for the task at hand (0.83)
 - The quarantine pattern for triage workflows bars the agents that read untrusted public content from taking high-privilege actions, leaving those actions to separate agents in charge of acting on the information (0.83)
@@ -60,9 +60,9 @@ review_required: false
   - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "A workflow moves the plan into code. With subagents, skills, and agent teams, Claude is the orchestrator: it decides turn by turn what to spawn or assign next, and every result lands in a context window."
 - `clm_f395b23fc4e7` — "A dynamic workflow script accepts no mid-run user input, has no direct filesystem or shell access, and fails before the run starts if it contains import() — the agents it coordinates are what read, write, and run commands." · p 0.93 · active · 1 support · 0 contradict
   - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "| No mid-run user input | Only agent permission prompts can pause a run."
-- `clm_5379e62f099f` — "A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list." · p 0.91 · active · 1 support · 0 contradict
+- `clm_5379e62f099f` — "A dynamic workflow's script body is plain JavaScript with top-level await in which agent() spawns one subagent and pipeline() runs one agent per item in a list." · p 0.90 · active · 1 support · 0 contradict
   - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "The body is plain JavaScript with top-level `await`. `agent()` spawns one subagent and `pipeline()` runs one per item in a list."
-- `clm_e3e1d00b42dd` — "The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run." · p 0.91 · active · 1 support · 0 contradict
+- `clm_e3e1d00b42dd` — "The workflow runtime runs up to 16 agents concurrently — fewer when Claude Code has fewer CPUs available — and allows at most 1,000 agents in total per run." · p 0.90 · active · 1 support · 0 contradict
   - `src_d6586d5c5c4f` Orchestrate subagents at scale with dynamic workflows: "| Up to 16 concurrent agents, fewer when Claude Code has fewer CPUs available, including inside a CPU-limited container | Bounds local resource use | | In a fan-out, agents that share the first agent's prompt-cache prefix start up to 5…"
 - `clm_73ef785dc390` — "Sorting a long list in one prompt degrades in quality and will not fit in context, so the workflow answer is a tournament, a pipeline of pairwise-comparison agents, or parallel bucket-ranking then a merge — comparative judgment being more reliable than absolute scoring" · p 0.83 · active · 1 support · 0 contradict
   - `src_7415e8608f3c` A harness for every task: dynamic workflows in Claude Code: "Instead run a tournament, a pipeline of pairwise-comparison agents (comparative judgment is more reliable than absolute scoring), or bucket-rank in parallel then merge."

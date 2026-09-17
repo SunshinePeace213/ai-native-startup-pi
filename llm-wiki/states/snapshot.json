@@ -1,6 +1,6 @@
 {
   "arithmetic": "log-odds-v2",
-  "as_of": "2026-09-14T19:58:05Z",
+  "as_of": "2026-09-17T23:02:02Z",
   "counts": {
     "claims": 804,
     "claims_by_status": {
@@ -13,11 +13,11 @@
     "pages": 201,
     "relationships": 530,
     "sources": 109,
-    "transitions": 967,
+    "transitions": 1292,
     "unresolved_conflicts": 0
   },
   "runs": {
-    "live": 158,
+    "live": 159,
     "retracted": 16
   },
   "segment": "shared"

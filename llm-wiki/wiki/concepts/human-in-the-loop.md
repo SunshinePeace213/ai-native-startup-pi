@@ -2,23 +2,23 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-08-30
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/langchain/how-to-build-a-custom-agent-harness.md, title: "How to Build a Custom Agent Harness", id: src_f7dcee3b42fc}
   - {resource: llm-wiki/raw/articles/langchain/the-art-of-loop-engineering.md, title: "the-art-of-loop-engineering", id: src_5b435bf5e144}
   - {resource: llm-wiki/raw/docs/claude-code/claude-security.md, title: "Scan your codebase for vulnerabilities", id: src_2eb7a799d8a7}
-generated: {by: process:llm-wiki-render, at: 2026-08-30}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_human_in_the_loop]
 claim_ids: [clm_594603b49144, clm_b5487cbd1bcd, clm_23587a9fe68d, clm_ed006b80a855]
-confidence: 0.84
+confidence: 0.83
 stale_after: 2028-02-01
-last_rendered: 2026-08-30T09:30:07Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # human in the loop
 
-> **In here:** Expertise that can be codified belongs in the prompt or tools, but sensitive actions such as financial transactions and database operations need live human review · 4 claims, confidence 0.84.
+> **In here:** Expertise that can be codified belongs in the prompt or tools, but sensitive actions such as financial transactions and database operations need live human review · 4 claims, confidence 0.83.
 
 ## Current understanding
 

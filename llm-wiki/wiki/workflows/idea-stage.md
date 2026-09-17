@@ -2,15 +2,15 @@
 type: workflow
 status: current
 created: 2026-08-23
-updated: 2026-08-23
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/books/founders-playbook/index.md, title: "The Founder's Playbook: Building an AI-Native Startup", id: src_72a67c0111dc}
-generated: {by: process:llm-wiki-render, at: 2026-08-23}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_idea_stage]
 claim_ids: [clm_69a691b0baea, clm_45ec07dc2159, clm_74747bbbbb79]
 confidence: 0.88
 stale_after: 2028-07-07
-last_rendered: 2026-08-23T12:03:11Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -21,17 +21,17 @@ review_required: false
 ## Current understanding
 
 - A working prototype is not evidence of problem-solution fit — it is a pressure-testing prop for conversations with potential users, and those conversations are the real evidence (0.96)
-- AI hands confirmation bias a research engine — a founder who is not asking hard questions can assemble an elaborate, well-researched-looking case for a bad idea faster than ever while feeling they performed due diligence — and the antidote is the same tool pointed in the opposite direction, pressure-testing the idea as thoroughly as it would validate it (0.84)
-- The AI-native startup journey remaps onto four core stages — Idea, MVP, Launch, and Scale — each carrying its own goal, exit criteria, and characteristic failure modes, replacing a traditional growth arc in which every new phase demanded a bigger team, a different skill set, and a fresh funding round (0.84)
+- AI hands confirmation bias a research engine — a founder who is not asking hard questions can assemble an elaborate, well-researched-looking case for a bad idea faster than ever while feeling they performed due diligence — and the antidote is the same tool pointed in the opposite direction, pressure-testing the idea as thoroughly as it would validate it (0.83)
+- The AI-native startup journey remaps onto four core stages — Idea, MVP, Launch, and Scale — each carrying its own goal, exit criteria, and characteristic failure modes, replacing a traditional growth arc in which every new phase demanded a bigger team, a different skill set, and a fresh funding round (0.83)
 
 ## Evidence
 
 - `clm_69a691b0baea` — "A working prototype is not evidence of problem-solution fit — it is a pressure-testing prop for conversations with potential users, and those conversations are the real evidence" · p 0.96 · active · 2 support · 0 contradict
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "A working prototype is easy to mistake as concrete evidence that you're solving a real problem, but it's not. Your prototype instead serves as a useful pressure-testing prop for conversations with potential users."
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "Even before the current era of agentic coding, 42% of startups failed because they built something nobody wanted."
-- `clm_45ec07dc2159` — "AI hands confirmation bias a research engine — a founder who is not asking hard questions can assemble an elaborate, well-researched-looking case for a bad idea faster than ever while feeling they performed due diligence — and the antidote is the same tool pointed in the opposite direction, pressure-testing the idea as thoroughly as it would validate it" · p 0.84 · active · 1 support · 0 contradict
+- `clm_45ec07dc2159` — "AI hands confirmation bias a research engine — a founder who is not asking hard questions can assemble an elaborate, well-researched-looking case for a bad idea faster than ever while feeling they performed due diligence — and the antidote is the same tool pointed in the opposite direction, pressure-testing the idea as thoroughly as it would validate it" · p 0.83 · active · 1 support · 0 contradict
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "AI follows your direction, which means a founder who isn't asking hard questions can now construct an elaborate, well-researched-looking case for a bad idea faster than ever before, while feeling fully confident that they are, in fact…"
-- `clm_74747bbbbb79` — "The AI-native startup journey remaps onto four core stages — Idea, MVP, Launch, and Scale — each carrying its own goal, exit criteria, and characteristic failure modes, replacing a traditional growth arc in which every new phase demanded a bigger team, a different skill set, and a fresh funding round" · p 0.84 · active · 1 support · 0 contradict
+- `clm_74747bbbbb79` — "The AI-native startup journey remaps onto four core stages — Idea, MVP, Launch, and Scale — each carrying its own goal, exit criteria, and characteristic failure modes, replacing a traditional growth arc in which every new phase demanded a bigger team, a different skill set, and a fresh funding round" · p 0.83 · active · 1 support · 0 contradict
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "The traditional startup growth arc assumes that the path from idea to scale is validate → raise → hire → build → raise again → grow → hire more → repeat."
 
 ## Timeline

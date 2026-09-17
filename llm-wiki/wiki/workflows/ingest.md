@@ -2,7 +2,7 @@
 type: workflow
 status: current
 created: 2026-08-20
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/ahumanft/llm-wiki-v3.md, title: "LLM Wiki V3: Segmentation", id: src_b585de1a26bb}
   - {resource: llm-wiki/raw/articles/llm-wiki/karpathy/llm-wiki.md, title: "LLM Wiki", id: src_6711dfc0cddd}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-6-coordination-and-reversal.md, title: "Phase 6 coordination and reversal — the lock, the inbox, and what undo can and cannot reach", id: src_e689bfca564a}
   - {resource: llm-wiki/raw/notes/llm-wiki-review-2026-08-22.md, title: "llm-wiki review — 2026-08-22", id: src_af0433facf9d}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_ingest]
 claim_ids: [clm_783a8d83a795, clm_388d45acd4c5, clm_8268e86d6097, clm_eeb7b7aa9290, clm_fd6b4187fcae, clm_d8e8392dd4ee, clm_64d1c38ec74a, clm_c3528b922fca, clm_7c79b30b59bd]
 confidence: 0.86
 stale_after: 2026-10-15
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -31,10 +31,10 @@ review_required: false
 - An ingest extracts structured entities — people, projects, libraries, concepts, files, decisions — each carrying a type, attributes, and typed relationships to other entities, rather than only writing prose into pages (0.96)
 - A wiki works the way a real library does, with the roles segmented: nobody asks the librarian to also receive shipments, catalog new arrivals, and repair damaged books simultaneously — those are separate jobs done by separate people with separate workflows (0.83)
 - An ingest reads the new source, discusses its key takeaways with the human, writes a summary page, updates the index, updates the entity and concept pages it touches, and appends an entry to the log — a single source might touch 10-15 wiki pages (0.83)
-- The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction (0.83)
+- The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction (0.82)
 - The wiki is operated through three operations — ingest, query, and lint — and log.md keeps an append-only chronological record of every one of them (0.82)
-- The inbox separates authorship of a proposal from responsibility for the write: an actor with no permission to apply may still write a proposal, and the drain records the run against the actor that applied it rather than the one that wrote the file (0.77)
-- The llm-wiki hooks report and never write: the SessionStart hook prints a queue block only when the engine's read-only queue verb finds an unregistered or unextracted archive, the PostToolUse hook reminds the session that just wrote one, and both fail open to a silent exit 0 when the engine, uv, or the payload is missing (0.76)
+- The inbox separates authorship of a proposal from responsibility for the write: an actor with no permission to apply may still write a proposal, and the drain records the run against the actor that applied it rather than the one that wrote the file (0.76)
+- The llm-wiki hooks report and never write: the SessionStart hook prints a queue block only when the engine's read-only queue verb finds an unregistered or unextracted archive, the PostToolUse hook reminds the session that just wrote one, and both fail open to a silent exit 0 when the engine, uv, or the payload is missing (0.74)
 
 ## Evidence
 
@@ -55,14 +55,14 @@ review_required: false
 - `clm_fd6b4187fcae` — "An ingest reads the new source, discusses its key takeaways with the human, writes a summary page, updates the index, updates the entity and concept pages it touches, and appends an entry to the log — a single source might touch 10-15 wiki pages" · p 0.83 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "An example flow: the LLM reads the source, discusses key takeaways with you, writes a summary page in the wiki, updates the index, updates relevant entity and concept pages across the wiki, and appends an entry to the log."
   - exception — when for a broad, uncurated file-system corpus of thousands of files rather than a small personally curated collection: For a broad, uncurated corpus the goal of ingestion is findability rather than deep indexing: a good title and a clean summary is enough for a librarian to locate the file later, and trying to do more at that stage wastes tokens and produces dirty data that poisons retrieval downstream (`obs_8e2a1e93b171`)
-- `clm_d8e8392dd4ee` — "The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction" · p 0.83 · active · 1 support · 0 contradict
+- `clm_d8e8392dd4ee` — "The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "The human should still be in the loop for curation and direction. But the bookkeeping, the part that makes people abandon wikis, should be fully automated."
   - exception — when for the deep lane, which turns a source into belief: Automation stops at the light lane: the weekly routine files only the light-lane channels and the deep lane stays a session's command (`obs_da678a69fac4`)
 - `clm_64d1c38ec74a` — "The wiki is operated through three operations — ingest, query, and lint — and log.md keeps an append-only chronological record of every one of them" · p 0.82 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "**log.md** is chronological. It's an append-only record of what happened and when — ingests, queries, lint passes."
-- `clm_c3528b922fca` — "The inbox separates authorship of a proposal from responsibility for the write: an actor with no permission to apply may still write a proposal, and the drain records the run against the actor that applied it rather than the one that wrote the file" · p 0.77 · active · 1 support · 0 contradict
+- `clm_c3528b922fca` — "The inbox separates authorship of a proposal from responsibility for the write: an actor with no permission to apply may still write a proposal, and the drain records the run against the actor that applied it rather than the one that wrote the file" · p 0.76 · active · 1 support · 0 contradict
   - `src_e689bfca564a` Phase 6 coordination and reversal — the lock, the inbox, and what undo can and cannot reach: "That split is what lets an actor propose work it is not permitted to land. The weekly routine has no permission to apply on the shared segment, but nothing stops it writing a proposal;"
-- `clm_7c79b30b59bd` — "The llm-wiki hooks report and never write: the SessionStart hook prints a queue block only when the engine's read-only queue verb finds an unregistered or unextracted archive, the PostToolUse hook reminds the session that just wrote one, and both fail open to a silent exit 0 when the engine, uv, or the payload is missing" · p 0.76 · active · 1 support · 0 contradict
+- `clm_7c79b30b59bd` — "The llm-wiki hooks report and never write: the SessionStart hook prints a queue block only when the engine's read-only queue verb finds an unregistered or unextracted archive, the PostToolUse hook reminds the session that just wrote one, and both fail open to a silent exit 0 when the engine, uv, or the payload is missing" · p 0.74 · active · 1 support · 0 contradict
   - `src_21d1317cc326` Phase 5 build findings — what the retune and the loops measured: "The hooks report and never write. The SessionStart hook prints an `<llm-wiki-queue>` block only when the engine's read-only queue verb finds an unregistered or unextracted archive;"
 
 ## Contradictions

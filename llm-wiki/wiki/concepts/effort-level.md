@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-14
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/claude-model-and-effort-level-in-claude-code.md, title: "Choosing a Claude model and effort level in Claude Code", id: src_fbabc2423960}
   - {resource: llm-wiki/raw/articles/artificial-analysis/terminalbench-v4-0.md, title: "Terminal-Bench v4.0 Benchmark Leaderboard", id: src_28e09fc746e0}
@@ -17,12 +17,12 @@ sources:
   - {resource: llm-wiki/raw/docs/openai/guides-reasoning.md, title: "Reasoning models", id: src_7fcd56977d57}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-5-6-sol.md, title: "GPT-5.6 Sol", id: src_2799e7222597}
   - {resource: llm-wiki/raw/docs/openai/models-gpt-6-astra.md, title: "GPT-6 Astra", id: src_5fbc74a9d0b2}
-generated: {by: process:llm-wiki-render, at: 2026-09-14}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_effort_level]
-claim_ids: [clm_3a056b12fdae, clm_2361143345d6, clm_639cfed3cd72, clm_276d872e5414, clm_6dfe4cd8cabb, clm_176a1b0b4554, clm_5bae95a20dd2, clm_7c4565fc3397, clm_8479874ac5ba, clm_8b4e7965fc9f, clm_a59ebad0a4be, clm_d14e11fac1d7, clm_e24b51402fe1, clm_f9352cf8d901, clm_9c0d8265daab, clm_b912dae9bece, clm_46e3c15120c2, clm_56f905a63307, clm_90f666969a1a, clm_9e1d6aa8e826, clm_60ac29d854e8, clm_c9de5ea3f012, clm_3cc279b5026f, clm_d6ec10ffd6b5, clm_f78e75dbfc4a, clm_458be0d9c81d]
+claim_ids: [clm_3a056b12fdae, clm_2361143345d6, clm_639cfed3cd72, clm_276d872e5414, clm_6dfe4cd8cabb, clm_176a1b0b4554, clm_5bae95a20dd2, clm_7c4565fc3397, clm_8479874ac5ba, clm_8b4e7965fc9f, clm_a59ebad0a4be, clm_d14e11fac1d7, clm_e24b51402fe1, clm_f9352cf8d901, clm_9c0d8265daab, clm_b912dae9bece, clm_46e3c15120c2, clm_56f905a63307, clm_90f666969a1a, clm_9e1d6aa8e826, clm_60ac29d854e8, clm_c9de5ea3f012, clm_3cc279b5026f, clm_458be0d9c81d, clm_d6ec10ffd6b5, clm_f78e75dbfc4a]
 confidence: 0.91
 stale_after: 2026-12-07
-last_rendered: 2026-09-14T19:58:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -54,10 +54,10 @@ review_required: false
 - GPT-6 Astra's reasoning.effort takes low, medium, high, xhigh, and max — there is no none setting (0.92)
 - GPT-5.6 Sol, Terra, and Luna accept reasoning.effort none, low, medium, high, xhigh, and max, with medium as the default (0.92)
 - On GPT-5.6 models an omitted reasoning.effort defaults to medium, which OpenAI calls the default configuration for most workloads and a well-balanced point on the latency, performance, and cost curve (0.92)
-- The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort (0.82)
+- The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort (0.81)
+- On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one (0.80)
 - Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability (0.80)
 - Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort (0.80)
-- On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one (0.80)
 
 ## Evidence
 
@@ -107,14 +107,14 @@ review_required: false
   - `src_2799e7222597` GPT-5.6 Sol: "Reasoning.effort supports: none, low, medium (default), high, xhigh, and max."
 - `clm_c9de5ea3f012` — "On GPT-5.6 models an omitted reasoning.effort defaults to medium, which OpenAI calls the default configuration for most workloads and a well-balanced point on the latency, performance, and cost curve." · p 0.92 · active · 1 support · 0 contradict
   - `src_7fcd56977d57` Reasoning models: "If you omit `reasoning.effort`, GPT-5.6 defaults to `medium` in both modes."
-- `clm_3cc279b5026f` — "The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort" · p 0.82 · active · 1 support · 0 contradict
+- `clm_3cc279b5026f` — "The axis to raise is picked by the failure: if Claude had adequate context and still got it wrong the answer is a more capable model, and if it skipped steps or abandoned the task prematurely the answer is more effort" · p 0.81 · active · 1 support · 0 contradict
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "If Claude has adequate context and still fails, a more capable model is needed. If it skipped steps or abandoned tasks prematurely, increase effort level."
+- `clm_458be0d9c81d` — "On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one." · p 0.80 · active · 1 support · 0 contradict
+  - `src_28e09fc746e0` Terminal-Bench v4.0 Benchmark Leaderboard: "GPT-6 Astra (xhigh) scores the highest on Terminal-Bench v4.0 with a score of 59.6%, followed by GPT-6 Astra (max) with a score of 59.1%"
 - `clm_d6ec10ffd6b5` — "Effort determines how far Claude will travel along its capability curve, not how far it must travel to complete the task, so effort cannot substitute for a model that lacks the capability" · p 0.80 · active · 1 support · 0 contradict
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "Effort determines how far Claude **will travel** along capability curves, not how far it **must travel** to complete tasks."
 - `clm_f78e75dbfc4a` — "Per-token costs increase with larger models but total per-task costs may decrease on genuinely difficult tasks, because a smaller model grinding at its capability limit cannot succeed regardless of effort" · p 0.80 · active · 1 support · 0 contradict · when: on harder multi-step work
   - `src_fbabc2423960` Choosing a Claude model and effort level in Claude Code: "Per-token costs increase with larger models, but total per-task costs may decrease on genuinely difficult tasks where smaller models cannot succeed regardless of effort."
-- `clm_458be0d9c81d` — "On Terminal-Bench v4.0 GPT-6 Astra's xhigh setting scores above its max setting (59.6% against 59.1%), so a model's highest labelled effort is not automatically its best-scoring one." · p 0.80 · active · 1 support · 0 contradict
-  - `src_28e09fc746e0` Terminal-Bench v4.0 Benchmark Leaderboard: "GPT-6 Astra (xhigh) scores the highest on Terminal-Bench v4.0 with a score of 59.6%, followed by GPT-6 Astra (max) with a score of 59.1%"
 
 ## Timeline
 

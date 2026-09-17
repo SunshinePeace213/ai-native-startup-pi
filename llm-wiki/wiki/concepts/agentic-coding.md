@@ -2,24 +2,24 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-02
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/a-field-guide-to-claude-fable-finding-your-unknowns.md, title: "A field guide to Claude Fable 5: Finding your unknowns", id: src_10f512f5f8de}
   - {resource: llm-wiki/raw/articles/anthropic/building-verification-loops-in-claude-code-with-skills.md, title: "Building verification loops in Claude Code with skills", id: src_8e30f40dbfb8}
   - {resource: llm-wiki/raw/books/founders-playbook/index.md, title: "The Founder's Playbook: Building an AI-Native Startup", id: src_72a67c0111dc}
   - {resource: llm-wiki/raw/docs/anthropic/prompting-claude-fable-5-1.md, title: "Delivering work", id: src_9f2ae1e705ce}
-generated: {by: process:llm-wiki-render, at: 2026-09-02}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_agentic_coding]
 claim_ids: [clm_69a691b0baea, clm_486ba5592791, clm_3a7054e3ee20, clm_5cbba3ebb17e, clm_b2abede86a8c, clm_6cfecd1b5320, clm_8ca11f550bd7]
-confidence: 0.87
+confidence: 0.86
 stale_after: 2028-04-16
-last_rendered: 2026-09-02T10:03:36Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # agentic coding
 
-> **In here:** Most agentic coding sessions follow one predictable pattern — request changes, gather context, execute actions, verify results, and iterate if needed · 7 claims, confidence 0.87.
+> **In here:** Most agentic coding sessions follow one predictable pattern — request changes, gather context, execute actions, verify results, and iterate if needed · 7 claims, confidence 0.86.
 
 ## Current understanding
 
@@ -29,7 +29,7 @@ review_required: false
 - Agentic coding tools generate code that works, not code that is inherently secure, and security defects carry no natural feedback loop because they stay invisible until exploited — so a security review before any user touches the product is the minimum responsible threshold for shipping an MVP (0.84)
 - In an AI-native startup the founder stops being an individual contributor and becomes an orchestrator of agents, with attention shifting up the stack to generating ideas and directing the AI agents, tools, and small team that carry them out (0.84)
 - Most agentic coding sessions follow one predictable pattern — request changes, gather context, execute actions, verify results, and iterate if needed — with verification being how the agent validates its work before responding (0.82)
-- Reducing and planning for your unknowns is the skill of agentic coding — the best agentic coders have relatively few unknowns and assume the rest — and it is a skill that improves by working with Claude (0.82)
+- Reducing and planning for your unknowns is the skill of agentic coding — the best agentic coders have relatively few unknowns and assume the rest — and it is a skill that improves by working with Claude (0.81)
 
 ## Evidence
 
@@ -46,7 +46,7 @@ review_required: false
   - `src_72a67c0111dc` The Founder's Playbook: Building an AI-Native Startup: "In an AI-native startup, the founder role becomes much less individual contributor and much more orchestrator of agents—specialized AI assistants that can read files, run commands, execute code, and even browse the web."
 - `clm_6cfecd1b5320` — "Most agentic coding sessions follow one predictable pattern — request changes, gather context, execute actions, verify results, and iterate if needed — with verification being how the agent validates its work before responding" · p 0.82 · active · 1 support · 0 contradict
   - `src_8e30f40dbfb8` Building verification loops in Claude Code with skills: "Most agentic coding sessions follow a predictable pattern: request changes, gather context, execute actions, verify results, and iterate if needed."
-- `clm_8ca11f550bd7` — "Reducing and planning for your unknowns is the skill of agentic coding — the best agentic coders have relatively few unknowns and assume the rest — and it is a skill that improves by working with Claude" · p 0.82 · active · 1 support · 0 contradict
+- `clm_8ca11f550bd7` — "Reducing and planning for your unknowns is the skill of agentic coding — the best agentic coders have relatively few unknowns and assume the rest — and it is a skill that improves by working with Claude" · p 0.81 · active · 1 support · 0 contradict
   - `src_10f512f5f8de` A field guide to Claude Fable 5: Finding your unknowns: "In many ways, reducing and planning for your unknowns is the **skill** of agentic coding. But luckily, this is a skill you can improve at, by working with Claude."
 
 ## Timeline

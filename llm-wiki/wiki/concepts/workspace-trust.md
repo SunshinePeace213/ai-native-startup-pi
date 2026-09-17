@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/claude-code/headless.md, title: "Run Claude Code programmatically", id: src_d5ec157b2e7b}
   - {resource: llm-wiki/raw/docs/claude-code/hooks.md, title: "Hooks reference", id: src_af0a3c9de51d}
@@ -10,29 +10,29 @@ sources:
   - {resource: llm-wiki/raw/docs/pi/extensions.md, title: "Extensions", id: src_a49af96a95e8}
   - {resource: llm-wiki/raw/docs/pi/packages.md, title: "Pi Packages", id: src_1589290f55f3}
   - {resource: llm-wiki/raw/docs/pi/security.md, title: "Security", id: src_38afec4a51af}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_workspace_trust]
 claim_ids: [clm_a9cd0f68d4eb, clm_8a5ac3a8a835, clm_794ee065e6ca, clm_3e99f9d5f50a, clm_74ad73ec8056, clm_e28274bf7967, clm_657f7801cf02, clm_a9afd6afe40a]
-confidence: 0.93
+confidence: 0.92
 stale_after: 2027-01-13
-last_rendered: 2026-09-11T20:02:51Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # workspace trust
 
-> **In here:** An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks… · 8 claims, confidence 0.93.
+> **In here:** An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks… · 8 claims, confidence 0.92.
 
 ## Current understanding
 
 - Pi's project trust decides only whether project-local settings, resources, packages, and extensions are loaded; it is not a sandbox and places no limit on what tools may do once a session is running (0.94)
 - Without bare mode a headless print session runs the hooks in a project's .claude/settings.json and connects the servers in its .mcp.json even in a folder that was never trusted, showing no workspace trust dialog and no per-server approval prompt (0.94)
 - An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks committed in a repository run in a folder the user never trusted (0.93)
-- Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely (0.93)
-- The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on (0.93)
-- Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository (0.93)
-- Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them (0.92)
-- A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away (0.91)
+- Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely (0.92)
+- The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on (0.92)
+- Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository (0.92)
+- Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them (0.91)
+- A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away (0.89)
 
 ## Evidence
 
@@ -42,15 +42,15 @@ review_required: false
   - `src_d5ec157b2e7b` Run Claude Code programmatically: "Without `--bare`, a `-p` session runs the hooks in a project's `.claude/settings.json` and connects the servers in its `.mcp.json`, even in a folder you've never trusted."
 - `clm_794ee065e6ca` — "An interactive session withholds every settings-file hook until the workspace trust dialog is accepted, but a -p or SDK session never shows that dialog and treats the folder as trusted, so hooks committed in a repository run in a folder the user never trusted." · p 0.93 · active · 1 support · 0 contradict · when: for hooks defined in settings files
   - `src_af0a3c9de51d` Hooks reference: "* **Interactive session**: Claude Code holds back hooks from every settings file, including your own `~/.claude/settings.json`, until you accept the [workspace trust dialog](/docs/en/permissions#project-allow-rules-and-workspace-trust)…"
-- `clm_3e99f9d5f50a` — "Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely." · p 0.93 · active · 1 support · 0 contradict
+- `clm_3e99f9d5f50a` — "Pi loads context files such as AGENTS.override.md, AGENTS.md, and CLAUDE.md regardless of project trust, unless context loading is switched off entirely." · p 0.92 · active · 1 support · 0 contradict
   - `src_38afec4a51af` Security: "Context files such as `AGENTS.override.md`, `AGENTS.md`, and `CLAUDE.md` are loaded regardless of project trust unless context loading is disabled."
-- `clm_74ad73ec8056` — "The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on." · p 0.93 · active · 1 support · 0 contradict
+- `clm_74ad73ec8056` — "The first user/global or CLI Pi extension whose project_trust handler answers yes or no owns the trust decision and suppresses the built-in prompt; undecided passes it on." · p 0.92 · active · 1 support · 0 contradict
   - `src_a49af96a95e8` Extensions: "A user/global or CLI extension that returns `"yes"` or `"no"` owns the decision; the first yes/no decision wins and suppresses the built-in trust prompt."
-- `clm_e28274bf7967` — "Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository." · p 0.93 · active · 1 support · 0 contradict
+- `clm_e28274bf7967` — "Pi installs a project's missing packages automatically at startup once the project is trusted, so package settings can be shared with a team through the repository." · p 0.92 · active · 1 support · 0 contradict
   - `src_1589290f55f3` Pi Packages: "Project settings can be shared with your team, and pi installs any missing packages automatically on startup after the project is trusted."
-- `clm_657f7801cf02` — "Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them." · p 0.92 · active · 1 support · 0 contradict · when: in non-interactive modes (-p, --mode json, --mode rpc)
+- `clm_657f7801cf02` — "Pi's non-interactive modes never prompt for trust: absent a saved decision, defaultProjectTrust values "ask" and "never" both ignore trust-gated project resources while "always" loads them." · p 0.91 · active · 1 support · 0 contradict · when: in non-interactive modes (-p, --mode json, --mode rpc)
   - `src_38afec4a51af` Security: "Non-interactive modes (`-p`, `--mode json`, and `--mode rpc`) do not show a trust prompt. Without an applicable saved trust decision, `defaultProjectTrust: "ask"` and `"never"` ignore such resources, while `"always"` trusts them."
-- `clm_a9afd6afe40a` — "A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away." · p 0.91 · active · 1 support · 0 contradict
+- `clm_a9afd6afe40a` — "A committed `.claude/settings.json` does not reach a teammate's session until they trust the folder for `permissions.allow` rules, `additionalDirectories`, `extraKnownMarketplaces`, and most `env` values, while `deny` and `ask` rules apply right away." · p 0.89 · active · 1 support · 0 contradict
   - `src_44aa3ffce603` Claude Code settings: "**The key waits for trust.** `permissions.allow` rules, `permissions.additionalDirectories`, `extraKnownMarketplaces`, and most [`env`](/docs/en/settings-reference#env) values apply only after each teammate [trusts the…"
 
 ## Timeline

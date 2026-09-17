@@ -2,21 +2,21 @@
 type: workflow
 status: current
 created: 2026-08-23
-updated: 2026-08-30
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/the-ai-native-sdlc-playbook.md, title: "The AI-Native SDLC playbook", id: src_c65435745c66}
-generated: {by: process:llm-wiki-render, at: 2026-08-30}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_ai_native_sdlc]
 claim_ids: [clm_a6c8b8853219, clm_fcb622036271, clm_0e4a65e960de, clm_82f6244bbaa4, clm_d21c16986b36, clm_79c9cb09913d, clm_076f6360ca74]
-confidence: 0.83
+confidence: 0.82
 stale_after: 2028-04-01
-last_rendered: 2026-08-30T13:51:43Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # AI-native SDLC
 
-> **In here:** Once the build phase runs faster than the traditional lifecycle allows, the bottleneck moves to the steps on either side of it — plan, review and test, and deploy — which still run at human speed · 7 claims, confidence 0.83.
+> **In here:** Once the build phase runs faster than the traditional lifecycle allows, the bottleneck moves to the steps on either side of it — plan, review and test, and deploy — which still run at human speed · 7 claims, confidence 0.82.
 
 ## Current understanding
 

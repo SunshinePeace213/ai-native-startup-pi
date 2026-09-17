@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/agent-skills/adding-skills-support.md, title: "How to add skills support to your agent", id: src_6932f817f8b4}
   - {resource: llm-wiki/raw/docs/agent-skills/home.md, title: "Agent Skills Overview", id: src_9b4d3b3d8635}
@@ -11,12 +11,12 @@ sources:
   - {resource: llm-wiki/raw/docs/agent-skills/specification.md, title: "Specification", id: src_7bd75101edfa}
   - {resource: llm-wiki/raw/docs/claude-code/skills.md, title: "Extend Claude with skills", id: src_07950e24c4ee}
   - {resource: llm-wiki/raw/docs/pi/skills.md, title: "Skills", id: src_51c275d28919}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_skill_description]
 claim_ids: [clm_90a71be135d8, clm_12ec66bc98dd, clm_5f3ca55d25bb, clm_23c00ec362dd, clm_b61710bffc40, clm_5b11d3ad951c, clm_e2bdb859a630, clm_0335d473cad6, clm_42bb868ef1cb, clm_e531bde51ac9, clm_f112d81f86c1, clm_581b1e4926be, clm_7754773c8a2a, clm_794de3446251]
 confidence: 0.89
 stale_after: 2027-01-13
-last_rendered: 2026-09-11T19:57:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -29,7 +29,7 @@ review_required: false
 - Agents load skills through progressive disclosure in three stages: discovery loads only each skill's name and description at startup, activation reads the full SKILL.md when a task matches the description, and execution follows the instructions and optionally loads bundled code or referenced files (0.99)
 - The required description field is capped at 1024 characters, must be non-empty, and should describe both what the skill does and when to use it, including keywords that help agents identify relevant tasks (0.92)
 - The documented remedy for a skill Claude does not use is to put the words users would naturally say into its description, confirm the skill is listed, rephrase the request to match it, or invoke it directly by name (0.92)
-- A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing (0.91)
+- A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing (0.89)
 - The description carries the entire burden of triggering: an under-specified one means the skill will not fire when it should, an over-broad one means it fires when it should not, and if it does not convey when the skill is useful the agent will not reach for it (0.89)
 - Optimizing a description against every query overfits it to those phrasings, so the query set splits into a train set that guides revisions and a held-out validation set that checks whether improvements generalize (0.88)
 - An effective description uses imperative phrasing framed as an instruction to the agent, focuses on user intent rather than implementation, errs on the side of being pushy about the contexts where it applies, and stays concise within the 1024-character limit (0.88)
@@ -50,7 +50,7 @@ review_required: false
   - `src_7bd75101edfa` Specification: "Max 1024 characters. Non-empty. Describes what the skill does and when to use it."
 - `clm_5f3ca55d25bb` — "The documented remedy for a skill Claude does not use is to put the words users would naturally say into its description, confirm the skill is listed, rephrase the request to match it, or invoke it directly by name." · p 0.92 · active · 1 support · 0 contradict
   - `src_07950e24c4ee` Extend Claude with skills: "If Claude doesn't use your skill when expected: 1. Check the description includes keywords users would naturally say 2. Verify the skill appears in `What skills are available?` 3."
-- `clm_23c00ec362dd` — "A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing." · p 0.91 · active · 1 support · 0 contradict
+- `clm_23c00ec362dd` — "A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing." · p 0.89 · active · 1 support · 0 contradict
   - `src_07950e24c4ee` Extend Claude with skills: "What the skill does and when to use it. Claude uses this to decide when to apply the skill. If omitted, uses the first paragraph of markdown content."
 - `clm_b61710bffc40` — "The description carries the entire burden of triggering: an under-specified one means the skill will not fire when it should, an over-broad one means it fires when it should not, and if it does not convey when the skill is useful the agent will not reach for it." · p 0.89 · active · 1 support · 0 contradict
   - `src_2435d7ebda83` Optimizing skill descriptions: "This means the description carries the entire burden of triggering. If the description doesn't convey when the skill is useful, the agent won't know to reach for it."

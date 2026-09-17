@@ -2,17 +2,17 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-08-23
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
   - {resource: llm-wiki/raw/articles/llm-wiki/lucianfialho/graphwiki-pattern.md, title: "graphwiki: an LLM Wiki pattern for graph databases", id: src_09c828d1c803}
   - {resource: llm-wiki/raw/articles/llm-wiki/rohitg00/llm-wiki.md, title: "LLM Wiki v2", id: src_48f57237f6ef}
-generated: {by: process:llm-wiki-render, at: 2026-08-23}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_memory_lifecycle]
 claim_ids: [clm_f3c9a3215ea4, clm_7efaede7ba35, clm_03243c5df8d3, clm_d72e29d3a5de]
 confidence: 0.90
 stale_after: 2028-05-20
-last_rendered: 2026-08-23T09:04:00Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -24,8 +24,8 @@ review_required: false
 
 - When new information contradicts or updates an existing claim, the new claim explicitly supersedes the old one — linked, timestamped, and the old version preserved but marked stale — rather than the old claim sitting in place with a note (0.99)
 - A claim's confidence is not one number — the belief layer keeps its dimensions separate, tracking semantic confidence, source authority, extraction quality, recency weight, and agreement score, and combines them into a single observation weight rather than pretending one float captures everything (0.96)
-- A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted (0.83)
-- Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it (0.83)
+- A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted (0.82)
+- Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it (0.82)
 
 ## Evidence
 
@@ -36,9 +36,9 @@ review_required: false
 - `clm_7efaede7ba35` — "A claim's confidence is not one number — the belief layer keeps its dimensions separate, tracking semantic confidence, source authority, extraction quality, recency weight, and agreement score, and combines them into a single observation weight rather than pretending one float captures everything" · p 0.96 · active · 2 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "Every fact in the wiki should carry a confidence score: how many sources support it, how recently it was confirmed, whether anything contradicts it."
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "This avoids pretending that one float captures everything."
-- `clm_03243c5df8d3` — "A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted" · p 0.83 · active · 1 support · 0 contradict
+- `clm_03243c5df8d3` — "A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "Implement a retention curve: facts that were important once but haven't been accessed or reinforced in months should gradually fade. Not deleted, but deprioritized."
-- `clm_d72e29d3a5de` — "Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it" · p 0.83 · active · 1 support · 0 contradict
+- `clm_d72e29d3a5de` — "Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "- **Working memory**: recent observations, not yet processed - **Episodic memory**: session summaries, compressed from raw observations - **Semantic memory**: cross-session facts, consolidated from episodes - **Procedural memory**…"
 
 ## Timeline

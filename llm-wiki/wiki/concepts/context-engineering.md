@@ -2,24 +2,24 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-08-30
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/a-field-guide-to-claude-fable-finding-your-unknowns.md, title: "A field guide to Claude Fable 5: Finding your unknowns", id: src_10f512f5f8de}
   - {resource: llm-wiki/raw/articles/anthropic/the-new-rules-of-context-engineering-for-claude-5-generation-models.md, title: "the-new-rules-of-context-engineering-for-claude-5-generation-models", id: src_8419bce2e672}
   - {resource: llm-wiki/raw/articles/langchain/how-to-build-a-custom-agent-harness.md, title: "How to Build a Custom Agent Harness", id: src_f7dcee3b42fc}
   - {resource: llm-wiki/raw/docs/claude-code/hooks.md, title: "Hooks reference", id: src_af0a3c9de51d}
-generated: {by: process:llm-wiki-render, at: 2026-08-30}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_context_engineering]
 claim_ids: [clm_fcd14cd753ef, clm_9141bd4b9ef6, clm_eb22268647a0, clm_fb9c93bd8a79, clm_059a28935b6c, clm_188fe3aabeee, clm_a53d87e1c13c, clm_67bf5b559bfc, clm_3ff082dbe3a3, clm_5cee05d79c41]
-confidence: 0.84
+confidence: 0.83
 stale_after: 2028-02-01
-last_rendered: 2026-08-30T13:51:43Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # context engineering
 
-> **In here:** A reference no longer has to be a simple markdown spec: Claude handles richer forms including HTML artifacts, code, a detailed test suite, a function in another codebase to port, and rubrics that… · 10 claims, confidence 0.84.
+> **In here:** A reference no longer has to be a simple markdown spec: Claude handles richer forms including HTML artifacts, code, a detailed test suite, a function in another codebase to port, and rubrics that… · 10 claims, confidence 0.83.
 
 ## Current understanding
 
@@ -30,7 +30,7 @@ review_required: false
 - Anthropic removed over 80% of Claude Code's system prompt for models like Claude Opus 5 and Claude Fable 5 with no measurable loss on its coding evaluations (0.83)
 - Overconstraining produces conflicting messages inside a single request as system prompt, skills, and user request clash, and while Claude can still interpret the intent it must think more carefully about the overlapping instructions before deciding what to do (0.83)
 - A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system (0.83)
-- The best reference when you cannot describe what you want is source code: pointing Fable at a folder that already implements the behavior gives much richer detail around markup and structure than a screenshot, even when the reference is in a different language (0.82)
+- The best reference when you cannot describe what you want is source code: pointing Fable at a folder that already implements the behavior gives much richer detail around markup and structure than a screenshot, even when the reference is in a different language (0.81)
 - A reference no longer has to be a simple markdown spec: Claude handles richer forms including HTML artifacts, code, a detailed test suite, a function in another codebase to port, and rubrics that verifier agents check taste against (0.81)
 - An agent is only as good as the context provided to the model, so the job of a harness is to provide that context at every step (0.80)
 
@@ -50,7 +50,7 @@ review_required: false
   - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "Generally, Claude can interpret the user's intent to get to the right answer, but Claude must think more carefully about these overlapping and conflicting messages before deciding what to do."
 - `clm_a53d87e1c13c` — "A CLAUDE.md should stay lightweight — a brief description of what the repo is for with most of its tokens spent on gotchas inside the codebase, and nothing stating the obvious that Claude could learn by reading the file system" · p 0.83 · active · 1 support · 0 contradict
   - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "Keep your CLAUDE.md lightweight and briefly describe what your repo is for, but spend most of the tokens on gotchas inside of the codebase."
-- `clm_67bf5b559bfc` — "The best reference when you cannot describe what you want is source code: pointing Fable at a folder that already implements the behavior gives much richer detail around markup and structure than a screenshot, even when the reference is in a different language" · p 0.82 · active · 1 support · 0 contradict
+- `clm_67bf5b559bfc` — "The best reference when you cannot describe what you want is source code: pointing Fable at a folder that already implements the behavior gives much richer detail around markup and structure than a screenshot, even when the reference is in a different language" · p 0.81 · active · 1 support · 0 contradict
   - `src_10f512f5f8de` A field guide to Claude Fable 5: Finding your unknowns: "While you can include diagrams, documentation or pictures, the absolute best reference is _source code_."
 - `clm_3ff082dbe3a3` — "A reference no longer has to be a simple markdown spec: Claude handles richer forms including HTML artifacts, code, a detailed test suite, a function in another codebase to port, and rubrics that verifier agents check taste against" · p 0.81 · active · 1 support · 0 contradict
   - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "You may also give Claude references in the form of code. A spec may also be a detailed test suite, or a function in a different codebase that Claude might port."

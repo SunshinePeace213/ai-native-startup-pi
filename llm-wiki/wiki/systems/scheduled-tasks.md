@@ -2,22 +2,22 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/claude-code/github-actions.md, title: "Claude Code GitHub Actions", id: src_7962dafdd21b}
   - {resource: llm-wiki/raw/docs/claude-code/scheduled-tasks.md, title: "Run prompts on a schedule", id: src_1aeabecafdc5}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_scheduled_tasks]
 claim_ids: [clm_5780564b3c9e, clm_bd185ee1d648, clm_be385c8101a7, clm_6b4415ff0398, clm_d3c8688a9a26, clm_69d3afaff11e]
-confidence: 0.93
+confidence: 0.92
 stale_after: 2027-01-10
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # scheduled tasks
 
-> **In here:** GitHub runs scheduled workflows only from the default branch and, in public repositories, disables the schedule after 60 days without repository activity · 6 claims, confidence 0.93.
+> **In here:** GitHub runs scheduled workflows only from the default branch and, in public repositories, disables the schedule after 60 days without repository activity · 6 claims, confidence 0.92.
 
 ## Current understanding
 
@@ -26,7 +26,7 @@ review_required: false
 - A recurring session-scoped task expires 7 days after creation — firing one last time and then deleting itself — which bounds how long a forgotten loop can run (0.93)
 - Supplying an interval to /loop makes Claude convert it into a cron expression and run the prompt on that fixed schedule, confirming the cadence and the job ID (0.93)
 - Session-scoped tasks fire only while Claude Code is running and idle, so closing the terminal stops them, though backgrounding the session carries /loop tasks into a background session that keeps running (0.92)
-- Three tools sit under session scheduling: CronCreate schedules a task from a 5-field cron expression, CronList shows every task with its ID and prompt, and CronDelete cancels one by ID (0.90)
+- Three tools sit under session scheduling: CronCreate schedules a task from a 5-field cron expression, CronList shows every task with its ID and prompt, and CronDelete cancels one by ID (0.89)
 
 ## Evidence
 
@@ -40,7 +40,7 @@ review_required: false
   - `src_1aeabecafdc5` Run prompts on a schedule: "When you supply an interval, Claude converts it to a cron expression, schedules the job, and confirms the cadence and job ID."
 - `clm_d3c8688a9a26` — "Session-scoped tasks fire only while Claude Code is running and idle, so closing the terminal stops them, though backgrounding the session carries /loop tasks into a background session that keeps running." · p 0.92 · active · 1 support · 0 contradict
   - `src_1aeabecafdc5` Run prompts on a schedule: "Tasks only fire while Claude Code is running and idle. Closing the terminal or letting the session exit stops them firing."
-- `clm_69d3afaff11e` — "Three tools sit under session scheduling: CronCreate schedules a task from a 5-field cron expression, CronList shows every task with its ID and prompt, and CronDelete cancels one by ID." · p 0.90 · active · 1 support · 0 contradict
+- `clm_69d3afaff11e` — "Three tools sit under session scheduling: CronCreate schedules a task from a 5-field cron expression, CronList shows every task with its ID and prompt, and CronDelete cancels one by ID." · p 0.89 · active · 1 support · 0 contradict
   - `src_1aeabecafdc5` Run prompts on a schedule: "| `CronCreate` | Schedule a new task. Accepts a 5-field cron expression, the prompt to run, and whether it recurs or fires once. | | `CronList` | List all scheduled tasks with their IDs, schedules, and prompts."
 
 ## Timeline

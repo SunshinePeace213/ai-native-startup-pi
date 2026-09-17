@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/claude-code/agent-teams.md, title: "Orchestrate teams of Claude Code sessions", id: src_67017872e4a4}
   - {resource: llm-wiki/raw/docs/claude-code/cross-session-messaging.md, title: "Message your other Claude Code sessions", id: src_10e9043d62f0}
@@ -12,18 +12,18 @@ sources:
   - {resource: llm-wiki/raw/docs/claude-code/sub-agents.md, title: "Create custom subagents", id: src_5671f6c73f3d}
   - {resource: llm-wiki/raw/docs/claude-code/workflows.md, title: "Orchestrate subagents at scale with dynamic workflows", id: src_d6586d5c5c4f}
   - {resource: llm-wiki/raw/docs/claude-code/worktrees.md, title: "Run parallel sessions with worktrees", id: src_0979d158a4cf}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_permission_mode]
-claim_ids: [clm_c6f907387ca6, clm_0db4ee93154e, clm_1dae05957203, clm_826adcc8fb72, clm_1cbbd4529c24, clm_7c3de0c5639e, clm_614484c4baab, clm_64b87a2b64e4, clm_77037ce59207, clm_06937874202e, clm_34217cbae0d3, clm_54afb768c457, clm_29d91a7cbb32, clm_3dcf6b089b87, clm_9d7ccdfee9ae, clm_fa3bd1f7b469, clm_55681f67bc76, clm_e5824e43202d, clm_ce1b361863a3]
-confidence: 0.92
+claim_ids: [clm_c6f907387ca6, clm_0db4ee93154e, clm_1dae05957203, clm_826adcc8fb72, clm_1cbbd4529c24, clm_7c3de0c5639e, clm_614484c4baab, clm_64b87a2b64e4, clm_77037ce59207, clm_06937874202e, clm_34217cbae0d3, clm_54afb768c457, clm_55681f67bc76, clm_e5824e43202d, clm_29d91a7cbb32, clm_3dcf6b089b87, clm_9d7ccdfee9ae, clm_fa3bd1f7b469, clm_ce1b361863a3]
+confidence: 0.91
 stale_after: 2027-01-10
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # permission mode
 
-> **In here:** A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs · 19 claims, confidence 0.92.
+> **In here:** A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs · 19 claims, confidence 0.91.
 
 ## Current understanding
 
@@ -36,16 +36,16 @@ review_required: false
 - Auto mode replaces routine permission prompts with a separate classifier model that reviews each action and blocks anything escalating beyond the request, targeting unrecognized infrastructure, or driven by hostile content Claude read (0.93)
 - A parent session running in bypassPermissions, acceptEdits, or auto mode takes precedence over whatever permission mode a subagent declares in its own frontmatter (0.92)
 - A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs (0.92)
-- A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked (0.91)
-- Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate (0.91)
-- Every teammate starts with the lead's permission settings, including --dangerously-skip-permissions, and an individual teammate's mode can only be changed after spawning, never set at spawn time (0.91)
-- `bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths (0.91)
-- `acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories` (0.91)
-- `dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves (0.91)
-- Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it (0.91)
-- With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses (0.91)
-- Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off (0.91)
-- The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff` (0.90)
+- A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked (0.90)
+- Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate (0.90)
+- Every teammate starts with the lead's permission settings, including --dangerously-skip-permissions, and an individual teammate's mode can only be changed after spawning, never set at spawn time (0.90)
+- With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses (0.90)
+- Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off (0.90)
+- `bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths (0.89)
+- `acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories` (0.89)
+- `dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves (0.89)
+- Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it (0.89)
+- The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff` (0.89)
 
 ## Evidence
 
@@ -67,25 +67,25 @@ review_required: false
   - `src_5671f6c73f3d` Create custom subagents: "If the parent uses `bypassPermissions` or `acceptEdits`, this takes precedence and can't be overridden."
 - `clm_77037ce59207` — "A `-p` session starts in the Manual permission mode on every plan, so a non-interactive run that wants a different baseline must pass the permission mode it needs." · p 0.92 · active · 1 support · 0 contradict
   - `src_d5ec157b2e7b` Run Claude Code programmatically: "To set a baseline for the whole session instead of listing individual tools, pass a [permission mode](/docs/en/permission-modes)."
-- `clm_06937874202e` — "A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+- `clm_06937874202e` — "A message from another session never counts as the user's consent, so it cannot answer a pending permission prompt, and the receiving Claude is instructed never to change permission settings, `CLAUDE.md`, or other configuration because another session asked." · p 0.90 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
   - `src_10e9043d62f0` Message your other Claude Code sessions: "* **It can't approve anything**: a message from another session never counts as your consent, so it can't answer a pending permission prompt on your behalf."
-- `clm_34217cbae0d3` — "Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+- `clm_34217cbae0d3` — "Claude Code tells a receiving agent that a SendMessage message came from another Claude session rather than the user, so a teammate can neither approve a permission prompt on the user's behalf nor relay a denied action through another teammate." · p 0.90 · active · 1 support · 0 contradict · when: for experimental agent teams
   - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "When one agent sends another a message over `SendMessage`, Claude Code tells the receiving agent the message came from another Claude session, not from you."
-- `clm_54afb768c457` — "Every teammate starts with the lead's permission settings, including --dangerously-skip-permissions, and an individual teammate's mode can only be changed after spawning, never set at spawn time." · p 0.91 · active · 1 support · 0 contradict · when: for experimental agent teams
+- `clm_54afb768c457` — "Every teammate starts with the lead's permission settings, including --dangerously-skip-permissions, and an individual teammate's mode can only be changed after spawning, never set at spawn time." · p 0.90 · active · 1 support · 0 contradict · when: for experimental agent teams
   - `src_67017872e4a4` Orchestrate teams of Claude Code sessions: "Teammates start with the lead's permission settings. If the lead runs with `--dangerously-skip-permissions`, all teammates do too. After spawning, you can change individual teammate modes, but you can't set per-teammate modes at spawn time."
-- `clm_29d91a7cbb32` — "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths." · p 0.91 · active · 1 support · 0 contradict
-  - `src_4a22e1f99f87` Choose a permission mode: "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to [protected paths](#protected-paths)."
-- `clm_3dcf6b089b87` — "`acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories`." · p 0.91 · active · 1 support · 0 contradict
-  - `src_4a22e1f99f87` Choose a permission mode: "In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`."
-- `clm_9d7ccdfee9ae` — "`dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves." · p 0.91 · active · 1 support · 0 contradict
-  - `src_4a22e1f99f87` Choose a permission mode: "If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you."
-- `clm_fa3bd1f7b469` — "Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it." · p 0.91 · active · 1 support · 0 contradict
-  - `src_0979d158a4cf` Run parallel sessions with worktrees: "When Claude enters a path outside the repository's `.claude/worktrees/` directory, Claude Code asks for your approval first, because the move takes the session's working directory, write access, and project configuration such as…"
-- `clm_55681f67bc76` — "With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+- `clm_55681f67bc76` — "With no `crossSessionInbound` value in effect, a receiving session that prompts for permissions delivers each message and holds one only when the sender bypasses permission prompts, while a receiving session that bypasses prompts holds every message for approval unless the sender also bypasses." · p 0.90 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
   - `src_10e9043d62f0` Message your other Claude Code sessions: "* **The receiving session prompts for permissions**: Claude Code delivers each message. It holds one for your approval only when the sending session identifies itself as bypassing permission prompts."
-- `clm_e5824e43202d` — "Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off." · p 0.91 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
+- `clm_e5824e43202d` — "Setting `isolatePeerMachines` to `true` requires the user's approval before any message reaches a session beyond this machine, even in `bypassPermissions` mode, and a `true` from any settings scope applies so a checked-in project file can turn the requirement on but not off." · p 0.90 · active · 1 support · 0 contradict · when: Claude Code v2.1.224 or later on macOS, Linux, and WSL 2, Claude Code v2.1.234 or later on native Windows
   - `src_10e9043d62f0` Message your other Claude Code sessions: "With this set, Claude Code asks for your approval before Claude's message to a session beyond this machine leaves, even in `bypassPermissions` mode, which skips ordinary permission prompts."
-- `clm_ce1b361863a3` — "The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff`." · p 0.90 · active · 1 support · 0 contradict
+- `clm_29d91a7cbb32` — "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to protected paths." · p 0.89 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "`bypassPermissions` mode disables permission prompts and safety checks so tool calls execute immediately, including writes to [protected paths](#protected-paths)."
+- `clm_3dcf6b089b87` — "`acceptEdits` mode auto-approves file edits plus the common filesystem Bash commands `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`, but only for paths inside the working directory or `additionalDirectories`." · p 0.89 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "In addition to file edits, `acceptEdits` mode auto-approves common filesystem Bash commands: `mkdir`, `touch`, `rm`, `rmdir`, `mv`, `cp`, and `sed`."
+- `clm_9d7ccdfee9ae` — "`dontAsk` mode auto-denies every tool call that would otherwise prompt, leaving Claude only the actions matching `permissions.allow` rules, read-only Bash commands, and calls a `PreToolUse` hook approves." · p 0.89 · active · 1 support · 0 contradict
+  - `src_4a22e1f99f87` Choose a permission mode: "If you set `dontAsk` mode, Claude Code auto-denies every tool call that would otherwise prompt you."
+- `clm_fa3bd1f7b469` — "Entering a worktree path outside the repository's `.claude/worktrees/` directory always asks for approval — no EnterWorktree permission rule or "don't ask again" choice suppresses it, only bypassPermissions mode — because the move takes the session's working directory, write access, and project configuration with it." · p 0.89 · active · 1 support · 0 contradict
+  - `src_0979d158a4cf` Run parallel sessions with worktrees: "When Claude enters a path outside the repository's `.claude/worktrees/` directory, Claude Code asks for your approval first, because the move takes the session's working directory, write access, and project configuration such as…"
+- `clm_ce1b361863a3` — "The `--allowedTools` flag pre-approves tools for a non-interactive run using permission rule syntax, where a trailing space-asterisk enables prefix matching so `Bash(git diff *)` allows any command starting with `git diff`." · p 0.89 · active · 1 support · 0 contradict
   - `src_d5ec157b2e7b` Run Claude Code programmatically: "The `--allowedTools` flag uses [permission rule syntax](/docs/en/settings-reference#permission-rule-syntax). The trailing ` *` enables prefix matching, so `Bash(git diff *)` allows any command starting with `git diff`."
 
 ## Timeline

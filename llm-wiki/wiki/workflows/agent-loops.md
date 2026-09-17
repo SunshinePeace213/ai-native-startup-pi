@@ -2,7 +2,7 @@
 type: workflow
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/getting-started-with-loops.md, title: "Loop engineering: Getting started with loops", id: src_d0a8a3247101}
   - {resource: llm-wiki/raw/articles/anthropic/the-ai-native-sdlc-playbook.md, title: "The AI-Native SDLC playbook", id: src_c65435745c66}
@@ -14,12 +14,12 @@ sources:
   - {resource: llm-wiki/raw/docs/claude-code/security-guidance.md, title: "Catch security issues as Claude writes code", id: src_99ad4fe8f1dd}
   - {resource: llm-wiki/raw/papers/graph-engineering-andrew-ng-playbook/index.md, title: "Graph Engineering for Multi-Agentic Systems: The Andrew Ng Playbook", id: src_363b13dc0870}
   - {resource: llm-wiki/raw/papers/llm-as-judge-cross-model-review-guide.md, title: "Cross-Model AI Code Review & LLM-as-a-Judge: A 2026 Practical Guide for a Solo Founder", id: src_521f898b9896}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_agent_loops]
-claim_ids: [clm_6282902285c5, clm_1b9bffef36d2, clm_59b11e9c72c2, clm_62d0421c8691, clm_e888d6f6645f, clm_3a7e3a8fb83b, clm_8a554e6f410e, clm_82f6244bbaa4, clm_c29788ac7b83, clm_dccaa0e30cd9, clm_03066b8b3f8d, clm_ef8112621454, clm_dcd107fbb284, clm_45559da3e34a, clm_b5487cbd1bcd, clm_7b6ad949a0a3, clm_ff0824c7a20d, clm_174fcd481dc7]
+claim_ids: [clm_6282902285c5, clm_1b9bffef36d2, clm_59b11e9c72c2, clm_62d0421c8691, clm_e888d6f6645f, clm_3a7e3a8fb83b, clm_8a554e6f410e, clm_82f6244bbaa4, clm_c29788ac7b83, clm_dccaa0e30cd9, clm_03066b8b3f8d, clm_ef8112621454, clm_dcd107fbb284, clm_45559da3e34a, clm_b5487cbd1bcd, clm_ff0824c7a20d, clm_174fcd481dc7, clm_7b6ad949a0a3]
 confidence: 0.86
 stale_after: 2026-10-29
-last_rendered: 2026-09-05T16:35:43Z
+last_rendered: 2026-09-17T23:03:12Z
 review_required: false
 ---
 
@@ -38,15 +38,15 @@ review_required: false
 - The patterns are not isolated recipes but stages in the externalization of cognition: a loop externalizes revision, a chain externalizes task order, a network externalizes role specialization, and a graph externalizes shared state and relationships (0.90)
 - In the closed maintenance loop detection stays entirely deterministic with no model involved — Claude is invoked only once a control band is breached, and the tier sets what it may do: log at one sigma, read-only diagnosis at two, and action confined to a PR or a pre-approved runbook at three (0.83)
 - The agent loop, the first level of the stack, is a model calling tools in a loop until a task is complete (0.81)
-- Loop engineering treats an agent as a stack of loops: the model calling tools until it is done is the most fundamental loop but far from the only loop that powers agents (0.81)
-- The verification loop wraps the agent loop with a grader that checks output against a rubric and sends the result back with feedback when it falls short (0.81)
-- The event-driven loop connects an agent to its ecosystem so that a document landing, a schedule, or a webhook fires the run, making the agent a component running continuously inside a larger system rather than something invoked manually (0.81)
+- Loop engineering treats an agent as a stack of loops: the model calling tools until it is done is the most fundamental loop but far from the only loop that powers agents (0.80)
+- The verification loop wraps the agent loop with a grader that checks output against a rubric and sends the result back with feedback when it falls short (0.80)
+- The event-driven loop connects an agent to its ecosystem so that a document landing, a schedule, or a webhook fires the run, making the agent a component running continuously inside a larger system rather than something invoked manually (0.80)
 - Middleware hooks into the agent loop before and after model calls, before and after tool calls, and at agent startup and teardown, with each piece handling one concern and composing freely with any other (0.80)
 - The hill climbing loop's return path does not merely restart the run: it reaches inside and updates the agent loop directly, so each outer cycle makes the inner loops more effective (0.80)
 - Expertise that can be codified belongs in the prompt or tools, but sensitive actions such as financial transactions and database operations need live human review (0.80)
-- LangChain's create_agent is purposefully minimalistic: it implements only the core agent loop and exposes middleware as the primitive for customization (0.78)
 - Agent loops sort along three axes — what triggers them, what stops them, and what tasks they suit — into four types: turn-based, goal-based, time-based, and proactive (0.78)
 - Token usage inside a loop is managed by matching primitives and models to the task's actual complexity, piloting a dynamic workflow at small scale before running it broadly, and using scripts for deterministic steps rather than having the model reason through them each time (0.78)
+- LangChain's create_agent is purposefully minimalistic: it implements only the core agent loop and exposes middleware as the primitive for customization (0.76)
 
 ## Evidence
 
@@ -73,11 +73,11 @@ review_required: false
   - `src_c65435745c66` The AI-Native SDLC playbook: "Detection stays deterministic. Claude is invoked once a band is breached, and the tier sets what it may do."
 - `clm_c29788ac7b83` — "The agent loop, the first level of the stack, is a model calling tools in a loop until a task is complete." · p 0.81 · active · 1 support · 0 contradict
   - `src_5b435bf5e144` the-art-of-loop-engineering: "At its core, an agent is just a model calling tools in a loop until a task is complete."
-- `clm_dccaa0e30cd9` — "Loop engineering treats an agent as a stack of loops: the model calling tools until it is done is the most fundamental loop but far from the only loop that powers agents." · p 0.81 · active · 1 support · 0 contradict
+- `clm_dccaa0e30cd9` — "Loop engineering treats an agent as a stack of loops: the model calling tools until it is done is the most fundamental loop but far from the only loop that powers agents." · p 0.80 · active · 1 support · 0 contradict
   - `src_5b435bf5e144` the-art-of-loop-engineering: "The core agent algorithm is simple: give the LLM context and let it call tools in a loop until it's done. This is the most fundamental loop. But it's far from the only loop that powers agents."
-- `clm_03066b8b3f8d` — "The verification loop wraps the agent loop with a grader that checks output against a rubric and sends the result back with feedback when it falls short." · p 0.81 · active · 1 support · 0 contradict
+- `clm_03066b8b3f8d` — "The verification loop wraps the agent loop with a grader that checks output against a rubric and sends the result back with feedback when it falls short." · p 0.80 · active · 1 support · 0 contradict
   - `src_5b435bf5e144` the-art-of-loop-engineering: "The verification loop adds a grader: something that checks the agent's output against a rubric and, if it fails, sends the result back with feedback."
-- `clm_ef8112621454` — "The event-driven loop connects an agent to its ecosystem so that a document landing, a schedule, or a webhook fires the run, making the agent a component running continuously inside a larger system rather than something invoked manually." · p 0.81 · active · 1 support · 0 contradict
+- `clm_ef8112621454` — "The event-driven loop connects an agent to its ecosystem so that a document landing, a schedule, or a webhook fires the run, making the agent a component running continuously inside a larger system rather than something invoked manually." · p 0.80 · active · 1 support · 0 contradict
   - `src_5b435bf5e144` the-art-of-loop-engineering: "The event-driven loop connects your agent to your ecosystem. An event fires — a new document lands, a schedule triggers, a webhook arrives — and the agent runs. The agent isn't something you invoke manually;"
 - `clm_dcd107fbb284` — "Middleware hooks into the agent loop before and after model calls, before and after tool calls, and at agent startup and teardown, with each piece handling one concern and composing freely with any other." · p 0.80 · active · 1 support · 0 contradict
   - `src_f7dcee3b42fc` How to Build a Custom Agent Harness: "Middleware hooks into the agent loop at each step: before and after model calls, before and after tool calls, at agent startup and teardown. Each piece handles one concern and composes freely with any other"
@@ -85,12 +85,12 @@ review_required: false
   - `src_5b435bf5e144` the-art-of-loop-engineering: "The key move here is that the return arrow doesn't just loop back to the top — it reaches inside and updates the agent loop directly. Each cycle of the outer loop makes the inner loops more effective."
 - `clm_b5487cbd1bcd` — "Expertise that can be codified belongs in the prompt or tools, but sensitive actions such as financial transactions and database operations need live human review." · p 0.80 · active · 1 support · 0 contradict · when: for sensitive actions
   - `src_5b435bf5e144` the-art-of-loop-engineering: "Some expertise should be codified in the prompt/tools themselves, but for sensitive actions, live human review is essential (think financial transactions, DB operations, etc)."
-- `clm_7b6ad949a0a3` — "LangChain's create_agent is purposefully minimalistic: it implements only the core agent loop and exposes middleware as the primitive for customization." · p 0.78 · active · 1 support · 0 contradict
-  - `src_f7dcee3b42fc` How to Build a Custom Agent Harness: "`create_agent` just implements the core agent loop, and it exposes **middleware** as a primitive for customization."
 - `clm_ff0824c7a20d` — "Agent loops sort along three axes — what triggers them, what stops them, and what tasks they suit — into four types: turn-based, goal-based, time-based, and proactive" · p 0.78 · active · 1 support · 0 contradict
   - `src_d0a8a3247101` Loop engineering: Getting started with loops: "The article categorizes loops along three axes: what triggers them, what stops them, and what kinds of tasks they suit. It walks through four loop types — turn-based, goal-based, time-based, and proactive"
 - `clm_174fcd481dc7` — "Token usage inside a loop is managed by matching primitives and models to the task's actual complexity, piloting a dynamic workflow at small scale before running it broadly, and using scripts for deterministic steps rather than having the model reason through them each time" · p 0.78 · active · 1 support · 0 contradict
   - `src_d0a8a3247101` Loop engineering: Getting started with loops: "Pilot a dynamic workflow at small scale before running it broadly. - Use scripts for deterministic steps instead of having the model reason through them each time."
+- `clm_7b6ad949a0a3` — "LangChain's create_agent is purposefully minimalistic: it implements only the core agent loop and exposes middleware as the primitive for customization." · p 0.76 · active · 1 support · 0 contradict
+  - `src_f7dcee3b42fc` How to Build a Custom Agent Harness: "`create_agent` just implements the core agent loop, and it exposes **middleware** as a primitive for customization."
 
 ## Timeline
 

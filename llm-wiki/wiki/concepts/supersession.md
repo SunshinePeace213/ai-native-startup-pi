@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
   - {resource: llm-wiki/raw/articles/llm-wiki/lucianfialho/graphwiki-pattern.md, title: "graphwiki: an LLM Wiki pattern for graph databases", id: src_09c828d1c803}
@@ -11,28 +11,28 @@ sources:
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-6-coordination-and-reversal.md, title: "Phase 6 coordination and reversal — the lock, the inbox, and what undo can and cannot reach", id: src_e689bfca564a}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-6-governance-build-notes.md, title: "Phase 6 governance build notes — the fold key, the guards, and what the loops measured", id: src_4863372048fa}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_supersession]
 claim_ids: [clm_f3c9a3215ea4, clm_11592f0abfb3, clm_a0b912ad50ca, clm_38f894daef7f, clm_b78683e15c8a, clm_774c0f6c78f5, clm_90eab08bfde2]
-confidence: 0.87
+confidence: 0.86
 stale_after: 2026-09-22
-last_rendered: 2026-09-05T16:35:44Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # supersession
 
-> **In here:** When new information contradicts or updates an existing claim, the new claim explicitly supersedes the old one — linked, timestamped, and the old version preserved but marked stale · 7 claims, confidence 0.87.
+> **In here:** When new information contradicts or updates an existing claim, the new claim explicitly supersedes the old one — linked, timestamped, and the old version preserved but marked stale · 7 claims, confidence 0.86.
 
 ## Current understanding
 
 - When new information contradicts or updates an existing claim, the new claim explicitly supersedes the old one — linked, timestamped, and the old version preserved but marked stale — rather than the old claim sitting in place with a note (0.99)
 - Search that scales combines four retrieval streams — BM25 for exact names and terms, vector search for semantic similarity, graph traversal for structural dependencies, and state search over claims, entities, confidence, and evidence — fused with reciprocal rank fusion, because each stream catches what the others miss (0.99)
 - A contradiction is useful signal, never something to hide: it resolves into one of six outcomes — an unresolved dispute, a newer source superseding an older one, a scope split, an exception added to the rule, the old claim weakened, or human review required — and the updater asks which of them applies rather than treating every conflict as mutual exclusion (0.96)
-- The state stream's stopword table, inherited from a standard English list, carried the word own itself and silently removed the very token prefix matching exists to expand, until the build dropped it from the list (0.90)
-- Undo is stack-ordered for belief runs because probability and status come from each transition's recorded after-snapshot while log-odds replay as deltas — removing a run from the middle would leave later claims carrying a snapshot their own history no longer produces — while a merge or an observation-less registration carries no belief and reverses from any position (0.79)
-- Ordering two same-second runs by the hex of their run_id can replay a support or a supersession before the claim it targets exists — thirteen core tests hit a KeyError on it, and an inbox drain produces dependent runs inside one wall-clock second by construction (0.75)
-- After the retune and the stopword fix the superseded ownership claim ranks fifth on its historical question, and the remaining gap to rank one is the belief multiplier alone, which reads the claim's current belief rather than the belief it held before its supersession (0.72)
+- The state stream's stopword table, inherited from a standard English list, carried the word own itself and silently removed the very token prefix matching exists to expand, until the build dropped it from the list (0.88)
+- Undo is stack-ordered for belief runs because probability and status come from each transition's recorded after-snapshot while log-odds replay as deltas — removing a run from the middle would leave later claims carrying a snapshot their own history no longer produces — while a merge or an observation-less registration carries no belief and reverses from any position (0.78)
+- Ordering two same-second runs by the hex of their run_id can replay a support or a supersession before the claim it targets exists — thirteen core tests hit a KeyError on it, and an inbox drain produces dependent runs inside one wall-clock second by construction (0.73)
+- After the retune and the stopword fix the superseded ownership claim ranks fifth on its historical question, and the remaining gap to rank one is the belief multiplier alone, which reads the claim's current belief rather than the belief it held before its supersession (0.71)
 
 ## Evidence
 
@@ -49,14 +49,14 @@ review_required: false
 - `clm_a0b912ad50ca` — "A contradiction is useful signal, never something to hide: it resolves into one of six outcomes — an unresolved dispute, a newer source superseding an older one, a scope split, an exception added to the rule, the old claim weakened, or human review required — and the updater asks which of them applies rather than treating every conflict as mutual exclusion" · p 0.96 · active · 2 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "The LLM should propose which claim is more likely correct based on source recency, source authority, and the number of supporting observations. The human can override, but the default behavior should usually be right."
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "Contradictions should not be hidden."
-- `clm_38f894daef7f` — "The state stream's stopword table, inherited from a standard English list, carried the word own itself and silently removed the very token prefix matching exists to expand, until the build dropped it from the list" · p 0.90 · active · 2 support · 0 contradict
+- `clm_38f894daef7f` — "The state stream's stopword table, inherited from a standard English list, carried the word own itself and silently removed the very token prefix matching exists to expand, until the build dropped it from the list" · p 0.88 · active · 2 support · 0 contradict
   - `src_21d1317cc326` Phase 5 build findings — what the retune and the loops measured: "The stopword table the stream inherited from a standard English list carried the word own itself, which silently removed the token the mechanism exists for until the build dropped it from the list."
   - `src_e261dc10ac79` llm-wiki Phase 5 automation build — what the session asked, found, and decided: "Dropping the word own from the retriever's stopword table moved the superseded ownership claim on "who used to own the wiki layer" from rank 22 to rank 5: once the token reached the state stream it matched ownership by prefix, the claim…"
-- `clm_b78683e15c8a` — "Undo is stack-ordered for belief runs because probability and status come from each transition's recorded after-snapshot while log-odds replay as deltas — removing a run from the middle would leave later claims carrying a snapshot their own history no longer produces — while a merge or an observation-less registration carries no belief and reverses from any position" · p 0.79 · active · 1 support · 0 contradict
+- `clm_b78683e15c8a` — "Undo is stack-ordered for belief runs because probability and status come from each transition's recorded after-snapshot while log-odds replay as deltas — removing a run from the middle would leave later claims carrying a snapshot their own history no longer produces — while a merge or an observation-less registration carries no belief and reverses from any position" · p 0.78 · active · 1 support · 0 contradict
   - `src_e689bfca564a` Phase 6 coordination and reversal — the lock, the inbox, and what undo can and cannot reach: "The reason is in how the fold works. Probability and status come from each transition's recorded after-snapshot, while log-odds replay as deltas;"
-- `clm_774c0f6c78f5` — "Ordering two same-second runs by the hex of their run_id can replay a support or a supersession before the claim it targets exists — thirteen core tests hit a KeyError on it, and an inbox drain produces dependent runs inside one wall-clock second by construction" · p 0.75 · active · 1 support · 0 contradict
+- `clm_774c0f6c78f5` — "Ordering two same-second runs by the hex of their run_id can replay a support or a supersession before the claim it targets exists — thirteen core tests hit a KeyError on it, and an inbox drain produces dependent runs inside one wall-clock second by construction" · p 0.73 · active · 1 support · 0 contradict
   - `src_4863372048fa` Phase 6 governance build notes — the fold key, the guards, and what the loops measured: "The engine builder shipped `(timestamp, file order)` instead, because the literal key replays a same-second dependent run before the run it depends on: two runs sharing a timestamp order by the hex of their `run_id`, so a support or a…"
-- `clm_90eab08bfde2` — "After the retune and the stopword fix the superseded ownership claim ranks fifth on its historical question, and the remaining gap to rank one is the belief multiplier alone, which reads the claim's current belief rather than the belief it held before its supersession" · p 0.72 · active · 1 support · 0 contradict
+- `clm_90eab08bfde2` — "After the retune and the stopword fix the superseded ownership claim ranks fifth on its historical question, and the remaining gap to rank one is the belief multiplier alone, which reads the claim's current belief rather than the belief it held before its supersession" · p 0.71 · active · 1 support · 0 contradict
   - `src_e261dc10ac79` llm-wiki Phase 5 automation build — what the session asked, found, and decided: "Whether the historical profile should read the belief a claim held before its supersession: the retune and the stopword fix put the superseded claim fifth, and the remaining gap to rank one is the belief multiplier alone."
 
 ## Timeline

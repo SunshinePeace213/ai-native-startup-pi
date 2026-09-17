@@ -2,21 +2,21 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-05
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/claude-code/artifacts.md, title: "Share session output as artifacts", id: src_9e45f4ba4e23}
-generated: {by: process:llm-wiki-render, at: 2026-09-05}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_artifacts]
 claim_ids: [clm_34b4c7629f8c, clm_5fa665e68b63, clm_c31c934c70bd, clm_dc0ebbb9a51b, clm_366126bf4acf, clm_ed1642c941f5, clm_758fc2ddaf23, clm_d26999152815, clm_5e59824148fe, clm_6d413ce21aa5]
-confidence: 0.93
+confidence: 0.92
 stale_after: 2027-02-25
-last_rendered: 2026-09-05T16:35:43Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # artifacts
 
-> **In here:** Artifacts are available on Pro, Max, Team, and Enterprise plans and require a session signed in with /login · 10 claims, confidence 0.93.
+> **In here:** Artifacts are available on Pro, Max, Team, and Enterprise plans and require a session signed in with /login · 10 claims, confidence 0.92.
 
 ## Current understanding
 
@@ -28,8 +28,8 @@ review_required: false
 - Updating an artifact means Claude edits the underlying file and publishes again to the same URL, so viewers with the page open see the revision in place (0.93)
 - Owners on Team and Enterprise plans control artifacts from claude.ai admin settings, and artifact content is stored on Anthropic-operated infrastructure visible only to authenticated members of the publishing organization unless the artifact is shared publicly (0.92)
 - A public artifact link opens for anyone on the internet without a claude.ai sign-in, and it is the only sharing route on Pro and Max plans, while on Team and Enterprise plans public sharing stays off until an Owner enables it for the organization (0.92)
-- Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later (0.91)
-- An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later (0.91)
+- Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later (0.90)
+- An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later (0.90)
 
 ## Evidence
 
@@ -49,9 +49,9 @@ review_required: false
   - `src_9e45f4ba4e23` Share session output as artifacts: "Owners on Team and Enterprise plans control artifacts from [claude.ai admin settings](https://claude.ai/admin-settings/claude-code)."
 - `clm_d26999152815` — "A public artifact link opens for anyone on the internet without a claude.ai sign-in, and it is the only sharing route on Pro and Max plans, while on Team and Enterprise plans public sharing stays off until an Owner enables it for the organization." · p 0.92 · active · 1 support · 0 contradict
   - `src_9e45f4ba4e23` Share session output as artifacts: "**Publicly**: share a link that anyone on the internet can open, with no claude.ai sign-in required. On Pro and Max plans, a public link is the only way to share an artifact."
-- `clm_5e59824148fe` — "Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later." · p 0.91 · active · 1 support · 0 contradict · when: on Team and Enterprise plans
+- `clm_5e59824148fe` — "Only an artifact shared within an organization takes comments, which Claude can read and reply to on Team and Enterprise plans with Claude Code v2.1.221 or later." · p 0.90 · active · 1 support · 0 contradict · when: on Team and Enterprise plans
   - `src_9e45f4ba4e23` Share session output as artifacts: "When you share an artifact within your organization, the people you share it with can leave comments on the page, and you can have Claude read those comments and reply to them."
-- `clm_6d413ce21aa5` — "An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later." · p 0.91 · active · 1 support · 0 contradict
+- `clm_6d413ce21aa5` — "An artifact can call MCP connectors each time someone views it so the page shows current data rather than a snapshot from the session that built it, on Pro, Max, Team, and Enterprise plans with Claude Code v2.1.209 or later." · p 0.90 · active · 1 support · 0 contradict
   - `src_9e45f4ba4e23` Share session output as artifacts: "An artifact can call [MCP connectors](/docs/en/mcp#use-mcp-servers-from-claude-ai) each time someone views it, so the page shows current data rather than a snapshot from the session that built it."
 
 ## Timeline

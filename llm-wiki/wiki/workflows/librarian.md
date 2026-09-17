@@ -2,23 +2,23 @@
 type: workflow
 status: current
 created: 2026-08-20
-updated: 2026-08-23
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/ahumanft/llm-wiki-v3.md, title: "LLM Wiki V3: Segmentation", id: src_b585de1a26bb}
   - {resource: llm-wiki/raw/articles/llm-wiki/karpathy/llm-wiki.md, title: "LLM Wiki", id: src_6711dfc0cddd}
   - {resource: llm-wiki/raw/chats/crystallize-placement-and-push-auth.md, title: "Where a crystallize belongs, and why pushes touching a workflow file were refused", id: src_a503e85dd88c}
-generated: {by: process:llm-wiki-render, at: 2026-08-23}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_librarian]
 claim_ids: [clm_b615b87a6731, clm_11e28d02ab4f, clm_eeb7b7aa9290, clm_fd6b4187fcae, clm_bb16c12eb6cd]
-confidence: 0.82
+confidence: 0.81
 stale_after: 2027-07-19
-last_rendered: 2026-08-23T10:25:46Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # librarian
 
-> **In here:** Separating retrieval into a librarian is bias prevention, not just token economy: the team's first read of the research happens together, with the objective present, without a single agent's… · 5 claims, confidence 0.82.
+> **In here:** Separating retrieval into a librarian is bias prevention, not just token economy: the team's first read of the research happens together, with the objective present, without a single agent's… · 5 claims, confidence 0.81.
 
 ## Current understanding
 

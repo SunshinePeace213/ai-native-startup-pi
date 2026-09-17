@@ -2,18 +2,18 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/docs/claude-code/commands.md, title: "Commands", id: src_63b61512d6ab}
   - {resource: llm-wiki/raw/docs/claude-code/github-actions.md, title: "Claude Code GitHub Actions", id: src_7962dafdd21b}
   - {resource: llm-wiki/raw/docs/claude-code/headless.md, title: "Run Claude Code programmatically", id: src_d5ec157b2e7b}
   - {resource: llm-wiki/raw/docs/claude-code/mcp.md, title: "Connect Claude Code to tools via MCP", id: src_9e7c0cb34402}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_mcp_server]
 claim_ids: [clm_8c4373808e22, clm_bd5e3c93d364, clm_1d80b9620932, clm_4a3a128f14d1, clm_1dc5534f1f11, clm_4d483e15f7f2, clm_9bbd3ed4fb7d, clm_0617d629981c, clm_5bd3b13812ff, clm_a93159a85dff, clm_10c46e8fa80e, clm_1c66cecb61a2, clm_849bb2be606c]
 confidence: 0.92
 stale_after: 2027-01-10
-last_rendered: 2026-09-11T19:57:09Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -33,9 +33,9 @@ review_required: false
 - Prompts exposed by a connected MCP server appear in Claude Code's slash-command list as `/mcp__servername__promptname` (0.92)
 - An MCP server can change its available tools, prompts, and resources mid-session by sending a `list_changed` notification, which Claude Code answers by refreshing that server's capabilities without a disconnect and reconnect (0.92)
 - Claude Code authenticates to cloud-based MCP servers that require it with OAuth 2.0 (0.92)
-- Prompts exposed by connected MCP servers are dynamically discovered and appear as slash commands in the form /mcp__<server>__<prompt> (0.91)
-- A tool from a plugin-bundled MCP server is callable as `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, with every character outside letters, digits, underscore, and hyphen replaced by an underscore (0.90)
-- The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it (0.90)
+- Prompts exposed by connected MCP servers are dynamically discovered and appear as slash commands in the form /mcp__<server>__<prompt> (0.89)
+- A tool from a plugin-bundled MCP server is callable as `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, with every character outside letters, digits, underscore, and hyphen replaced by an underscore (0.89)
+- The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it (0.89)
 
 ## Evidence
 
@@ -59,11 +59,11 @@ review_required: false
   - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Claude Code supports MCP `list_changed` notifications, allowing MCP servers to dynamically update their available tools, prompts, and resources without requiring you to disconnect and reconnect."
 - `clm_a93159a85dff` — "Claude Code authenticates to cloud-based MCP servers that require it with OAuth 2.0." · p 0.92 · active · 1 support · 0 contradict
   - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Many cloud-based MCP servers require authentication. Claude Code supports OAuth 2.0 for secure connections."
-- `clm_10c46e8fa80e` — "Prompts exposed by connected MCP servers are dynamically discovered and appear as slash commands in the form /mcp__<server>__<prompt>." · p 0.91 · active · 1 support · 0 contradict
+- `clm_10c46e8fa80e` — "Prompts exposed by connected MCP servers are dynamically discovered and appear as slash commands in the form /mcp__<server>__<prompt>." · p 0.89 · active · 1 support · 0 contradict
   - `src_63b61512d6ab` Commands: "MCP servers can expose prompts that appear as commands. These use the format `/mcp__<server>__<prompt>` and are dynamically discovered from connected servers."
-- `clm_1c66cecb61a2` — "A tool from a plugin-bundled MCP server is callable as `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, with every character outside letters, digits, underscore, and hyphen replaced by an underscore." · p 0.90 · active · 1 support · 0 contradict · when: for plugin-bundled MCP servers
+- `clm_1c66cecb61a2` — "A tool from a plugin-bundled MCP server is callable as `mcp__plugin_<plugin-name>_<server-name>__<tool-name>`, with every character outside letters, digits, underscore, and hyphen replaced by an underscore." · p 0.89 · active · 1 support · 0 contradict · when: for plugin-bundled MCP servers
   - `src_9e7c0cb34402` Connect Claude Code to tools via MCP: "Tools from a plugin-bundled MCP server include both the plugin name and the server key in their callable name."
-- `clm_849bb2be606c` — "The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it." · p 0.90 · active · 1 support · 0 contradict
+- `clm_849bb2be606c` — "The `system/init` event of a Claude Code stream reports session metadata including the model, tools, MCP servers, and loaded plugins, and is the first event in the stream unless startup events precede it." · p 0.89 · active · 1 support · 0 contradict
   - `src_d5ec157b2e7b` Run Claude Code programmatically: "The `system/init` event reports session metadata including the model, tools, MCP servers, and loaded plugins. It is the first event in the stream unless startup events precede it:"
 
 ## Timeline

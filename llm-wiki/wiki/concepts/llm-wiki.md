@@ -2,7 +2,7 @@
 type: concept
 status: current
 created: 2026-08-20
-updated: 2026-08-30
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/llm-wiki/ahumanft/llm-wiki-v3.md, title: "LLM Wiki V3: Segmentation", id: src_b585de1a26bb}
   - {resource: llm-wiki/raw/articles/llm-wiki/housamkak/llm-wiki.md, title: "LLM Wiki v3: A State-Space Knowledge System", id: src_758247b58186}
@@ -13,18 +13,18 @@ sources:
   - {resource: llm-wiki/raw/chats/llm-wiki-engine-layout-refactor.md, title: "Moving the llm-wiki engine under scripts/llm-wiki and splitting its tests out of the harness layer", id: src_157432f58354}
   - {resource: llm-wiki/raw/notes/llm-wiki-phase-5-build-findings.md, title: "Phase 5 build findings — what the retune and the loops measured", id: src_21d1317cc326}
   - {resource: llm-wiki/raw/notes/llm-wiki-review-2026-08-22.md, title: "llm-wiki review — 2026-08-22", id: src_af0433facf9d}
-generated: {by: process:llm-wiki-render, at: 2026-08-30}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_llm_wiki]
 claim_ids: [clm_783a8d83a795, clm_f3c9a3215ea4, clm_11592f0abfb3, clm_68d42ae34cc5, clm_64cae6b2f5df, clm_a645efcafb39, clm_8268e86d6097, clm_7efaede7ba35, clm_a0b912ad50ca, clm_9e583518b455, clm_1970186e8e8b, clm_1036b815fa78, clm_e4478d9f00c6, clm_688a5a02a006, clm_105c92df6add, clm_16c890a2aae1, clm_eeb7b7aa9290, clm_ccececdb9e58, clm_fd6b4187fcae, clm_03243c5df8d3, clm_d8e8392dd4ee, clm_877c740dd0fb, clm_d72e29d3a5de, clm_511e5a08009b, clm_64d1c38ec74a, clm_d9fe1d507413, clm_b6682585a170, clm_49f55182d4b0, clm_bb16c12eb6cd, clm_e77a37176207]
-confidence: 0.88
+confidence: 0.87
 stale_after: 2027-07-19
-last_rendered: 2026-08-30T13:48:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
 # LLM Wiki
 
-> **In here:** In the LLM Wiki pattern the LLM incrementally builds and maintains a persistent wiki — a structured, interlinked collection of markdown files that sits between a reader and their raw sources · 29 claims, confidence 0.88.
+> **In here:** In the LLM Wiki pattern the LLM incrementally builds and maintains a persistent wiki — a structured, interlinked collection of markdown files that sits between a reader and their raw sources · 29 claims, confidence 0.87.
 
 ## Current understanding
 
@@ -40,17 +40,17 @@ review_required: false
 - Useful exploratory work is crystallized back into the knowledge base as a source rather than written straight into a page — a debugging session, research thread, or architecture conversation becomes a raw source, which yields a summary, then observations, then claim updates, and only then new or updated wiki pages (0.96)
 - A lint pass health-checks the wiki for contradictions between pages, stale claims newer sources have superseded, orphan pages with no inbound links, important concepts lacking their own page, missing cross-references, and data gaps a web search could fill (0.96)
 - In the LLM Wiki pattern the LLM incrementally builds and maintains a persistent wiki — a structured, interlinked collection of markdown files that sits between a reader and their raw sources — rather than only retrieving from those sources at query time (0.84)
-- The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it (0.84)
+- The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it (0.83)
 - There is no such thing as a stateful LLM by itself: every stateful LLM system is built around a stateless model call, which is the constraint every wiki builder is working inside (0.83)
 - Past roughly 100-200 pages index.md becomes too long for the LLM to read in one pass, so it is kept only as a human-readable catalog while real search takes over as the primary retrieval mechanism (0.83)
 - When a wiki outgrows its structure the answer is not a stronger foundation but more foundations — each one narrow, each one purpose-built, each one carrying only what it needs to carry (0.83)
 - A wiki works the way a real library does, with the roles segmented: nobody asks the librarian to also receive shipments, catalog new arrivals, and repair damaged books simultaneously — those are separate jobs done by separate people with separate workflows (0.83)
 - The LLM does not write the wiki: it observes evidence, the state model updates belief, and the wiki renders the current understanding — markdown pages are human-readable renderings of the belief state rather than the primary source of truth, which is raw immutable evidence plus structured observations, probabilistic belief state, transition history, and graph relationships (0.83)
 - An ingest reads the new source, discusses its key takeaways with the human, writes a summary page, updates the index, updates the entity and concept pages it touches, and appends an entry to the log — a single source might touch 10-15 wiki pages (0.83)
-- A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted (0.83)
-- The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction (0.83)
-- Reading and believing are separate roles: the LLM is a semantic sensor that reads messy human material and emits structured observations, while a deterministic belief updater decides whether an observation creates, supports, contradicts or supersedes a claim and how much confidence changes — the LLM never decides truth (0.83)
-- Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it (0.83)
+- A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted (0.82)
+- The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction (0.82)
+- Reading and believing are separate roles: the LLM is a semantic sensor that reads messy human material and emits structured observations, while a deterministic belief updater decides whether an observation creates, supports, contradicts or supersedes a claim and how much confidence changes — the LLM never decides truth (0.82)
+- Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it (0.82)
 - Reading index.md first to find relevant pages and then drilling into them works well enough that no embedding-based RAG infrastructure is needed (0.82)
 - The wiki is operated through three operations — ingest, query, and lint — and log.md keeps an append-only chronological record of every one of them (0.82)
 - The system is built in seven incremental phases — Phase 0 a minimal v1-style wiki, Phase 1 observations and claim state, Phase 2 confidence and transitions, Phase 3 the graph layer, Phase 4 hybrid retrieval, Phase 5 automation, Phase 6 governance and collaboration — each carrying its own goal, Phase 1's being to separate source, observation, belief, and rendered page (0.81)
@@ -104,7 +104,7 @@ review_required: false
   - `src_b585de1a26bb` LLM Wiki V3: Segmentation: "**The linter** keeps the collection healthy. It deduplicates. It flags outdated entries. It makes sure the same document did not get filed under three different titles. It runs on its own schedule, not as part of every query."
 - `clm_1036b815fa78` — "In the LLM Wiki pattern the LLM incrementally builds and maintains a persistent wiki — a structured, interlinked collection of markdown files that sits between a reader and their raw sources — rather than only retrieving from those sources at query time" · p 0.84 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "Instead of just retrieving from raw documents at query time, the LLM **incrementally builds and maintains a persistent wiki** — a structured, interlinked collection of markdown files that sits between you and the raw sources."
-- `clm_e4478d9f00c6` — "The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it" · p 0.84 · active · 1 support · 0 contradict
+- `clm_e4478d9f00c6` — "The raw layer is immutable — the LLM reads from it but never modifies it — and it is the source of truth for everything built above it" · p 0.83 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "These are immutable — the LLM reads from them but never modifies them. This is your source of truth."
 - `clm_688a5a02a006` — "There is no such thing as a stateful LLM by itself: every stateful LLM system is built around a stateless model call, which is the constraint every wiki builder is working inside." · p 0.83 · active · 1 support · 0 contradict
   - `src_b585de1a26bb` LLM Wiki V3: Segmentation: "There is no such thing as a stateful LLM by itself. Stateful LLM systems are built around a stateless model call."
@@ -119,14 +119,14 @@ review_required: false
 - `clm_fd6b4187fcae` — "An ingest reads the new source, discusses its key takeaways with the human, writes a summary page, updates the index, updates the entity and concept pages it touches, and appends an entry to the log — a single source might touch 10-15 wiki pages" · p 0.83 · active · 1 support · 0 contradict
   - `src_6711dfc0cddd` LLM Wiki: "An example flow: the LLM reads the source, discusses key takeaways with you, writes a summary page in the wiki, updates the index, updates relevant entity and concept pages across the wiki, and appends an entry to the log."
   - exception — when for a broad, uncurated file-system corpus of thousands of files rather than a small personally curated collection: For a broad, uncurated corpus the goal of ingestion is findability rather than deep indexing: a good title and a clean summary is enough for a librarian to locate the file later, and trying to do more at that stage wastes tokens and produces dirty data that poisons retrieval downstream (`obs_8e2a1e93b171`)
-- `clm_03243c5df8d3` — "A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted" · p 0.83 · active · 1 support · 0 contradict
+- `clm_03243c5df8d3` — "A wiki that never forgets becomes noisy, so a retention curve lets facts that were important once but have not been accessed or reinforced in months gradually fade — deprioritized rather than deleted" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "Implement a retention curve: facts that were important once but haven't been accessed or reinforced in months should gradually fade. Not deleted, but deprioritized."
-- `clm_d8e8392dd4ee` — "The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction" · p 0.83 · active · 1 support · 0 contradict
+- `clm_d8e8392dd4ee` — "The pattern's biggest practical gap is that every operation is manual; hooks firing on events — new source, session start, session end, query, memory write, and schedule — should automate the bookkeeping entirely while the human stays in the loop for curation and direction" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "The human should still be in the loop for curation and direction. But the bookkeeping, the part that makes people abandon wikis, should be fully automated."
   - exception — when for the deep lane, which turns a source into belief: Automation stops at the light lane: the weekly routine files only the light-lane channels and the deep lane stays a session's command (`obs_da678a69fac4`)
-- `clm_877c740dd0fb` — "Reading and believing are separate roles: the LLM is a semantic sensor that reads messy human material and emits structured observations, while a deterministic belief updater decides whether an observation creates, supports, contradicts or supersedes a claim and how much confidence changes — the LLM never decides truth" · p 0.83 · active · 1 support · 0 contradict
+- `clm_877c740dd0fb` — "Reading and believing are separate roles: the LLM is a semantic sensor that reads messy human material and emits structured observations, while a deterministic belief updater decides whether an observation creates, supports, contradicts or supersedes a claim and how much confidence changes — the LLM never decides truth" · p 0.82 · active · 1 support · 0 contradict
   - `src_758247b58186` LLM Wiki v3: A State-Space Knowledge System: "The LLM does not decide truth. It outputs a noisy observation. The updater decides how belief changes."
-- `clm_d72e29d3a5de` — "Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it" · p 0.83 · active · 1 support · 0 contradict
+- `clm_d72e29d3a5de` — "Observations consolidate up four tiers — working memory for recent unprocessed observations, episodic memory for compressed session summaries, semantic memory for cross-session facts, and procedural memory for workflows and patterns — each tier more compressed, more confident, and longer-lived than the one below it" · p 0.82 · active · 1 support · 0 contradict
   - `src_48f57237f6ef` LLM Wiki v2: "- **Working memory**: recent observations, not yet processed - **Episodic memory**: session summaries, compressed from raw observations - **Semantic memory**: cross-session facts, consolidated from episodes - **Procedural memory**…"
 - `clm_511e5a08009b` — "Reading index.md first to find relevant pages and then drilling into them works well enough that no embedding-based RAG infrastructure is needed" · p 0.82 · active · 1 support · 0 contradict · when: at moderate scale — roughly 100 sources and hundreds of pages
   - `src_6711dfc0cddd` LLM Wiki: "When answering a query, the LLM reads the index first to find relevant pages, then drills into them."

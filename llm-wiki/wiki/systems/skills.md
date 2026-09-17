@@ -2,7 +2,7 @@
 type: system
 status: current
 created: 2026-08-23
-updated: 2026-09-11
+updated: 2026-09-17
 sources:
   - {resource: llm-wiki/raw/articles/anthropic/building-verification-loops-in-claude-code-with-skills.md, title: "Building verification loops in Claude Code with skills", id: src_8e30f40dbfb8}
   - {resource: llm-wiki/raw/articles/anthropic/steering-claude-code-skills-hooks-rules-subagents-and-more.md, title: "Steering Claude Code: when to use CLAUDE.md, skills, hooks, and subagents", id: src_93a1e6058bf1}
@@ -23,12 +23,12 @@ sources:
   - {resource: llm-wiki/raw/docs/claude-code/skills.md, title: "Extend Claude with skills", id: src_07950e24c4ee}
   - {resource: llm-wiki/raw/docs/claude-code/sub-agents.md, title: "Create custom subagents", id: src_5671f6c73f3d}
   - {resource: llm-wiki/raw/docs/pi/skills.md, title: "Skills", id: src_51c275d28919}
-generated: {by: process:llm-wiki-render, at: 2026-09-11}
+generated: {by: process:llm-wiki-render, at: 2026-09-17}
 entity_ids: [ent_skills]
-claim_ids: [clm_b538f92510e2, clm_6ef07a9ab4ea, clm_90a71be135d8, clm_d6db5eb024a3, clm_02e514dade50, clm_9bc86c7e0f02, clm_3e4818ada12a, clm_6934fabe9f66, clm_98edccb4d232, clm_b7ca365c6ed5, clm_32f17cdfb00d, clm_971e9091b930, clm_742b530ea197, clm_bd0cc70821d9, clm_f0cf5ae8be32, clm_699f2ae955ac, clm_11a662f3b659, clm_5f3ca55d25bb, clm_b167fbc5a6f4, clm_c65d0e1b83ce, clm_946cea9b74e2, clm_e66375272c22, clm_be519460c23c, clm_d0b564243947, clm_5d94196bbcc7, clm_23c00ec362dd, clm_f80283eafc06, clm_2ca7bcd80c20, clm_5a82b7a5bc03, clm_2de5f30ab086, clm_2f7a799c6386, clm_4bae63d37071, clm_6007cb4241eb, clm_8632f86d1a67, clm_f1d5f35ed2be, clm_581b1e4926be, clm_e3e5baaddc59, clm_de14bf30813a, clm_c9c5dd5b8063, clm_5c17d8431d06, clm_0798c6e82be8, clm_8475650d0018, clm_3c47d354c81e, clm_20c02c1a02c6, clm_03e53c040278, clm_bc04d29e3d9d, clm_26fcdb481f71, clm_5dcc0f9cf720, clm_188fe3aabeee, clm_1a53bb98ed3b, clm_35ea8d540945, clm_0877adc37cca, clm_92153b810131]
+claim_ids: [clm_b538f92510e2, clm_6ef07a9ab4ea, clm_90a71be135d8, clm_d6db5eb024a3, clm_02e514dade50, clm_9bc86c7e0f02, clm_3e4818ada12a, clm_6934fabe9f66, clm_98edccb4d232, clm_b7ca365c6ed5, clm_32f17cdfb00d, clm_971e9091b930, clm_742b530ea197, clm_bd0cc70821d9, clm_f0cf5ae8be32, clm_11a662f3b659, clm_5f3ca55d25bb, clm_946cea9b74e2, clm_e66375272c22, clm_699f2ae955ac, clm_b167fbc5a6f4, clm_c65d0e1b83ce, clm_5d94196bbcc7, clm_be519460c23c, clm_d0b564243947, clm_23c00ec362dd, clm_f80283eafc06, clm_2ca7bcd80c20, clm_5a82b7a5bc03, clm_2de5f30ab086, clm_2f7a799c6386, clm_4bae63d37071, clm_6007cb4241eb, clm_8632f86d1a67, clm_f1d5f35ed2be, clm_581b1e4926be, clm_e3e5baaddc59, clm_de14bf30813a, clm_c9c5dd5b8063, clm_5c17d8431d06, clm_0798c6e82be8, clm_8475650d0018, clm_3c47d354c81e, clm_20c02c1a02c6, clm_03e53c040278, clm_bc04d29e3d9d, clm_26fcdb481f71, clm_188fe3aabeee, clm_1a53bb98ed3b, clm_35ea8d540945, clm_0877adc37cca, clm_92153b810131, clm_5dcc0f9cf720]
 confidence: 0.90
 stale_after: 2026-11-30
-last_rendered: 2026-09-11T19:57:10Z
+last_rendered: 2026-09-17T23:03:13Z
 review_required: false
 ---
 
@@ -53,18 +53,18 @@ review_required: false
 - Some entries in Claude Code's command list are bundled skills rather than coded-in commands, and they behave like user-written skills — a prompt handed to Claude, which Claude can also invoke on its own when relevant (0.93)
 - Rules load into context every session or whenever a matching file is opened, while skills load only when invoked or judged relevant, which makes skills the fit for task-specific instructions that need not always be in context (0.93)
 - Because full instructions load only when a task calls for them, agents can keep many skills on hand at only a small context footprint (0.93)
-- When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found (0.92)
 - When many skills are discovered, their descriptions are shortened, which can strip the keywords Claude uses to decide whether a skill applies (0.92)
 - The documented remedy for a skill Claude does not use is to put the words users would naturally say into its description, confirm the skill is listed, rephrase the request to match it, or invoke it directly by name (0.92)
-- Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it (0.92)
-- In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter (0.92)
 - Skills address agents lacking the context to do real work reliably by packaging procedural knowledge and company-, team-, and user-specific context into portable, version-controlled folders that agents load on demand (0.92)
 - A skill built once can be used across any skills-compatible agent, making cross-product reuse a core benefit of the standard (0.92)
-- A SKILL.md file has two parts — YAML frontmatter between --- markers that tells Claude when to use the skill, and markdown instructions Claude follows when it runs — and the skill's directory name becomes the command typed to invoke it (0.91)
-- Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled (0.91)
-- A slash command is recognized only at the start of a message and everything after its name becomes its arguments, with skills as the exception: up to six skills can be chained at the start of a message and each receives the trailing text as arguments (0.91)
-- A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing (0.91)
-- A skill's `allowed-tools` pre-approves the listed tools only for the turn that invokes the skill and never restricts the tool pool — every tool stays callable and normal permission settings govern the rest (0.91)
+- When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found (0.92)
+- Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it (0.91)
+- In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter (0.91)
+- A slash command is recognized only at the start of a message and everything after its name becomes its arguments, with skills as the exception: up to six skills can be chained at the start of a message and each receives the trailing text as arguments (0.90)
+- A SKILL.md file has two parts — YAML frontmatter between --- markers that tells Claude when to use the skill, and markdown instructions Claude follows when it runs — and the skill's directory name becomes the command typed to invoke it (0.90)
+- Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled (0.90)
+- A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing (0.89)
+- A skill's `allowed-tools` pre-approves the listed tools only for the turn that invokes the skill and never restricts the tool pool — every tool stays callable and normal permission settings govern the rest (0.89)
 - The highest-value content in many skills is a gotchas list — concrete environment-specific facts that defy reasonable assumptions — and these belong in SKILL.md itself, where the agent reads them before hitting the situation (0.88)
 - Scoping a skill is like scoping a function: it should encapsulate a coherent unit of work that composes with other skills, since too-narrow skills force several to load at once and too-broad ones cannot be activated precisely (0.88)
 - A skill should teach the agent how to approach a class of problems rather than what to produce for one instance, so the approach generalizes even when individual details are specific (0.88)
@@ -84,13 +84,13 @@ review_required: false
 - The benchmark delta states what the skill costs in time and tokens against what it buys in pass rate, so a skill adding 13 seconds for 50 points of pass rate is worth it while one doubling tokens for 2 points may not be (0.87)
 - The universal precedence convention across existing implementations is that project-level skills override user-level skills, with collisions inside one scope resolved consistently either first-found or last-found and logged as a warning (0.86)
 - A client with a permission system gating file access should allowlist skill directories, or every reference to a bundled script or reference file raises a permission dialog and breaks the flow for skills carrying resources (0.86)
-- Whether a skill's instructions are actually carried out depends on the model: tool-use reliability varies, and some models answer on their own rather than running the commands a skill specifies (0.85)
-- An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session (0.84)
+- Whether a skill's instructions are actually carried out depends on the model: tool-use reliability varies, and some models answer on their own rather than running the commands a skill specifies (0.83)
 - Overconstraining produces conflicting messages inside a single request as system prompt, skills, and user request clash, and while Claude can still interpret the intent it must think more carefully about the overlapping instructions before deciding what to do (0.83)
 - Progressive disclosure replaced loading everything upfront: verification and code review moved into skills Claude Code calls selectively, and deferred-loading tools cost no context until the agent searches for their definitions (0.83)
 - A skill is an advisory control and a hook is the deterministic layer behind it: a policy that must always hold needs something deterministic backing the skill, because the skill makes violations rare while the hook makes them close to impossible (0.83)
 - A verification check is placed by where it runs: standalone and invoked deliberately, embedded in the producing skill so it fires automatically, chained so one skill calls the next at completion, or applied to every PR — and chaining is what converts habits into contracts (0.82)
 - A verification loop is a repeating cycle in which the agent examines its own output — running tests, linters, or custom checks — and corrects failures before proceeding, and packaging that loop as a skill is what makes it apply consistently across every session (0.82)
+- An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session (0.82)
 
 ## Evidence
 
@@ -129,29 +129,29 @@ review_required: false
   - `src_e698013f1182` How Claude remembers your project: "Rules load into context every session or when matching files are opened."
 - `clm_f0cf5ae8be32` — "Because full instructions load only when a task calls for them, agents can keep many skills on hand at only a small context footprint." · p 0.93 · active · 1 support · 0 contradict
   - `src_9b4d3b3d8635` Agent Skills Overview: "Full instructions load only when a task calls for them, so agents can keep many skills on hand with only a small context footprint."
-- `clm_699f2ae955ac` — "When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found." · p 0.92 · active · 1 support · 0 contradict
-  - `src_51c275d28919` Skills: "Name collisions (same name from different locations) warn and keep the first skill found."
 - `clm_11a662f3b659` — "When many skills are discovered, their descriptions are shortened, which can strip the keywords Claude uses to decide whether a skill applies." · p 0.92 · active · 1 support · 0 contradict
   - `src_5ed7c226af31` Set up Claude Code in a monorepo or large codebase: "Names always load, but [descriptions are shortened when there are many](/docs/en/skills#skill-descriptions-are-cut-short), which can strip the keywords Claude uses to decide whether a skill applies."
 - `clm_5f3ca55d25bb` — "The documented remedy for a skill Claude does not use is to put the words users would naturally say into its description, confirm the skill is listed, rephrase the request to match it, or invoke it directly by name." · p 0.92 · active · 1 support · 0 contradict
   - `src_07950e24c4ee` Extend Claude with skills: "If Claude doesn't use your skill when expected: 1. Check the description includes keywords users would naturally say 2. Verify the skill appears in `What skills are available?` 3."
-- `clm_b167fbc5a6f4` — "Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it." · p 0.92 · active · 1 support · 0 contradict
-  - `src_51c275d28919` Skills: "When a task matches, the agent uses `read`, or `bash` when `read` is unavailable, to load the full SKILL.md (models don't always do this; use prompting or `/skill:name` to force it)"
-- `clm_c65d0e1b83ce` — "In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter." · p 0.92 · active · 1 support · 0 contradict
-  - `src_51c275d28919` Skills: "In `~/.agents/skills/` and project `.agents/skills/`, root `.md` files are ignored, but nested `.md` files in grouping folders are discovered when they declare skill frontmatter"
 - `clm_946cea9b74e2` — "Skills address agents lacking the context to do real work reliably by packaging procedural knowledge and company-, team-, and user-specific context into portable, version-controlled folders that agents load on demand." · p 0.92 · active · 1 support · 0 contradict
   - `src_9b4d3b3d8635` Agent Skills Overview: "Skills solve this by packaging procedural knowledge and company-, team-, and user-specific context into portable, version-controlled folders that agents load on demand."
 - `clm_e66375272c22` — "A skill built once can be used across any skills-compatible agent, making cross-product reuse a core benefit of the standard." · p 0.92 · active · 1 support · 0 contradict
   - `src_9b4d3b3d8635` Agent Skills Overview: "**Cross-product reuse**: Build a skill once and use it across any skills-compatible agent."
-- `clm_be519460c23c` — "A SKILL.md file has two parts — YAML frontmatter between --- markers that tells Claude when to use the skill, and markdown instructions Claude follows when it runs — and the skill's directory name becomes the command typed to invoke it." · p 0.91 · active · 1 support · 0 contradict
-  - `src_07950e24c4ee` Extend Claude with skills: "Every skill needs a `SKILL.md` file with two parts: YAML frontmatter between `---` markers that tells Claude when to use the skill, and markdown content with the instructions Claude follows when the skill runs."
-- `clm_d0b564243947` — "Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled." · p 0.91 · active · 1 support · 0 contradict
-  - `src_07950e24c4ee` Extend Claude with skills: "| Personal | `~/.claude/skills/<skill-name>/SKILL.md` | All your projects | | Project | `.claude/skills/<skill-name>/SKILL.md` | This project only | | Plugin | `<plugin>/skills/<skill-name>/SKILL.md` | Where plugin is enabled |"
-- `clm_5d94196bbcc7` — "A slash command is recognized only at the start of a message and everything after its name becomes its arguments, with skills as the exception: up to six skills can be chained at the start of a message and each receives the trailing text as arguments." · p 0.91 · active · 1 support · 0 contradict · when: as of Claude Code v2.1.199
+- `clm_699f2ae955ac` — "When two Pi skill locations supply the same skill name, Pi warns and keeps the first one it found." · p 0.92 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "Name collisions (same name from different locations) warn and keep the first skill found."
+- `clm_b167fbc5a6f4` — "Pi's agent is expected to load a matching SKILL.md itself with read or bash, but models do not always do so, which is why prompting or an explicit /skill:name command exists to force it." · p 0.91 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "When a task matches, the agent uses `read`, or `bash` when `read` is unavailable, to load the full SKILL.md (models don't always do this; use prompting or `/skill:name` to force it)"
+- `clm_c65d0e1b83ce` — "In the shared .agents/skills directories Pi ignores root .md files but discovers nested .md files inside grouping folders whenever they declare skill frontmatter." · p 0.91 · active · 1 support · 0 contradict
+  - `src_51c275d28919` Skills: "In `~/.agents/skills/` and project `.agents/skills/`, root `.md` files are ignored, but nested `.md` files in grouping folders are discovered when they declare skill frontmatter"
+- `clm_5d94196bbcc7` — "A slash command is recognized only at the start of a message and everything after its name becomes its arguments, with skills as the exception: up to six skills can be chained at the start of a message and each receives the trailing text as arguments." · p 0.90 · active · 1 support · 0 contradict · when: as of Claude Code v2.1.199
   - `src_63b61512d6ab` Commands: "A command is only recognized at the start of your message. Text that follows the command name becomes its arguments."
-- `clm_23c00ec362dd` — "A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing." · p 0.91 · active · 1 support · 0 contradict
+- `clm_be519460c23c` — "A SKILL.md file has two parts — YAML frontmatter between --- markers that tells Claude when to use the skill, and markdown instructions Claude follows when it runs — and the skill's directory name becomes the command typed to invoke it." · p 0.90 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "Every skill needs a `SKILL.md` file with two parts: YAML frontmatter between `---` markers that tells Claude when to use the skill, and markdown content with the instructions Claude follows when the skill runs."
+- `clm_d0b564243947` — "Where a skill's directory sits decides its reach: `~/.claude/skills/` covers all of a user's projects, a repo's `.claude/skills/` covers that project only, and a plugin's `skills/` folder covers wherever the plugin is enabled." · p 0.90 · active · 1 support · 0 contradict
+  - `src_07950e24c4ee` Extend Claude with skills: "| Personal | `~/.claude/skills/<skill-name>/SKILL.md` | All your projects | | Project | `.claude/skills/<skill-name>/SKILL.md` | This project only | | Plugin | `<plugin>/skills/<skill-name>/SKILL.md` | Where plugin is enabled |"
+- `clm_23c00ec362dd` — "A skill's description is the text Claude matches against to decide when to apply the skill, and the combined description and when_to_use text is truncated at 1,536 characters in the skill listing." · p 0.89 · active · 1 support · 0 contradict
   - `src_07950e24c4ee` Extend Claude with skills: "What the skill does and when to use it. Claude uses this to decide when to apply the skill. If omitted, uses the first paragraph of markdown content."
-- `clm_f80283eafc06` — "A skill's `allowed-tools` pre-approves the listed tools only for the turn that invokes the skill and never restricts the tool pool — every tool stays callable and normal permission settings govern the rest." · p 0.91 · active · 1 support · 0 contradict
+- `clm_f80283eafc06` — "A skill's `allowed-tools` pre-approves the listed tools only for the turn that invokes the skill and never restricts the tool pool — every tool stays callable and normal permission settings govern the rest." · p 0.89 · active · 1 support · 0 contradict
   - `src_07950e24c4ee` Extend Claude with skills: "The `allowed-tools` field grants permission for the listed tools during the turn that invokes the skill, so Claude can use them without prompting you for approval."
 - `clm_2ca7bcd80c20` — "The highest-value content in many skills is a gotchas list — concrete environment-specific facts that defy reasonable assumptions — and these belong in SKILL.md itself, where the agent reads them before hitting the situation." · p 0.88 · active · 1 support · 0 contradict
   - `src_58c8a3f32b3f` Best practices for skill creators: "The highest-value content in many skills is a list of gotchas — environment-specific facts that defy reasonable assumptions."
@@ -191,10 +191,8 @@ review_required: false
   - `src_6932f817f8b4` How to add skills support to your agent: "The universal convention across existing implementations: **project-level skills override user-level skills.**"
 - `clm_bc04d29e3d9d` — "A client with a permission system gating file access should allowlist skill directories, or every reference to a bundled script or reference file raises a permission dialog and breaks the flow for skills carrying resources." · p 0.86 · active · 1 support · 0 contradict
   - `src_6932f817f8b4` How to add skills support to your agent: "If your agent has a permission system that gates file access, **allowlist skill directories** so the model can read bundled resources without triggering user confirmation prompts."
-- `clm_26fcdb481f71` — "Whether a skill's instructions are actually carried out depends on the model: tool-use reliability varies, and some models answer on their own rather than running the commands a skill specifies." · p 0.85 · active · 1 support · 0 contradict
+- `clm_26fcdb481f71` — "Whether a skill's instructions are actually carried out depends on the model: tool-use reliability varies, and some models answer on their own rather than running the commands a skill specifies." · p 0.83 · active · 1 support · 0 contradict
   - `src_cc19a042a4fe` Quickstart: "Tool-use reliability varies across models — some follow skill instructions and run commands consistently, while others may attempt to answer on their own."
-- `clm_5dcc0f9cf720` — "An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session." · p 0.84 · active · 1 support · 0 contradict
-  - `src_6932f817f8b4` How to add skills support to your agent: "Instead of injecting skill instructions into the main conversation, the skill is run in a **separate subagent session**."
 - `clm_188fe3aabeee` — "Overconstraining produces conflicting messages inside a single request as system prompt, skills, and user request clash, and while Claude can still interpret the intent it must think more carefully about the overlapping instructions before deciding what to do" · p 0.83 · active · 1 support · 0 contradict
   - `src_8419bce2e672` the-new-rules-of-context-engineering-for-claude-5-generation-models: "Generally, Claude can interpret the user's intent to get to the right answer, but Claude must think more carefully about these overlapping and conflicting messages before deciding what to do."
 - `clm_1a53bb98ed3b` — "Progressive disclosure replaced loading everything upfront: verification and code review moved into skills Claude Code calls selectively, and deferred-loading tools cost no context until the agent searches for their definitions" · p 0.83 · active · 1 support · 0 contradict
@@ -205,6 +203,8 @@ review_required: false
   - `src_8e30f40dbfb8` Building verification loops in Claude Code with skills: "One skill calls another at completion. Anthropic's Claude Code team uses this pattern: `/code-review` hunts bugs, `/simplify` cleans diffs, `/verify` confirms behavior, and `/design` checks UI guidelines."
 - `clm_92153b810131` — "A verification loop is a repeating cycle in which the agent examines its own output — running tests, linters, or custom checks — and corrects failures before proceeding, and packaging that loop as a skill is what makes it apply consistently across every session" · p 0.82 · active · 1 support · 0 contradict
   - `src_8e30f40dbfb8` Building verification loops in Claude Code with skills: "In Claude Code, these loops can be packaged as skills, ensuring consistent application across all sessions."
+- `clm_5dcc0f9cf720` — "An advanced pattern supported by some clients runs a skill in a separate subagent session that receives the instructions, performs the task, and returns a summary — useful when a skill's workflow is complex enough to warrant a dedicated focused session." · p 0.82 · active · 1 support · 0 contradict
+  - `src_6932f817f8b4` How to add skills support to your agent: "Instead of injecting skill instructions into the main conversation, the skill is run in a **separate subagent session**."
 
 ## Timeline
 
