@@ -12,13 +12,13 @@
     "observations": 863,
     "pages": 201,
     "relationships": 530,
-    "sources": 111,
+    "sources": 109,
     "transitions": 967,
     "unresolved_conflicts": 0
   },
   "runs": {
-    "live": 160,
-    "retracted": 14
+    "live": 158,
+    "retracted": 16
   },
   "segment": "shared"
 }

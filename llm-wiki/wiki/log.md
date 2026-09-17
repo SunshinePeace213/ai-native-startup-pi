@@ -617,3 +617,11 @@ lane: deep · observations: 10 · claims: +10 ~0 · rendered: llm-wiki/wiki/conc
 ## [2026-09-14] ingest | DeepSWE v1.1 | llm-wiki/raw/articles/datacurve/deepswe-v1-1.md
 
 lane: deep · observations: 9 · claims: +9 ~0 · rendered: llm-wiki/wiki/concepts/deepswe.md, llm-wiki/wiki/projects/datacurve.md, llm-wiki/wiki/systems/gpt-6-astra.md, llm-wiki/wiki/systems/claude-opus-5.md, llm-wiki/wiki/systems/gemini-3-8-flash.md, llm-wiki/wiki/systems/claude-fable-5.md, llm-wiki/wiki/concepts/agent-evaluation.md, llm-wiki/wiki/concepts/eval-task.md
+
+## [2026-09-17] undo | run_a2fe2ecde997 | register | off-topic; user requested removal
+
+rows: 1 · views: changed · rendered: none
+
+## [2026-09-17] undo | run_9bcf5c8d8f0b | register | off-topic; user requested removal
+
+rows: 1 · views: changed · rendered: none
