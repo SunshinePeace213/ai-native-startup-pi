@@ -34,6 +34,7 @@ ai-native-startup/
 │   ├── agents/ — Delegated agent definitions
 │   │   └── evals/ — Subagent behavior evals
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
+│   │   ├── access-guard/ — Sensitive-file and vendored-path access guard on every tool call
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
 │   │   └── ui-customization-soriza/ — Pi chrome: S/Z header, theme picker, and the emoji statusline
@@ -54,6 +55,7 @@ ai-native-startup/
 │   ├── docs/ — Repository documentation reference checks
 │   ├── pi/ — Pi extension contracts
 │   │   ├── _harness/ — Shared extension test doubles
+│   │   ├── access-guard/ — Sensitive, vendored, and toggle contract tests
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
 │   │   └── ui-customization-soriza/ — Header, picker, terminal sync, statusline, and theme file contracts
@@ -74,6 +76,14 @@ ai-native-startup/
 - **KB extension:** `index.ts` wires lifecycle hooks, `engine.ts` bridges to Python
   CLIs, `guard.ts` checks protected write targets, and `format.ts` formats messages.
   It never writes under `llm-wiki/` and never calls a model.
+- **Access-guard extension:** `index.ts` wires `tool_call` and the `/access-guard`
+  command; `guard.ts` is the decision; `denial.ts` writes the reason the model sees;
+  `catalog/` holds the sensitive-file and vendored-path families as data; `match/`
+  compiles them (`path.ts` for tool paths in lexical and real form, `command.ts` for
+  bash text, `glob.ts` for grep/find patterns, `shell.ts` for the paths a bash
+  command rewrites). Sensitive files are denied to every tool and cannot be toggled;
+  vendored trees are denied to writes only, with a user-typed session toggle. It is
+  a tripwire on tool inputs, not a sandbox, and fails open on its own errors.
 - **Architecture extension:** `tree.ts` is the shared generator and bounded writer;
   `cli.ts` exposes it through Bun; `index.ts` supplies commands and optional
   `agent_settled` synchronization. It owns only the marked block above and never

@@ -26,12 +26,18 @@ tests/
 │   │   ├── fake-ctx.ts              ExtensionContext: cwd, hasUI, records ui.setStatus
 │   │   ├── scripted-exec.ts         exec by verb, plus the fail-open matrix every hook must survive
 │   │   └── scratch-layer.ts         a throwaway project with a minimal llm-wiki/ and engine marker
-│   └── llm-wiki/                    one directory per user-observable feature = one hook
-│       ├── write-guard/hook.test.ts     tool_call
-│       ├── grounding/hook.test.ts       input → before_agent_start
-│       ├── queue/hook.test.ts           session_start
-│       ├── archive-reminder/hook.test.ts tool_result
-│       └── engine-bridge/bridge.test.ts the exec seam the hooks share
+│   ├── llm-wiki/                    one directory per user-observable feature = one hook
+│   │   ├── write-guard/hook.test.ts     tool_call
+│   │   ├── grounding/hook.test.ts       input → before_agent_start
+│   │   ├── queue/hook.test.ts           session_start
+│   │   ├── archive-reminder/hook.test.ts tool_result
+│   │   └── engine-bridge/bridge.test.ts the exec seam the hooks share
+│   └── access-guard/                one directory per policy, on a scratch project with
+│       │                            a live secret, its template, a vendored tree, symlinks
+│       ├── fixture.ts               the scratch project and the wired extension
+│       ├── sensitive/hook.test.ts   tool_call — secret-bearing files, every tool
+│       ├── vendored/hook.test.ts    tool_call — generated trees, writes only
+│       └── toggle/command.test.ts   /access-guard session toggle
 └── scripts/
     └── llm-wiki/                    pytest — the engine, driven through its CLI on a scratch vault
         ├── conftest.py              Vault: run a verb, read ledgers/views/audit as bytes
@@ -56,6 +62,7 @@ Every test file opens with its numbered contract; every case is named
 | --- | --- |
 | `bun test` | every TS test (`bunfig.toml` roots discovery at `tests/`) |
 | `bun test tests/pi/llm-wiki` | KB extension |
+| `bun test tests/pi/access-guard` | Access guard: sensitive, vendored, and toggle contracts |
 | `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
 | `bun test tests/docs` | Local documentation links and heading targets |
 | `bun run architecture:check` | Generated map matches the current projected tree; no repairs |
