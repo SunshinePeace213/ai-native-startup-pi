@@ -10,7 +10,8 @@
 //     and no theme change.
 // T5: no themes discoverable (RPC) → a warning, no picker, no theme change.
 // C1: alt+= applies the next theme file, alt+- the previous, wrapping at both
-//     ends; the notification carries the position. Pi's built-ins `dark` and
+//     ends, and raises no notification — the swatch widget of A1 is the only
+//     feedback, so nothing repeats it. Pi's built-ins `dark` and
 //     `light` are never cycled into: from one of them, forward lands on the
 //     first file and backward on the last. With no theme files at all, the
 //     built-ins are cycled instead of doing nothing.
@@ -159,12 +160,18 @@ describe("C1 cycle", () => {
     const { ui, shortcut } = await setup({ active: "nord" }); // last of the two files
     await shortcut("alt+=");
     expect(ui.ctx.ui.theme.name).toBe("tokyo-night"); // wrapped, skipping dark
-    expect(ui.notifications.at(-1)?.message).toContain("1/2");
     await shortcut("alt+-");
     expect(ui.ctx.ui.theme.name).toBe("nord");
-    expect(ui.notifications.at(-1)?.message).toContain("2/2");
     expect(ui.themeCalls.every((c) => c.kind === "name")).toBe(true);
     expect(ui.themeCalls.some((c) => c.name === "dark")).toBe(false);
+  });
+
+  test("C1 a cycle notifies nothing; the swatch widget carries the new theme", async () => {
+    const { ui, shortcut } = await setup({ active: "nord" });
+    await shortcut("alt+=");
+    await shortcut("alt+-");
+    expect(ui.notifications).toHaveLength(0);
+    expect(strip(ui.widgets.get("soriza-swatch")!.join("\n"))).toContain("nord");
   });
 
   test.each([
@@ -220,7 +227,6 @@ describe("R1 order", () => {
     await fake.emit("session_start", {}, ui.ctx);
     await fake.shortcuts.get("alt+=")!.handler(ui.ctx);
     expect(ui.ctx.ui.theme.name).toBe("light");
-    expect(ui.notifications.at(-1)?.message).toContain("2/2");
   });
 });
 

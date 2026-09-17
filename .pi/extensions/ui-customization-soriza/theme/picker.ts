@@ -4,7 +4,9 @@
 // highlighted theme on the whole screen as an in-memory instance (nothing
 // persisted), Enter applies it by name (Pi saves it to settings.json), Esc
 // restores the original instance. `/theme <name>` and alt+. / alt+, apply
-// directly. Every successful switch reports through `applied`.
+// directly. Every successful switch reports through `applied`; only the ones
+// with no visible trigger of their own also raise a notification — cycling is
+// silent, since the swatch widget `applied` flashes already names the theme.
 
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { DynamicBorder } from "@earendil-works/pi-coding-agent";
@@ -36,14 +38,19 @@ export function orderThemes<T extends { name: string }>(themes: T[]): T[] {
   ];
 }
 
-function applyByName(ctx: ExtensionContext, name: string, applied: Applied, suffix = ""): boolean {
+function applyByName(
+  ctx: ExtensionContext,
+  name: string,
+  applied: Applied,
+  notify = true,
+): boolean {
   const result = ctx.ui.setTheme(name);
   if (!result.success) {
     ctx.ui.notify(`Theme "${name}" not found — /theme lists the available ones`, "error");
     return false;
   }
   applied(ctx);
-  ctx.ui.notify(`Theme: ${name}${suffix}`, "info");
+  if (notify) ctx.ui.notify(`Theme: ${name}`, "info");
   return true;
 }
 
@@ -178,7 +185,7 @@ export async function themeCommand(
  * cycling never snaps the terminal background to its default. With no theme
  * files at all the built-ins are cycled instead of doing nothing. Starting
  * from a skipped theme, forward lands on the first file and backward on the
- * last.
+ * last. No notification: the swatch widget is the feedback.
  */
 export function cycleTheme(ctx: ExtensionContext, direction: 1 | -1, applied: Applied): void {
   if (!ctx.hasUI) return;
@@ -196,5 +203,5 @@ export function cycleTheme(ctx: ExtensionContext, direction: 1 | -1, applied: Ap
         ? 0
         : themes.length - 1
       : (current + direction + themes.length) % themes.length;
-  applyByName(ctx, themes[next]!.name, applied, ` (${next + 1}/${themes.length})`);
+  applyByName(ctx, themes[next]!.name, applied, false);
 }
