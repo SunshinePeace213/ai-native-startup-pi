@@ -20,7 +20,7 @@ import {
 import { CATALOG } from "./catalog";
 import { showThemeStatus, swatch } from "./status";
 
-export type Applied = (ctx: ExtensionContext) => void;
+export type Applied = (ctx: ExtensionContext) => void | Promise<void>;
 
 const MAX_VISIBLE = 12;
 
@@ -38,18 +38,18 @@ export function orderThemes<T extends { name: string }>(themes: T[]): T[] {
   ];
 }
 
-function applyByName(
+async function applyByName(
   ctx: ExtensionContext,
   name: string,
   applied: Applied,
   notify = true,
-): boolean {
+): Promise<boolean> {
   const result = ctx.ui.setTheme(name);
   if (!result.success) {
     ctx.ui.notify(`Theme "${name}" not found — /theme lists the available ones`, "error");
     return false;
   }
-  applied(ctx);
+  await applied(ctx);
   if (notify) ctx.ui.notify(`Theme: ${name}`, "info");
   return true;
 }
@@ -159,7 +159,7 @@ export async function openPicker(ctx: ExtensionContext, applied: Applied): Promi
   });
 
   if (chosen) {
-    applyByName(ctx, chosen, applied);
+    await applyByName(ctx, chosen, applied);
     return;
   }
   ctx.ui.setTheme(original);
@@ -174,7 +174,7 @@ export async function themeCommand(
   if (!ctx.hasUI) return;
   const wanted = args.trim();
   if (wanted) {
-    applyByName(ctx, wanted, applied);
+    await applyByName(ctx, wanted, applied);
     return;
   }
   await openPicker(ctx, applied);
@@ -187,7 +187,11 @@ export async function themeCommand(
  * from a skipped theme, forward lands on the first file and backward on the
  * last. No notification: the swatch widget is the feedback.
  */
-export function cycleTheme(ctx: ExtensionContext, direction: 1 | -1, applied: Applied): void {
+export async function cycleTheme(
+  ctx: ExtensionContext,
+  direction: 1 | -1,
+  applied: Applied,
+): Promise<void> {
   if (!ctx.hasUI) return;
   const all = orderThemes(ctx.ui.getAllThemes());
   if (all.length === 0) {
@@ -203,5 +207,5 @@ export function cycleTheme(ctx: ExtensionContext, direction: 1 | -1, applied: Ap
         ? 0
         : themes.length - 1
       : (current + direction + themes.length) % themes.length;
-  applyByName(ctx, themes[next]!.name, applied, false);
+  await applyByName(ctx, themes[next]!.name, applied, false);
 }
