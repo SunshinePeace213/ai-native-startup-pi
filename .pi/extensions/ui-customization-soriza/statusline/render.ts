@@ -7,7 +7,7 @@
 //
 //   📁 cwd  🌿 branch ✓|+s ~m ?u ⇡a ⇣b  🔖 session  🤖 model · 🧠 thinking  🕐 clock
 //   🧮 Context    ⛁ …  pct (used/window) auto   📥 in · 📤 out · ⚡ cached   💰 cost sub ($/h)
-//   🟠 Claude  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at      (fable · opus …)
+//   🟠 Claude  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at      (fable pct)
 //   🟢 OpenAI  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at
 //   🏗️ architecture …   📚 wiki …   🎨 theme ██ …                       114k Tokens
 //
@@ -39,8 +39,14 @@ import {
   type Segment,
 } from "./format";
 import { type GitState, isClean } from "./git";
-import { modelWindowFor, PROVIDER_META, type ProviderId, type QuotaWindow } from "./quota";
-import type { QuotaEntry } from "./quota-store";
+import {
+  extraLimitWindows,
+  modelWindowFor,
+  PROVIDER_META,
+  type ProviderId,
+  type QuotaWindow,
+} from "./quota";
+import type { QuotaEntry, QuotaError } from "./quota-store";
 import type { UsageTotals } from "./stats";
 import { tokenBadge } from "../tokens";
 
@@ -107,6 +113,19 @@ const BAR_GAP = "  ";
 const PERCENT_WIDTH = 3;
 /** Values older than this without an error are flagged too: the idle poll should have replaced them. */
 const STALE_AFTER_MS = 15 * 60_000;
+
+/**
+ * What a failed poll is called on the line. A meter that has no values owes
+ * the reader the reason it is empty — a bare ⚠️ could be a 429, a dead link
+ * or a payload the parser no longer recognises, and each wants a different
+ * response from the user.
+ */
+const REASON_LABEL: Record<QuotaError, string> = {
+  auth: "re-login",
+  throttled: "429",
+  network: "network",
+  invalid: "payload",
+};
 
 const LEVEL_TOKEN: Record<Level, "success" | "warning" | "error"> = {
   ok: "success",
@@ -288,8 +307,10 @@ interface Marker {
 
 /**
  * How a provider's values are qualified. With values, the marker trails
- * them (`⚠️ stale 12m`, `🔒`); without, it stands in for them (`🔒 re-login`,
- * `…` while the first fetch is pending). Fresh values carry nothing.
+ * them (`⚠️ stale 12m`, `🔒`); without, it stands in for them — naming the
+ * failure and when the next poll runs (`⚠️ network · retry 15s`,
+ * `🔒 re-login`), or `…` while the first fetch is pending. Fresh values carry
+ * nothing.
  */
 function marker(p: Paint, entry: QuotaEntry, now: number): Marker {
   const age = entry.fetchedAt === undefined ? undefined : fmtDuration(now - entry.fetchedAt);
@@ -300,7 +321,13 @@ function marker(p: Paint, entry: QuotaEntry, now: number): Marker {
   });
   if (entry.error === "auth")
     return same(entry.quota ? ICON.auth : `${ICON.auth} ${p.dim("re-login")}`);
-  if (entry.error) return entry.quota && age ? stale(age) : same(ICON.stale);
+  if (entry.error) {
+    if (entry.quota && age) return stale(age);
+    const reason = p.dim(REASON_LABEL[entry.error]);
+    const wait = entry.nextAllowedAt - now;
+    const retry = wait > 0 ? ` ${p.dim("·")} ${p.dim(`retry ${fmtCountdown(wait)}`)}` : "";
+    return { full: `${ICON.stale} ${reason}${retry}`, compact: `${ICON.stale} ${reason}` };
+  }
   if (!entry.quota) return same(p.dim("…"));
   if (entry.fetchedAt !== undefined && now - entry.fetchedAt > STALE_AFTER_MS && age)
     return stale(age);
@@ -313,7 +340,7 @@ function head(p: Paint, entry: QuotaEntry, labelWidth: number): string {
   return `${icon} ${p.text(name)}${pad(name, labelWidth)}${BAR_GAP}`;
 }
 
-/** One provider's own line: `🟠 Claude  5h ⛁…  58% ↻ 2h14m · 16:46   7d …   (fable …)`. */
+/** One provider's own line: `🟠 Claude  5h ⛁…  58% ↻ 2h14m · 16:46   7d …   (fable 21%)`. */
 function providerQuota(
   p: Paint,
   entry: QuotaEntry,
@@ -357,20 +384,21 @@ function providerQuota(
   if (!quota.session && !quota.weekly)
     segments.push({ full: `${lead}${trail.full}`.trimEnd(), priority: Infinity });
 
-  if (quota.models.length > 0) {
+  // The separately metered families (Fable, Spark) bind from every model, so
+  // they stay on the line whichever one the session is using, and outrank the
+  // 7-day window when the width runs out.
+  const extras = extraLimitWindows(quota);
+  if (extras.length > 0) {
     const gating = modelWindowFor(quota, modelId);
-    const item = (m: (typeof quota.models)[number]) => {
-      const own = gating === undefined || m === gating;
-      const label = own ? p.text(m.label) : p.dim(m.label);
-      const pct = own ? p.pct(m.percent) : p.dim(fmtPercent(m.percent));
-      return `${label} ${pct}`;
+    const item = (m: (typeof extras)[number]) => {
+      const label = m === gating ? p.bold(p.text(m.label)) : p.text(m.label);
+      return `${label} ${p.pct(m.percent)}`;
     };
-    const all = quota.models.map(item).join(` ${p.dim("·")} `);
-    const first = item(gating ?? quota.models[0]!);
+    const all = extras.map(item);
     segments.push({
-      full: `${p.dim("(")}${all}${p.dim(")")}`,
-      compact: `${p.dim("(")}${first}${p.dim(")")}`,
-      priority: 60,
+      full: `${p.dim("(")}${all.join(` ${p.dim("·")} `)}${p.dim(")")}`,
+      compact: `${p.dim("(")}${all.join(p.dim("·"))}${p.dim(")")}`,
+      priority: 95,
     });
   }
   return segments;
@@ -400,8 +428,13 @@ function terseQuota(
     parts.push(`${p.dim("7d")} ${pct(quota.weekly)}`);
     shortParts.push(`${p.dim("7d")} ${pct(quota.weekly)}`);
   }
-  const gating = modelWindowFor(quota, modelId) ?? quota.models[0];
-  if (gating) parts.push(`${p.dim(gating.label)} ${pct(gating)}`);
+  const gating = modelWindowFor(quota, modelId);
+  for (const extra of extraLimitWindows(quota)) {
+    const label = extra === gating ? p.text(extra.label) : p.dim(extra.label);
+    const text = `${label} ${pct(extra)}`;
+    parts.push(text);
+    shortParts.push(text);
+  }
   if (mark.full) {
     parts.push(mark.full);
     shortParts.push(mark.compact);

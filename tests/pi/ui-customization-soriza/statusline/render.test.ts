@@ -20,15 +20,18 @@
 //     context (after compaction) shows — rather than 0.
 // R4: every provider gets its own line — icon, name padded into a shared
 //     column, then 5h and 7d as bar, two spaces, percentage padded to three,
-//     ↻ time-left · reset stamp — the active provider's line first and
-//     carrying the per-model weekly windows in parentheses, the one gating
-//     the active model highlighted and the rest dim; no quota at all → no
-//     quota lines.
+//     ↻ time-left · reset stamp — the active provider's line first. Every
+//     line carries the windows its plan meters separately (Fable, Spark) in
+//     parentheses, whatever model the session is using, with the one gating
+//     that model bold; families that only ride the shared 7d window (opus,
+//     sonnet) are not repeated. No quota at all → no quota lines.
 // R4b: a 5h window resetting today shows a bare 24-hour clock and otherwise
 //     the dated `20 Sep Sun 18:32` stamp; the 7d window is always dated.
 // R5: a failed poll keeps the last values and marks them, after the numbers,
 //     ⚠️ stale with their age; a re-login need shows 🔒; a first fetch still
 //     pending shows …; values older than the idle poll are marked stale too.
+//     A failure with no values at all names itself and its next attempt —
+//     ⚠️ network · retry 15s, ⚠️ 429, ⚠️ payload — rather than a bare ⚠️.
 //     Every icon is followed by a space; sibling icon groups are separated by ·.
 // R6: the last line lists other extensions' statuses with their icons in the
 //     fixed order (architecture-sync, llm-wiki, then unknown keys) and the
@@ -38,8 +41,8 @@
 //     corner, it follows the Context row's own figure, and control characters
 //     in a status never break the line.
 // R7: compact mode is two content lines with no bars, every provider terse on
-//     the second, plus the badge line; verbose adds the cache read/write
-//     totals and the provider id.
+//     the second — still carrying the separately metered window — plus the
+//     badge line; verbose adds the cache read/write totals and the provider id.
 // R8: lines 2..n are one grid — `Context`, then a row per provider — so the
 //     ⛁ bars, the percentages and the group after them all start at the same
 //     column on every row, whatever the names and numbers are.
@@ -287,7 +290,10 @@ describe("R4 quota lines", () => {
     const [, , claude, openai] = plain(snapshot());
     expect(claude).toContain(`🟠 Claude   5h ${cells(10)}  58% ↻ 2h14m · 16:46`);
     expect(claude).toContain(`7d ${cells(10)}  21% ↻ 4d6h · 20 Sep Sun 20:32`);
-    expect(claude).toContain("(fable 21% · opus 12% · sonnet 5%)");
+    expect(claude).toContain("(fable 21%)");
+    // opus and sonnet ride the 7d window; repeating them says nothing new
+    expect(claude).not.toContain("opus");
+    expect(claude).not.toContain("sonnet");
     expect(openai).toContain(`🟢 OpenAI   5h ${cells(10)}  3%  ↻ 4h00m · 18:32`);
     expect(openai).toContain(`7d ${cells(10)}  2%  ↻ 5d0h · 21 Sep Mon 14:32`);
   });
@@ -299,16 +305,21 @@ describe("R4 quota lines", () => {
     expect(lines).not.toContain("anthropic");
   });
 
-  test("R4 the window gating the active model is text, the others dim", () => {
-    const [, , raw] = render(snapshot());
-    expect(raw).toContain("<text:nord>fable</text:nord>");
-    expect(raw).toContain("<dim:nord>opus</dim:nord>");
-    expect(raw).toContain("<dim:nord>sonnet</dim:nord>");
-    const [, , sonnet] = render(
-      snapshot({ model: { id: "claude-sonnet-5", provider: "anthropic", thinking: "low" } }),
-    );
-    expect(sonnet).toContain("<text:nord>sonnet</text:nord>");
-    expect(sonnet).toContain("<dim:nord>fable</dim:nord>");
+  test("R4 the separately metered window shows from every model, bold when it gates", () => {
+    const [, , onFable] = render(snapshot());
+    expect(onFable).toContain("<b><text:nord>fable</text:nord></b>");
+    // on another model the Fable allowance still binds, so it still shows
+    const sonnet = snapshot({
+      model: { id: "claude-sonnet-5", provider: "anthropic", thinking: "low" },
+    });
+    expect(plain(sonnet)[2]).toContain("(fable 21%)");
+    expect(render(sonnet)[2]).toContain("<text:nord>fable</text:nord>");
+    expect(render(sonnet)[2]).not.toContain("<b><text:nord>fable</text:nord></b>");
+  });
+
+  test("R4 a plan with no separately metered window shows no parentheses", () => {
+    const plain5h: QuotaEntry = { ...anthropic, quota: { ...anthropic.quota!, models: [] } };
+    expect(plain(snapshot({ quotas: [plain5h] }))[2]).not.toContain("(");
   });
 
   test("R4 switching to codex puts its line first; both keep their bars", () => {
@@ -317,7 +328,7 @@ describe("R4 quota lines", () => {
     );
     expect(lines[2]!.startsWith("🟢 OpenAI")).toBe(true);
     expect(lines[3]!.startsWith("🟠 Claude")).toBe(true);
-    expect(lines[3]).toContain("(fable 21% · opus 12% · sonnet 5%)");
+    expect(lines[3]).toContain("(fable 21%)");
   });
 
   test.each([
@@ -425,6 +436,25 @@ describe("R5 stale and failed", () => {
     expect(plain(snapshot())[2]).not.toContain("⚠️");
     const old: QuotaEntry = { ...anthropic, fetchedAt: NOW - 20 * 60_000 };
     expect(plain(snapshot({ quotas: [old] }))[2]).toContain("⚠️ stale 20m");
+  });
+
+  test.each([
+    ["network", NOW + 15_000, "⚠️ network · retry 15s"],
+    ["throttled", NOW + 4 * 60_000, "⚠️ 429 · retry 4m"],
+    ["invalid", NOW + 30_000, "⚠️ payload · retry 30s"],
+  ] as const)("R5 an empty meter names the %s failure and its next attempt", (error, at, text) => {
+    const [, , line] = plain(
+      snapshot({ quotas: [{ provider: "anthropic", nextAllowedAt: at, error }] }),
+    );
+    expect(line).toContain(`🟠 Claude   ${text} 5h — · 7d —`);
+  });
+
+  test("R5 a failure whose retry is already due names itself without a countdown", () => {
+    const [, , line] = plain(
+      snapshot({ quotas: [{ provider: "anthropic", nextAllowedAt: NOW - 1, error: "network" }] }),
+    );
+    expect(line).toContain("🟠 Claude   ⚠️ network 5h — · 7d —");
+    expect(line).not.toContain("retry");
   });
 });
 
@@ -555,7 +585,7 @@ describe("R7 modes", () => {
     expect(lines).toHaveLength(3);
     expect(lines.join("\n")).not.toContain("⛁");
     expect(lines[1]).toContain("🧮 42%");
-    expect(lines[1]).toContain("🟠 Claude 5h 58% · 7d 21%");
+    expect(lines[1]).toContain("🟠 Claude 5h 58% · 7d 21% · fable 21%");
     expect(lines[1]).toContain("🟢 OpenAI 5h 3% · 7d 2%");
     expect(lines[1]!.indexOf("🟠")).toBeLessThan(lines[1]!.indexOf("🟢"));
     expect(lines[2]!.trim()).toBe("84,000 Tokens");

@@ -14,7 +14,13 @@
 // S4: quota: a provider the session is logged into by OAuth is polled at
 //     session_start with the token Pi resolves for it, and its windows render
 //     on a line of their own, the active provider's first; a provider on an
-//     API key is never polled and gets no line.
+//     API key is never polled and gets no line. An API-key model listed ahead
+//     of the provider's OAuth model does not hide it.
+// S9: a poll that fails with nothing stored leaves the reason and the retry
+//     on the line and arms that retry in seconds — the five-minute idle tick
+//     is too long to leave a meter blank — and the values recover when it
+//     succeeds. /statusline debug reports each provider's model, windows,
+//     last failure with its status, and next poll.
 // S5: a switch to another model polls that model's provider; agent_end polls
 //     the active provider only, and not again within a minute.
 // S6: an Anthropic response's rate-limit headers update the 5h/7d windows
@@ -79,22 +85,37 @@ interface Call {
   authorization?: string;
 }
 
-function usageFetch(): { fetch: FetchFn; calls: Call[] } {
+/** `failures` leading calls answer with that status before the payloads start. */
+function usageFetch(failures: number[] = []): { fetch: FetchFn; calls: Call[] } {
   const calls: Call[] = [];
+  const pending = [...failures];
   return {
     calls,
     fetch: async (url, init) => {
       const headers = (init.headers ?? {}) as Record<string, string>;
       calls.push({ url, authorization: headers["Authorization"] });
+      const status = pending.shift();
+      if (status !== undefined) return new Response("nope", { status });
       const body = url.includes("anthropic") ? ANTHROPIC_BODY : CODEX_BODY;
       return new Response(JSON.stringify(body), { status: 200 });
     },
   };
 }
 
-async function start(exec: ExecScript, options: Partial<UiCtxOptions> = {}, clock = NOW) {
+interface Scheduled {
+  ms: number;
+  run: () => void;
+}
+
+async function start(
+  exec: ExecScript,
+  options: Partial<UiCtxOptions> = {},
+  clock = NOW,
+  failures: number[] = [],
+) {
   const fake = createFakePi(exec);
-  const usage = usageFetch();
+  const usage = usageFetch(failures);
+  const scheduled: Scheduled[] = [];
   let now = clock;
   extension(fake.pi, {
     fetch: usage.fetch,
@@ -102,6 +123,14 @@ async function start(exec: ExecScript, options: Partial<UiCtxOptions> = {}, cloc
     home: HOME,
     agentDir: "/nonexistent",
     env: {},
+    schedule: (run, ms) => {
+      const item = { run, ms };
+      scheduled.push(item);
+      return () => {
+        const at = scheduled.indexOf(item);
+        if (at >= 0) scheduled.splice(at, 1);
+      };
+    },
   });
   const ui = createUiCtx({
     cwd: CWD,
@@ -133,8 +162,18 @@ async function start(exec: ExecScript, options: Partial<UiCtxOptions> = {}, cloc
     fake,
     ui,
     usage,
+    scheduled,
     advance: (ms: number) => {
       now += ms;
+    },
+    /** Fire the armed cold retry, as its timer would. */
+    fireRetry: async () => {
+      const next = scheduled.shift();
+      if (!next) throw new Error("no retry was armed");
+      now += next.ms;
+      next.run();
+      await new Promise((r) => setTimeout(r, 0));
+      return next.ms;
     },
     lines: (width = 4000) => ui.footer!.render(width).map(strip),
     run: (args: string) => fake.commands.get("statusline")!.handler(args, ui.ctx),
@@ -262,6 +301,62 @@ describe("S4 quota", () => {
       models: [{ ...CODEX, oauth: false, token: undefined }],
     });
     expect(usage.calls.map((c) => c.url)).toEqual(["https://api.anthropic.com/api/oauth/usage"]);
+  });
+
+  test("S4 an API-key model listed first does not hide the provider's OAuth model", async () => {
+    const { usage, lines } = await start(gitExec({ status: CLEAN }), {
+      model: { id: "claude-opus-4-5", provider: "anthropic", oauth: false },
+      models: [FABLE],
+    });
+    expect(usage.calls[0]!.authorization).toBe("Bearer anthropic-token");
+    expect(lines()[2]).toContain("🟠 Claude   5h");
+  });
+});
+
+describe("S9 a meter that cannot fetch", () => {
+  test("S9 the line names the failure and its retry, and the retry is armed in seconds", async () => {
+    const { lines, scheduled, usage } = await start(gitExec({ status: CLEAN }), {}, NOW, [522]);
+    expect(usage.calls).toHaveLength(1);
+    expect(lines()[2]).toContain("🟠 Claude   ⚠️ network · retry 15s 5h — · 7d —");
+    expect(scheduled.map((s) => s.ms)).toEqual([15_000]);
+  });
+
+  test("S9 the armed retry polls again and the windows come back", async () => {
+    const run = await start(gitExec({ status: CLEAN }), {}, NOW, [522]);
+    expect(await run.fireRetry()).toBe(15_000);
+    expect(run.usage.calls).toHaveLength(2);
+    const quota = run.lines()[2]!;
+    expect(quota).toContain("58%");
+    expect(quota).toContain("(fable 21%)");
+    expect(quota).not.toContain("⚠️");
+    expect(run.scheduled).toHaveLength(0);
+  });
+
+  test("S9 a repeated failure backs off on the ladder rather than hammering", async () => {
+    const run = await start(gitExec({ status: CLEAN }), {}, NOW, [522, 522, 522]);
+    expect(await run.fireRetry()).toBe(15_000);
+    expect(await run.fireRetry()).toBe(30_000);
+    expect(await run.fireRetry()).toBe(60_000);
+    expect(run.usage.calls).toHaveLength(4);
+  });
+
+  test("S9 /statusline debug reports the model, the failure with its status, and the next poll", async () => {
+    const { run, ui } = await start(gitExec({ status: CLEAN }), { models: [CODEX] }, NOW, [522]);
+    await run("debug");
+    const report = ui.notifications.at(-1)!;
+    expect(report.type).toBe("warning");
+    expect(report.message).toContain("🟠 anthropic · oauth claude-fable-5-1 · no values");
+    expect(report.message).toContain("last error network (HTTP 522) 0s ago");
+    expect(report.message).toContain("next poll in 15s");
+    expect(report.message).toContain("https://api.anthropic.com/api/oauth/usage");
+    expect(report.message).toContain("🟢 openai-codex · oauth gpt-5.5-codex · 5h 3% · 7d 17%");
+  });
+
+  test("S9 debug on a healthy session reports info, not a warning", async () => {
+    const { run, ui } = await start(gitExec({ status: CLEAN }), { models: [CODEX] });
+    await run("debug");
+    expect(ui.notifications.at(-1)!.type).toBe("info");
+    expect(ui.notifications.at(-1)!.message).toContain("last ok 0s ago");
   });
 });
 

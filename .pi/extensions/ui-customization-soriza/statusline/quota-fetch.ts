@@ -12,11 +12,28 @@ export type FetchFn = (input: string, init: RequestInit) => Promise<Response>;
 
 export type QuotaResult =
   | { ok: true; quota: ProviderQuota }
-  | { ok: false; reason: "auth" | "throttled" | "network" | "invalid"; retryAfterMs?: number };
+  | {
+      ok: false;
+      reason: "auth" | "throttled" | "network" | "invalid";
+      retryAfterMs?: number;
+      /** The HTTP status when a response came back at all; absent for a thrown fetch. */
+      status?: number;
+    };
 
 export const ANTHROPIC_USAGE_URL = "https://api.anthropic.com/api/oauth/usage";
 export const CODEX_USAGE_URL = "https://chatgpt.com/backend-api/wham/usage";
-export const USAGE_TIMEOUT_MS = 5000;
+/**
+ * Both endpoints answer in well under a second when healthy, but they sit
+ * behind the vendors' edges: 5 s was tight enough that an ordinary slow hop
+ * read as a network failure and emptied the meter for the whole backoff.
+ */
+export const USAGE_TIMEOUT_MS = 10_000;
+
+/** Where each provider's usage is read from — shown by `/statusline debug`. */
+export const USAGE_URL: Record<ProviderId, string> = {
+  anthropic: ANTHROPIC_USAGE_URL,
+  "openai-codex": CODEX_USAGE_URL,
+};
 
 const JWT_CLAIM = "https://api.openai.com/auth";
 
@@ -62,19 +79,20 @@ async function request(
   } catch {
     return { ok: false, reason: "network" };
   }
-  if (response.status === 401 || response.status === 403) return { ok: false, reason: "auth" };
-  if (response.status === 429)
-    return { ok: false, reason: "throttled", retryAfterMs: retryAfterMs(response) };
-  if (!response.ok) return { ok: false, reason: "network" };
+  const status = response.status;
+  if (status === 401 || status === 403) return { ok: false, reason: "auth", status };
+  if (status === 429)
+    return { ok: false, reason: "throttled", retryAfterMs: retryAfterMs(response), status };
+  if (!response.ok) return { ok: false, reason: "network", status };
   let body: unknown;
   try {
     body = await response.json();
   } catch {
-    return { ok: false, reason: "invalid" };
+    return { ok: false, reason: "invalid", status };
   }
   const quota = parse(body);
   if (!quota.session && !quota.weekly && quota.models.length === 0)
-    return { ok: false, reason: "invalid" };
+    return { ok: false, reason: "invalid", status };
   return { ok: true, quota };
 }
 

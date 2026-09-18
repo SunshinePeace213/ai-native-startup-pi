@@ -18,7 +18,8 @@
 //     classify every failure: 401/403 → auth, 429 → throttled (retry-after
 //     honoured), other non-2xx or a thrown fetch → network, a body that is
 //     not the payload → invalid; a Codex token without an account id → auth
-//     without any request.
+//     without any request. A failure that got a response carries its HTTP
+//     status, for the debug report.
 // Q5: the store polls at most once a minute per provider on turns and keeps
 //     the last good values through every failure; after a 429 it waits five
 //     minutes (doubling to thirty, or retry-after if longer) before polling
@@ -26,7 +27,18 @@
 //     minute but not a backoff; a provider without credentials is never
 //     stored; concurrent refreshes share one poll; every change notifies once.
 // Q6: header-carried windows merge into the stored quota without a poll and
-//     clear a previous error.
+//     clear a previous error; windows that land while a poll is in flight
+//     survive that poll failing — the response writes back the entry as it
+//     then stands, not the snapshot it started from.
+// Q7: a provider with no values at all retries on a short ladder (15 s
+//     doubling to two minutes) rather than the full backoff, since an empty
+//     meter protects nothing — except after an auth failure, and never sooner
+//     than a 429's retry-after. Every failure is kept (reason, status, when)
+//     even after the meter recovers.
+// Q8: `/statusline debug` reports, per provider: the OAuth model or that the
+//     session is not logged into it, the windows held, when values last
+//     arrived, the last failure with its HTTP status, the next allowed poll,
+//     and the endpoint.
 
 import { describe, expect, test } from "bun:test";
 import {
@@ -41,8 +53,15 @@ import {
   fetchAnthropicQuota,
   fetchCodexQuota,
   type FetchFn,
+  type QuotaResult,
 } from "@ext/ui-customization-soriza/statusline/quota-fetch";
-import { QuotaStore } from "@ext/ui-customization-soriza/statusline/quota-store";
+import {
+  COLD_BASE_MS,
+  COLD_MAX_MS,
+  type QuotaEntry,
+  QuotaStore,
+} from "@ext/ui-customization-soriza/statusline/quota-store";
+import { diagnose } from "@ext/ui-customization-soriza/statusline/diagnose";
 
 const NOW = Date.parse("2026-09-16T06:32:00Z");
 const MIN = 60_000;
@@ -271,6 +290,15 @@ describe("Q4 fetchers", () => {
     expect(result.reason).toBe(reason as typeof result.reason);
     if (retryAfterMs !== undefined) expect(result.retryAfterMs).toBe(retryAfterMs);
   });
+
+  test("Q4 a failure that got a response carries its status; a thrown fetch carries none", async () => {
+    const served = await fetchAnthropicQuota("tok", fakeFetch(() => json({}, 522)).fetch);
+    expect(served).toMatchObject({ ok: false, reason: "network", status: 522 });
+    const parsed = await fetchAnthropicQuota("tok", fakeFetch(() => json({ nope: 1 })).fetch);
+    expect(parsed).toMatchObject({ ok: false, reason: "invalid", status: 200 });
+    const thrown = await fetchAnthropicQuota("tok", fakeFetch(() => new Error("aborted")).fetch);
+    expect(thrown).toEqual({ ok: false, reason: "network" });
+  });
 });
 
 // ── store ───────────────────────────────────────────────────────────────────
@@ -291,8 +319,14 @@ function makeStore(script: Array<Awaited<ReturnType<FetchFn>> | "no-creds" | Err
       if (next === undefined) throw new Error("script exhausted");
       if (next === "no-creds") return undefined;
       if (next instanceof Error) return { ok: false, reason: "network" };
-      if (next.status === 401) return { ok: false, reason: "auth" };
-      if (next.status === 429) return { ok: false, reason: "throttled" };
+      const status = next.status;
+      if (status === 401 || status === 403) return { ok: false, reason: "auth", status };
+      if (status === 429) {
+        const header = next.headers.get("retry-after");
+        const retryAfterMs = header === null ? undefined : Number(header) * 1000;
+        return { ok: false, reason: "throttled", status, retryAfterMs };
+      }
+      if (status >= 400) return { ok: false, reason: "network", status };
       return { ok: true, quota: fromAnthropicUsage(await next.json()) };
     },
   });
@@ -400,5 +434,145 @@ describe("Q6 header merge", () => {
     s.store.mergeWindows("anthropic", {});
     expect(s.store.all()).toEqual([]);
     expect(s.changes()).toBe(0);
+  });
+
+  test("Q6 windows landing mid-flight survive the poll that was already out", async () => {
+    let clock = NOW;
+    let release: ((result: QuotaResult) => void) | undefined;
+    const store = new QuotaStore({
+      now: () => clock,
+      onChange: () => {},
+      fetch: () =>
+        new Promise<QuotaResult>((resolve) => {
+          release = resolve;
+        }),
+    });
+    const poll = store.refresh("anthropic", "start");
+    clock += 500;
+    store.mergeWindows("anthropic", { session: { percent: 61, resetsAt: null } });
+    release!({ ok: false, reason: "network", status: 522 });
+    await poll;
+    const entry = store.get("anthropic")!;
+    // the values the headers brought are the state; the failure only sets the backoff
+    expect(entry.quota?.session?.percent).toBe(61);
+    expect(entry.error).toBeUndefined();
+    expect(entry.failure).toMatchObject({ reason: "network", status: 522 });
+  });
+});
+
+describe("Q7 an empty meter", () => {
+  test("Q7 retries on the short ladder, doubling to its cap, not the full backoff", async () => {
+    const s = makeStore([json({}, 500), json({}, 500), json({}, 500), json({}, 500)]);
+    const waits: number[] = [];
+    for (let i = 0; i < 4; i += 1) {
+      await s.store.refresh("anthropic", i === 0 ? "start" : "timer");
+      const entry = s.store.get("anthropic")!;
+      waits.push(entry.nextAllowedAt - NOW - waits.reduce((a, b) => a + b, 0));
+      s.advance(waits[i]!);
+    }
+    expect(waits).toEqual([COLD_BASE_MS, 2 * COLD_BASE_MS, 4 * COLD_BASE_MS, COLD_MAX_MS]);
+    expect(s.polls()).toBe(4);
+  });
+
+  test("Q7 once values are held the full backoff returns", async () => {
+    const s = makeStore([json(ANTHROPIC_BODY), json({}, 500)]);
+    await s.store.refresh("anthropic", "start");
+    s.advance(MIN + 1);
+    await s.store.refresh("anthropic", "turn");
+    const entry = s.store.get("anthropic")!;
+    expect(entry.quota?.session?.percent).toBe(58);
+    expect(entry.nextAllowedAt - (NOW + MIN + 1)).toBe(MIN);
+  });
+
+  test("Q7 a 429's retry-after still wins over the ladder", async () => {
+    const s = makeStore([json({}, 429, { "retry-after": "120" })]);
+    await s.store.refresh("anthropic", "start");
+    expect(s.store.get("anthropic")!.nextAllowedAt).toBe(NOW + 120_000);
+  });
+
+  test("Q7 an auth failure keeps its fifteen minutes; the failure outlives recovery", async () => {
+    const s = makeStore([json({}, 401), json(ANTHROPIC_BODY)]);
+    await s.store.refresh("anthropic", "start");
+    expect(s.store.get("anthropic")!.nextAllowedAt).toBe(NOW + 15 * MIN);
+    s.advance(16 * MIN);
+    await s.store.refresh("anthropic", "timer");
+    const entry = s.store.get("anthropic")!;
+    expect(entry.error).toBeUndefined();
+    expect(entry.quota?.session?.percent).toBe(58);
+    expect(entry.failure).toMatchObject({ reason: "auth", status: 401, at: NOW });
+  });
+});
+
+describe("Q8 the debug report", () => {
+  const url = "https://api.anthropic.com/api/oauth/usage";
+  const healthy: QuotaEntry = {
+    provider: "anthropic",
+    quota: fromAnthropicUsage(ANTHROPIC_BODY),
+    fetchedAt: NOW - 2 * MIN,
+    nextAllowedAt: NOW + 43_000,
+  };
+
+  test("Q8 a healthy provider reports its model, windows, last poll and next", () => {
+    const report = diagnose(
+      [{ provider: "anthropic", model: "claude-fable-5", entry: healthy, url }],
+      NOW,
+    );
+    expect(report).toContain("oauth claude-fable-5");
+    expect(report).toContain("5h 58% · 7d 21% · fable 21% · sonnet 6%");
+    expect(report).toContain("last ok 2m ago");
+    expect(report).toContain("next poll in 43s");
+    expect(report).toContain(url);
+    expect(report).not.toContain("last error");
+  });
+
+  test("Q8 an empty failing meter reports the reason, the status and the retry", () => {
+    const report = diagnose(
+      [
+        {
+          provider: "anthropic",
+          model: "claude-fable-5",
+          entry: {
+            provider: "anthropic",
+            error: "network",
+            failure: { reason: "network", status: 522, at: NOW - 40_000 },
+            nextAllowedAt: NOW + 15_000,
+          },
+          url,
+        },
+      ],
+      NOW,
+    );
+    expect(report).toContain("no values");
+    expect(report).toContain("last ok —");
+    expect(report).toContain("last error network (HTTP 522) 40s ago");
+    expect(report).toContain("next poll in 15s");
+    expect(report).not.toContain("(recovered)");
+  });
+
+  test("Q8 a provider not logged into, and one never polled, say so", () => {
+    const report = diagnose(
+      [
+        { provider: "anthropic", model: null, url },
+        { provider: "openai-codex", model: "gpt-5.5-codex", url: CODEX_USAGE_URL },
+      ],
+      NOW,
+    );
+    expect(report).toContain("🟠 anthropic · not logged in — not polled");
+    expect(report).toContain("🟢 openai-codex · oauth gpt-5.5-codex · never polled");
+  });
+
+  test("Q8 a recovered meter still names the failure it came back from", () => {
+    const report = diagnose(
+      [
+        {
+          provider: "anthropic",
+          model: "claude-fable-5",
+          entry: { ...healthy, failure: { reason: "throttled", status: 429, at: NOW - 5 * MIN } },
+          url,
+        },
+      ],
+      NOW,
+    );
+    expect(report).toContain("last error throttled (HTTP 429) 5m ago (recovered)");
   });
 });

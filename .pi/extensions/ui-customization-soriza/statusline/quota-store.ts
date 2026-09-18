@@ -6,17 +6,40 @@
 // auth failure fifteen minutes (the token needs a re-login, polling will not
 // fix it). The last good values survive every failure, stamped with when they
 // were fetched so the footer can show how stale they are.
+//
+// Two rules keep a meter from going blank and staying blank:
+//
+//   * a poll writes back the entry as it stands when the response lands, not
+//     the snapshot it started from, so windows that arrived from response
+//     headers mid-flight are never overwritten by a failure that raced them;
+//   * a provider that has no values at all backs off on a short ladder
+//     (15 s doubling to two minutes) — waiting protects nothing while the
+//     meter is empty, and the first poll of a session is the one most likely
+//     to hit a cold edge.
+//
+// Every failure is also kept verbatim (reason, HTTP status, when) for
+// `/statusline debug`, even after later values recover the meter.
 
 import type { ProviderId, ProviderQuota, QuotaWindow } from "./quota";
 import type { QuotaResult } from "./quota-fetch";
 
 export type QuotaError = "auth" | "throttled" | "network" | "invalid";
 
+/** The last poll that failed, kept for `/statusline debug`. */
+export interface QuotaFailure {
+  reason: QuotaError;
+  /** The HTTP status, when the request got a response at all. */
+  status?: number;
+  at: number;
+}
+
 export interface QuotaEntry {
   provider: ProviderId;
   quota?: ProviderQuota;
   fetchedAt?: number;
   error?: QuotaError;
+  /** The last failure, whether or not the meter has recovered since. */
+  failure?: QuotaFailure;
   /** Earliest time another poll may run. */
   nextAllowedAt: number;
 }
@@ -36,6 +59,9 @@ const THROTTLE_MAX_MS = 30 * 60_000;
 const NETWORK_BASE_MS = 60_000;
 const NETWORK_MAX_MS = 10 * 60_000;
 const AUTH_WAIT_MS = 15 * 60_000;
+/** A meter with no values yet retries on this ladder instead of the full backoff. */
+export const COLD_BASE_MS = 15_000;
+export const COLD_MAX_MS = 2 * 60_000;
 
 export class QuotaStore {
   private readonly entries = new Map<ProviderId, QuotaEntry>();
@@ -84,15 +110,17 @@ export class QuotaStore {
       const inBackoff = entry.error !== undefined;
       if (reason !== "manual" || inBackoff) return;
     }
-    const run = this.poll(provider, entry).finally(() => this.inFlight.delete(provider));
+    const run = this.poll(provider, now).finally(() => this.inFlight.delete(provider));
     this.inFlight.set(provider, run);
     return run;
   }
 
-  private async poll(provider: ProviderId, entry: QuotaEntry): Promise<void> {
+  private async poll(provider: ProviderId, startedAt: number): Promise<void> {
     const result = await this.options.fetch(provider);
     const now = this.options.now();
     if (result === undefined) return; // provider not usable (no credentials)
+    // Re-read: response headers may have merged windows while this was in flight.
+    const entry = this.entries.get(provider) ?? { provider, nextAllowedAt: 0 };
     if (result.ok) {
       entry.quota = result.quota;
       entry.fetchedAt = now;
@@ -100,14 +128,21 @@ export class QuotaStore {
       entry.nextAllowedAt = now + MIN_POLL_MS;
       this.backoff.delete(provider);
     } else {
-      entry.error = result.reason;
-      entry.nextAllowedAt = now + this.nextBackoff(provider, result);
+      const overtaken = entry.fetchedAt !== undefined && entry.fetchedAt >= startedAt;
+      entry.failure = { reason: result.reason, status: result.status, at: now };
+      // Fresher values landed while this poll was out: they, not the failure, are the state.
+      if (!overtaken) entry.error = result.reason;
+      entry.nextAllowedAt = now + this.nextBackoff(provider, result, entry.quota === undefined);
     }
     this.entries.set(provider, entry);
     this.options.onChange();
   }
 
-  private nextBackoff(provider: ProviderId, failure: QuotaResult & { ok: false }): number {
+  private nextBackoff(
+    provider: ProviderId,
+    failure: QuotaResult & { ok: false },
+    cold: boolean,
+  ): number {
     const previous = this.backoff.get(provider);
     let wait: number;
     switch (failure.reason) {
@@ -120,6 +155,13 @@ export class QuotaStore {
         break;
       default:
         wait = Math.min(NETWORK_MAX_MS, previous ? previous * 2 : NETWORK_BASE_MS);
+    }
+    // Nothing is being protected while the meter is empty, so retry soon —
+    // except after an auth failure, which only a re-login fixes, and never
+    // sooner than a 429's own retry-after.
+    if (cold && failure.reason !== "auth") {
+      const ladder = Math.min(COLD_MAX_MS, previous ? previous * 2 : COLD_BASE_MS);
+      wait = Math.max(Math.min(wait, ladder), failure.retryAfterMs ?? 0);
     }
     this.backoff.set(provider, wait);
     return wait;

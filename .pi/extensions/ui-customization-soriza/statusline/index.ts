@@ -12,6 +12,12 @@
 //   /statusline verbose    toggle cache read/write totals and the provider id
 //   /statusline off | on   restore Pi's footer / bring the statusline back
 //   /statusline refresh    poll the quotas now
+//   /statusline debug      why each provider's meter reads the way it does
+//
+// A provider whose first poll fails has an empty meter and nothing to protect
+// by waiting, so the store backs it off on a short ladder and this file arms a
+// one-shot timer for it: the idle poll is five minutes away, which is far too
+// long to leave `⚠️ 5h — · 7d —` on the line.
 
 import type { Api, Model } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -19,10 +25,11 @@ import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import { readFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import type { TuiHandle } from "../tui";
+import { diagnose, type ProviderDiagnostic } from "./diagnose";
 import { fmtClock } from "./format";
 import { equalGit, type GitState, probeGit } from "./git";
 import { fromAnthropicHeaders, PROVIDER_META, type ProviderId } from "./quota";
-import { FETCHERS, type FetchFn } from "./quota-fetch";
+import { FETCHERS, type FetchFn, USAGE_URL } from "./quota-fetch";
 import { IDLE_POLL_MS, QuotaStore } from "./quota-store";
 import { type RenderOptions, renderStatusline, type Snapshot, type StatuslineMode } from "./render";
 import { sessionStartedAt, usageTotals } from "./stats";
@@ -33,6 +40,8 @@ export interface StatuslineDeps {
   env?: NodeJS.ProcessEnv;
   home?: string;
   agentDir?: string;
+  /** How a cold-retry poll is armed; returns its cancel. Tests fire it without waiting. */
+  schedule?: (run: () => void, ms: number) => () => void;
 }
 
 export interface StatuslineFeature {
@@ -81,6 +90,13 @@ export function createStatusline(
   const now = deps.now ?? Date.now;
   const env = deps.env ?? process.env;
   const home = deps.home ?? env.HOME ?? env.USERPROFILE;
+  const schedule =
+    deps.schedule ??
+    ((run: () => void, ms: number) => {
+      const handle = setTimeout(run, ms);
+      handle.unref?.();
+      return () => clearTimeout(handle);
+    });
 
   const options: RenderOptions = { mode: "full", verbose: false };
   let enabled = true;
@@ -88,18 +104,28 @@ export function createStatusline(
   let git: GitState | null = null;
   let autoCompact = true;
   let timer: ReturnType<typeof setInterval> | undefined;
+  const retryTimers = new Map<ProviderId, () => void>();
   let latest: ExtensionContext | undefined;
 
   // ── quota ────────────────────────────────────────────────────────────────
 
+  /**
+   * The provider's OAuth model — any of them, not merely the first the
+   * registry lists: an API-key model ahead of the OAuth one in that list read
+   * as "not logged in" and stopped the provider being polled at all.
+   */
   function oauthModel(ctx: ExtensionContext, provider: ProviderId): Model<Api> | undefined {
-    const model = ctx.modelRegistry.getAvailable().find((m) => m.provider === provider);
-    return model && ctx.modelRegistry.isUsingOAuth(model) ? model : undefined;
+    return ctx.modelRegistry
+      .getAvailable()
+      .find((m) => m.provider === provider && ctx.modelRegistry.isUsingOAuth(m));
   }
 
   const store = new QuotaStore({
     now,
-    onChange: () => tui.requestRender(),
+    onChange: () => {
+      tui.requestRender();
+      scheduleColdRetries();
+    },
     fetch: async (provider) => {
       const ctx = latest;
       if (!ctx) return undefined;
@@ -113,6 +139,33 @@ export function createStatusline(
 
   function oauthProviders(ctx: ExtensionContext): ProviderId[] {
     return PROVIDERS.filter((p) => oauthModel(ctx, p) !== undefined);
+  }
+
+  /**
+   * Arm a one-shot poll for every provider whose meter is empty and failing.
+   * The store decides when (a 15-second ladder while cold); this only makes
+   * sure something actually calls back then, instead of the line waiting out
+   * the five-minute idle tick with nothing on it.
+   */
+  function scheduleColdRetries(): void {
+    for (const entry of store.all()) {
+      const cold = entry.error !== undefined && entry.error !== "auth" && !entry.quota;
+      const existing = retryTimers.get(entry.provider);
+      if (!cold) {
+        existing?.();
+        retryTimers.delete(entry.provider);
+        continue;
+      }
+      if (existing) continue;
+      const wait = Math.max(1000, entry.nextAllowedAt - now());
+      retryTimers.set(
+        entry.provider,
+        schedule(() => {
+          retryTimers.delete(entry.provider);
+          if (latest) void refreshQuotas(latest, "timer", entry.provider);
+        }, wait),
+      );
+    }
   }
 
   async function refreshQuotas(
@@ -218,6 +271,18 @@ export function createStatusline(
   function stopTimer(): void {
     if (timer) clearInterval(timer);
     timer = undefined;
+    for (const cancel of retryTimers.values()) cancel();
+    retryTimers.clear();
+  }
+
+  /** The `/statusline debug` rows: every provider, logged in or not. */
+  function diagnostics(ctx: ExtensionContext): ProviderDiagnostic[] {
+    return PROVIDERS.map((provider) => ({
+      provider,
+      model: oauthModel(ctx, provider)?.id ?? null,
+      entry: store.get(provider),
+      url: USAGE_URL[provider],
+    }));
   }
 
   // ── command ──────────────────────────────────────────────────────────────
@@ -228,7 +293,10 @@ export function createStatusline(
       `Statusline: ${enabled ? options.mode : "off"}${options.verbose ? " · verbose" : ""}`;
     switch (word) {
       case "":
-        ctx.ui.notify(`${describe()} — /statusline full|compact|verbose|off|on|refresh`, "info");
+        ctx.ui.notify(
+          `${describe()} — /statusline full|compact|verbose|off|on|refresh|debug`,
+          "info",
+        );
         return;
       case "full":
       case "compact":
@@ -250,9 +318,16 @@ export function createStatusline(
       case "refresh":
         await refreshQuotas(ctx, "manual");
         break;
+      case "debug": {
+        latest = ctx;
+        const rows = diagnostics(ctx);
+        const trouble = rows.some((row) => row.model === null || row.entry?.error !== undefined);
+        ctx.ui.notify(diagnose(rows, now()), trouble ? "warning" : "info");
+        return;
+      }
       default:
         ctx.ui.notify(
-          `Unknown option "${word}" — /statusline full|compact|verbose|off|on|refresh`,
+          `Unknown option "${word}" — /statusline full|compact|verbose|off|on|refresh|debug`,
           "error",
         );
         return;
@@ -312,7 +387,7 @@ export function createStatusline(
 
     register() {
       pi.registerCommand("statusline", {
-        description: "Statusline: full | compact | verbose | off | on | refresh",
+        description: "Statusline: full | compact | verbose | off | on | refresh | debug",
         handler: (args, ctx) => command(args, ctx),
       });
     },

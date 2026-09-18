@@ -34,6 +34,17 @@ export const PROVIDER_META: Record<ProviderId, { icon: string; name: string }> =
   "openai-codex": { icon: "🟢", name: "OpenAI" },
 };
 
+/**
+ * The families a plan meters on their own, beyond the shared 5h/7d windows:
+ * Anthropic's Fable weekly allowance and Codex's Spark. Opus and Sonnet ride
+ * the subscription's own 7-day window, so their per-model entries only repeat
+ * a figure the line already carries.
+ */
+export const EXTRA_LIMIT_MODELS: Record<ProviderId, readonly string[]> = {
+  anthropic: ["fable"],
+  "openai-codex": ["spark"],
+};
+
 type Json = Record<string, unknown>;
 
 const isObject = (value: unknown): value is Json =>
@@ -215,6 +226,16 @@ export function fromCodexUsage(body: unknown, now: number): ProviderQuota {
     }
   }
   return quota;
+}
+
+/**
+ * The per-model windows worth a place on the line: the separately metered
+ * families, in the provider's order, whatever model the session is using.
+ * A limit that exists is a limit that binds, so it is shown from every model.
+ */
+export function extraLimitWindows(quota: ProviderQuota): ModelWindow[] {
+  const wanted = EXTRA_LIMIT_MODELS[quota.provider] ?? [];
+  return quota.models.filter((m) => wanted.some((family) => m.label.includes(family)));
 }
 
 /** The per-model window that gates `modelId`, matched by family name. */
