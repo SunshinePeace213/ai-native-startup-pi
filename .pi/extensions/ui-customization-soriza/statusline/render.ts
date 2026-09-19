@@ -99,6 +99,7 @@ export const ICON = {
 export const STATUS_ICONS: ReadonlyArray<[key: string, icon: string]> = [
   ["architecture-sync", "🏗️"],
   ["llm-wiki", "📚"],
+  ["artifacts", "🧩"],
 ];
 
 const CONTEXT_CELLS = 10;

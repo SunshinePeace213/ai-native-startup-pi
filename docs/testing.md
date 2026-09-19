@@ -47,17 +47,14 @@ tests/
 │   └── artifacts/                   the local artifact loop on a scratch project with an
 │       │                            in-process Bun server, a recording opener, a scratch trash;
 │       │                            directories mirror the extension's layers
-│       ├── fixture.ts               the wired extension; tool runner; page-style HTTP helpers
-│       ├── shared/schemas.test.ts   Q1–Q4  questions/v1 shape · answers refused · required and hidden · registry
-│       ├── server/render.test.ts    S1–S9  wrap · inject · Markdown · islands · title · size · runtime parses
-│       ├── server/store.test.ts     T1–T7  layout · versions · pending · owner · trash · token · server record
-│       ├── server/http.test.ts      H1–H15 pages: token/cookie · Host/Origin · stale · schema · limits · SSE · gallery · ports;
-│       │                            api: header token · publish · owner routing and ack · stop
-│       ├── session/tool.test.ts     A1–A16 publish · ask (answer/timeout/abort) · read · watch · notify · cap · comments · delete · two sessions
-│       ├── session/hooks.test.ts    L1–L4  session_start replay · keepAlive · /artifacts · stop
-│       ├── structure/boundaries.test.ts B1–B5 no session→server/page imports · shared self-contained · Bun only in server/ ·
-│       │                            runtime is a classic script · no orphan modules
-│       └── process/launch.test.ts   P1–P4  the real `bun server/serve.ts` · stale record · findBun · the pi side under Node
+│       ├── fixture.ts               the wired extension; tool runner; page- and api-style HTTP helpers
+│       ├── domain/rules.test.ts     D1–D6  versions vs replies · retention · config · questions/v1 · envelope · terminal text
+│       ├── server/store.test.ts     T1–T6  layout · replies bound to versions · ownership · trash · sweep · same-path republish
+│       ├── server/http.test.ts      H1–H7  viewer cookie · page-only POSTs · session token · replies and 409 · Host · SSE · sweep
+│       ├── process/launch.test.ts   P1–P5  the real `bun src/server.ts` on a fixed port · token rotation · taken port refused · lock · logs
+│       ├── session/session.test.ts  S1–S8  publish · ask · republish in place · owner-only wakes · session_start · strip · selector · delete/verify
+│       └── structure/boundaries.test.ts B1–B6 domain pure · app over domain · pi side never imports the server · Bun only in http/server ·
+│                                    runtime is a classic script · no orphan modules
 │   └── destructive-guard/           one directory per layer, on a scratch workspace with
 │       │                            .git, src/, node_modules/, a home, and an escaping symlink
 │       ├── fixture.ts               the workspace, a scriptable select dialog, the wired extension
@@ -94,7 +91,7 @@ Every test file opens with its numbered contract; every case is named
 | `bun test tests/pi/fast-search` | grep and find tools, binary resolution, and the live rg/fd contracts |
 | `bun test tests/pi/destructive-guard` | Destructive guard: parser, paths, catalog, config, and hook contracts |
 | `bun test tests/pi/destructive-guard/engine` | The rule catalog alone — run after adding or changing a rule |
-| `bun test tests/pi/artifacts` | Artifacts: shell, store, server, tool, and session-hook contracts |
+| `bun test tests/pi/artifacts` | Artifacts: domain, store, HTTP, process, session, and structure contracts |
 | `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
 | `bun test tests/docs` | Local documentation links and heading targets |
 | `bun run architecture:check` | Generated map matches the current projected tree; no repairs |
@@ -144,9 +141,11 @@ Unknown folder descriptions are reported for curation, not inferred from filenam
 - A directory convention is not proof of eval coverage. The librarian has a
   standalone eval file; `source-archiver` currently does not. Trigger-eval files
   alone do not establish output quality for a skill or its delegated agent.
-- The artifacts browser runtime is parse-checked in the suite; whether it renders
-  and sends in a real browser was verified by hand with headless Chrome
-  (see [docs/artifacts.md](artifacts.md)) and is not automated.
+- The artifacts browser runtime is parse-checked in the suite; whether it renders,
+  sends, and reports diagnostics in a real browser is verified by hand
+  (see [docs/artifacts.md](artifacts.md)) and is not automated. The `alt+a`
+  overlay's placement over the footer is likewise a by-hand check; its key
+  handling is tested through the `Selector` component.
 - AGENTS.md adherence requires clean-session behavioral trials (read-only tasks,
   unrelated KB leads, queue reminders, and generated-block ownership), not exact
   string assertions against the instructions. Those behavioral trials were not

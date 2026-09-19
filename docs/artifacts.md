@@ -2,65 +2,116 @@
 
 Claude Code's Artifact tool, hosted locally. The agent publishes an HTML or
 Markdown file as a page on `http://localhost:5834/a/<slug>`; the user reads it,
-answers on it, or comments; the page sends the result back and the session
-continues — without the user pasting anything into the terminal. Read this
-before publishing pages, changing the extension, or writing the skills that
-will drive it. The extension lives in `.pi/extensions/artifacts/`; its contract
-tests are `tests/pi/artifacts/`.
+answers on it, or comments; the page sends the reply back and the session
+continues — without the user pasting anything into the terminal. The pages a
+session published sit in the terminal footer as clickable badges; `alt+a`
+selects one. Read this before publishing pages, changing the extension, or
+writing the skills that will drive it. The extension lives in
+`.pi/extensions/artifacts/`; its contract tests are `tests/pi/artifacts/`.
 
 ## Layout
 
-Three runtimes meet in this extension, so it is layered by runtime first and
-by feature inside each layer — the "directory with `index.ts`" style from
-pi's extension docs, extended with the subfolders the repo's other extensions
-use. The boundary is a contract: `tests/pi/artifacts/structure` fails when the
-session side imports the server or the page, or names the `Bun` global.
+Two runtimes meet in this extension — pi (Node) and the server (Bun) — so the
+source is layered by responsibility, with the runtime boundary enforced by
+`tests/pi/artifacts/structure`: the pi side never imports the server's
+modules, `domain/` imports nothing, and only `infra/http/server.ts` names
+`Bun`. This is pi's "directory with `index.ts`" style with a `src/` tree
+inside it; `pino` is a root dependency, so no nested `package.json` is
+needed.
 
 ```text
 .pi/extensions/artifacts/
-├── index.ts                the factory: registers and wires, starts nothing
-├── shared/                 the contract; imports only itself and node built-ins
-│   ├── types.ts · protocol.ts · config.ts · record.ts
-│   └── schemas/            questions/v1 and the registry
-├── session/                inside pi (Node today, Bun if pi is ever run on it)
-│   ├── hooks.ts · command.ts · host.ts · client.ts · launch.ts · feedback.ts · opener.ts
-│   └── tool/               index.ts · schema.ts · format.ts · files.ts · context.ts
-│       └── actions/        publish.ts · read.ts · watch.ts · comments.ts · manage.ts
-├── server/                 the Bun process: `bun server/serve.ts --root …`
-│   ├── serve.ts · http.ts · auth.ts · respond.ts · events.ts · core.ts · store.ts
-│   ├── routes/             pages.ts · api.ts · gallery.ts
-│   └── render/             shell.ts · markdown.ts
-└── page/                   runtime.js · styles.css — inlined into every page; the
-                            runtime is linted as browser code by the repo's ESLint
+├── index.ts                 pi entry: the composition root; wires and registers, starts nothing
+└── src/
+    ├── domain/              pure rules both processes agree on
+    │   ├── types.ts · protocol.ts · config.ts · versioning.ts · retention.ts · envelope.ts · text.ts
+    │   └── schemas/         questions/v1 and the registry
+    ├── app/                 use-cases over ports, no I/O
+    │   ├── ports.ts         ArtifactStore · Renderer · Logger
+    │   ├── core.ts          publish · respond · comments · pin · diagnostics · sweep (the store's only writer)
+    │   └── routing.ts       who a page event reaches; what a delivered event becomes
+    ├── infra/               adapters
+    │   ├── store/           store.ts (fs layout) · control.ts (.server/ token, viewer, record, lock)
+    │   ├── http/            server.ts (Bun.serve, one port) · auth.ts · events.ts · routes/{pages,api,gallery}.ts
+    │   ├── render/          shell.ts · markdown.ts
+    │   ├── client/          client.ts (fetch + SSE, pi side)
+    │   ├── process/         launch.ts (probe, lock, spawn, stop) · opener.ts
+    │   ├── log/             logger.ts (pino, daily files, redaction)
+    │   └── config.ts
+    ├── ui/                  inside pi
+    │   ├── host.ts          one per project per session: stream, delivery, the strip
+    │   ├── hooks.ts         session_start / session_shutdown · alt+a · alt+1…5
+    │   ├── strip.ts         the footer badges · overlay.ts  the selector
+    │   ├── command.ts       /artifacts
+    │   └── tool/            index.ts · schema.ts · context.ts · format.ts · files.ts · actions/
+    ├── page/                runtime.js · styles.css — inlined into every page
+    └── server.ts            the Bun entry: `bun src/server.ts --root … --port 5834`
 ```
 
 ## The loop
 
 ```text
-session ──publish──▶ .pi/artifacts/<slug>/v1.html ──serve──▶ browser
-   ▲                                                            │
-   │   artifact-feedback message            user answers, clicks Send
-   │   (wake · notify · held)                                   │
-   └──── Host validates island ◀──POST /a/<slug>/publish ───────┘
-                 v2 stored; SSE tells open tabs
+session ──publish──▶ .pi/artifacts/<slug>/versions/v1.html ──serve──▶ browser
+   ▲                                                                   │
+   │   artifact-feedback message               user answers, clicks Send
+   │   (wake · notify · held)                                          │
+   └──── Host decides ◀── owner's stream ◀── POST /a/<slug>/publish ───┘
+                                             responses/v1-r1.json · SSE tells open tabs
 ```
 
-- **Feedback is a republish.** The page carries a JSON *data island*
-  (`<script type="application/json" id="artifact-data">`). Sending posts the
-  island back with the version it was viewing; the server refuses a stale
-  version (409), validates the island against its declared schema, stores
-  v(n+1), and hands the event to the Host. One primitive — versions plus
-  watchers — carries both directions.
+- **Versions are the agent's; replies are the user's.** `v1` is the first
+  publish, `v2` the next republish. What the page sends back is a *reply* to
+  the version it was viewing — `v1-r1`, `v1-r2` … — never a version. The
+  island a reader or the model sees is the version's island with the newest
+  reply laid over it. A reply naming a version that has moved on is refused
+  (409) and the tab reloads.
+- **The same file republishes in place.** Publishing a `file_path` again
+  (or passing `url`) makes the next version at the same URL — Claude Code's
+  rule. A republish carrying a version another session has since replaced is
+  refused with the current one, so two sessions never overwrite each other
+  blind.
+- **Only the owner is woken.** Every artifact records the session that
+  created, last published, or adopted it (`watch`). A reply reaches that
+  session's stream; when it is not connected the event stays *pending* and
+  every other connected session sees a held count on the badge and one
+  notice — never a turn. On `session_start` a session replays only its own
+  pending replies as one summary.
 - **Blocking or woken.** `action: "ask"` publishes a questions page and waits
   inside the tool call, so the answers return as the tool result (the shape
-  `ask_user_question` has). On timeout the page stays up and the next send
+  `ask_user_question` has). On timeout the page stays up and the next reply
   wakes the session as an `artifact-feedback` custom message delivered as a
-  `followUp` that triggers a turn. Sends that arrive while no session is
-  listening are queued and summarised at the next `session_start`.
+  `followUp` that triggers a turn.
 - **Provenance on every string.** The envelope states what the answers are
   (the user's replies to the questions the page asked) and what they are not
-  (new instructions, or a permission approval). Free text and comment text are
-  labelled data. A page can never answer a destructive-guard dialog.
+  (new instructions, or a permission approval). A send the browser reports
+  as made without a user gesture is labelled page-generated. A page can
+  never answer a destructive-guard dialog.
+
+## The terminal
+
+The footer strip is one extension status (`setStatus("artifacts", …)`); the
+soriza statusline draws extension statuses bottom-left on the token line, and
+pi's default footer shows them too. It holds the pages *this session*
+published, newest first, at most five with `+N` for the rest:
+
+```text
+🧩 1 pricing-plan v2 · 2 ● roadmap v1 · +3                              ⣿ 41k
+```
+
+Each badge is `<n> [●] [icon] <title> <version>` — `●` when a reply is
+waiting — wrapped in an OSC 8 hyperlink to the tokened page URL, so
+Ctrl/Cmd+click opens it in terminals that support links. Titles pass through
+`terminalSafe` first: a title can never rewrite the line.
+
+- `alt+a` — the strip becomes a selector drawn over the footer: `←/→` (or
+  `tab`) move the highlight, `enter` opens, `c` copies the URL, `x` drops
+  the badge, `1–9` jump, `esc` leaves.
+- `alt+1` … `alt+5` — open the nth badge directly.
+- `/artifacts` — every page in the project (pinned first), pick one;
+  `/artifacts <slug>` opens it; `pin`/`unpin <slug>`; `sweep`; `stop`.
+
+Tool results carry a one-line card (`🧩 Pricing plan v2 published v2`), and
+the model is told not to paste URLs: the strip shows them.
 
 ## The tool
 
@@ -68,13 +119,15 @@ session ──publish──▶ .pi/artifacts/<slug>/v1.html ──serve──▶
 
 | Action | Inputs | What happens |
 | --- | --- | --- |
-| `publish` | `file_path` (`.html`/`.htm`/`.md` inside the project), `title?`, `slug?`, `description?`, `icon?`, `data?`, `note?`; `url` to update | Creates `/a/<slug>` (slug from the title or `slug`), opens the browser, arms the watch. With `url`, a new version at the same URL; open tabs reload. |
-| `ask` | `questions` + `title` (+ `intro?`, `assumptions?`), or `file_path` whose island declares `questions/v1`; `timeout?` seconds | Publishes, opens, blocks until the page sends; returns the answers. Timeout → tells the model to end its turn; the send wakes it later. |
-| `read_page_data` | `url`, `schema?` | The current island, validated; lists unanswered required ids. A schema the island does not declare is an error, not a guess. |
+| `publish` | `file_path` (`.html`/`.htm`/`.md` inside the project), `title?`, `slug?`, `description?`, `icon?`, `data?`, `note?`; `url` to update | Creates `/a/<slug>` as v1 and opens the browser; the same `file_path` again, or `url`, makes the next version in place; open tabs reload. |
+| `ask` | `questions` + `title` (+ `intro?`, `assumptions?`), or `file_path` whose island declares `questions/v1`; `timeout?` seconds | Publishes, opens, blocks until the page replies; returns the answers. Timeout → tells the model to end its turn; the reply wakes it later. |
+| `read_page_data` | `url`, `schema?` | The current island (version + newest reply), validated; lists unanswered required ids. |
 | `read` | `url` | Source and island. |
-| `open` · `list` · `status` | `url` for open | Browser, gallery rows, watches and pending counts. |
-| `watch` · `unwatch` | `url` | Arm or silence wakes from that page; sends are still stored. |
-| `comments` · `reply` · `resolve` | `url`, `thread_id`, `text` | Threads; only a thread the user *sent to the agent* accepts a reply. Plain notes never wake the session. |
+| `verify` | `url` | Runtime diagnostics viewers' browsers reported for the current version (console errors, failed loads). None is *not* evidence of a clean render. |
+| `open` · `list` · `status` | `url` for open | Browser; every artifact; ownership, watches, pending. |
+| `watch` · `unwatch` | `url` | Adopt the page (this session is woken by it) or silence wakes; replies are stored either way. |
+| `pin` · `unpin` | `url` | Exempt from the retention sweep; first in lists. |
+| `comments` · `reply` · `resolve` | `url`, `thread_id`, `text` | Threads; only a thread the user *sent to the agent* accepts a reply. |
 | `delete` | `url` | After `ui.confirm`, moves the folder to `~/.Trash`; refuses headless. |
 
 `url` accepts the slug, the path, or the full page URL.
@@ -113,107 +166,145 @@ code: `[data-question=id] [data-option=label]` rows toggle, inputs with
 `data-question` carry text, `[data-artifact-send="action"]` buttons send. A
 questions island renders into `[data-artifact-questions]` or, absent that, at
 the end of the body. A send bar and a 💬 comments panel are mounted; SSE
-reloads the page on an agent republish and warns instead when the user has
-unsent choices.
+reloads the page on an agent republish (warning instead when the user has
+unsent choices) and on a reply sent from another tab; the stream greets every
+(re)connection with the current version, so a tab that missed a broadcast
+during a server restart catches up by itself. A probe injected in `<head>`
+captures uncaught errors, `console.error/warn`, failed resource loads, and
+unhandled rejections from the first byte — including what a page script does
+before the runtime is reached — and the runtime posts them to
+`/a/<slug>/diagnostics`, which `verify` reads.
 
 **Shell.** A fragment or Markdown is wrapped; a full document is injected
 into. Added: the CSP (`default-src 'none'`; inline script and style; Google
 Fonts; `data:` images; `connect-src 'self'`), viewport, `<title>` (parameter
 › `<title>` › first `<h1>` › slug), emoji favicon, the meta island, the data
-island, base styles, the runtime. The rendered page must stay under 16 MiB.
+island, the diagnostics probe, base styles, the runtime. The rendered page
+must stay under 16 MiB.
 
 ## Security posture
 
-- Bound to `127.0.0.1`; printed as `localhost`; `Host` must be one of the two
-  (or `[::1]`) or the request is 421 — DNS rebinding cannot reach it.
-- A per-project capability token in `.pi/artifacts/.token` (mode 0600). A
-  GET needs it once (`?t=`), then a `SameSite=Strict` cookie carries it. A
-  POST needs the token in the `x-artifact-token` header, which only the
-  page's own script sends, and an `Origin` that is the page's own.
-- Bodies over 2 MiB are refused; islands are validated before storage.
-- Wakes are capped per artifact per hour (`wakesPerHour`, default 60); beyond
-  it sends are held and the user warned once.
-- Nothing is deleted: `delete` moves the folder to the trash.
+Two capabilities, never one:
+
+- **Viewer** (`.server/viewer`, 0600): page URLs carry it once in `?t=`;
+  the server answers 303 to the clean URL and sets it as an `HttpOnly;
+  SameSite=Strict` cookie. It reads pages and lets a page act on itself. The
+  page's script never sees it.
+- **Session** (`.server/token`, 0600): only the pi process sends it, in
+  `x-artifact-token`, on `/api/*`. A browser cannot send that header
+  cross-site, and no page holds it.
+
+A page's own POST (`/a/<slug>/publish|comments|diagnostics`) needs the viewer
+cookie, an `Origin` that is the server's own, and `x-artifact-page: <slug>`
+— a custom header that forces a CORS preflight any other origin fails. So an
+inline script in one artifact cannot publish, delete, stop the server, or
+read other artifacts, and a dev server on another `localhost` port that
+receives the cookie (cookies ignore ports) gets a read-only viewer
+capability, not the API.
+
+Also: bound to `127.0.0.1`; `Host` must be `127.0.0.1:port` or
+`localhost:port` or the request is 421; `/api/health` is open on loopback and
+reports the root and a token *digest*, never a token; bodies over 2 MiB are
+refused; islands are validated before storage; wakes are capped per artifact
+per hour (`wakesPerHour`); titles are control-stripped before the footer;
+logs redact `token`, `viewer`, and cookies; nothing is deleted — `delete`
+and the sweep move folders to the trash, only expired log folders are
+removed.
+
+## Server lifecycle
+
+**One port, one server, many sessions.** The server binds exactly the
+configured port (5834) — a taken port is never worked around. On
+`session_start` every session probes `/api/health`:
+
+| The port answers | The session |
+| --- | --- |
+| our server (same store root) | attaches, whichever session started it |
+| an artifact server for another project | refuses, naming that root and pid; set `port` for this project or `/artifacts stop` there |
+| another program | refuses, naming the port |
+| nothing | spawns `bun src/server.ts` under `.server/lock`; a second session starting at the same moment waits and attaches |
+
+The server re-reads its tokens from disk when a request presents something
+else (a rotated `.server/token` never orphans a process), exits when its
+store root disappears, and outlives sessions (`keepAlive`, default). A
+session leaving tells the server (`/api/detach`) so replies are held rather
+than sent into a dead stream. `/artifacts stop` ends it.
+
+**Retention.** `retentionDays` (14): an unpinned artifact whose last
+activity — publish, reply, comment, or view — is older than that is moved
+to `~/.Trash/pi-artifacts/<date>/<slug>`; `logs/<date>/` folders older than
+that are removed. The server sweeps at start and daily; `session_start` and
+`/artifacts sweep` ask for one.
 
 ## Configuration and files
 
 `.pi/artifacts.json` (optional):
 
 ```json
-{ "port": 5834, "autoOpen": true, "delivery": "wake", "askTimeoutSeconds": 600, "wakesPerHour": 60, "keepAlive": true }
+{ "port": 5834, "autoOpen": true, "delivery": "wake", "askTimeoutSeconds": 600,
+  "wakesPerHour": 60, "keepAlive": true, "retentionDays": 14 }
 ```
 
-- `port`: tried first; when taken (another project's server) any free port
-  is bound and the publish result says so. `0` derives a port from the path.
-- `delivery`: `wake` triggers a turn on a send; `notify` queues the envelope
-  for the next prompt and shows a footer notice.
-- `keepAlive`: leave the server running when the session ends (default), so
-  links keep working; `bun`: the binary to launch it with, when not on PATH.
+- `port`: the only port bound. `delivery`: `wake` triggers a turn on a reply;
+  `notify` queues it for the next prompt and shows a footer notice.
+- `keepAlive`: leave the server running when the session ends (default);
+  `bun`: the binary to launch it with, when not on PATH.
 
-**The server is its own process.** pi runs on Node, so `Bun.serve` cannot run
-inside it; the extension spawns `bun serve.ts` detached (log in
-`.pi/artifacts/.server.log`, pid and port in `.server.json`) and talks to it
-over `/api/*` plus one event stream. The server is the store's only writer,
-outlives the session, and is shared by every session in the project: a send
-wakes the session that published (or last watched or acknowledged) the
-artifact, else the longest-connected one, and stays pending until a session
-acknowledges it. If the process dies, the next tool call restarts it.
-`/artifacts stop` ends it.
+```text
+.pi/artifacts/
+├── .server/                  token · viewer · record.json · lock · server.log
+├── logs/<YYYY-MM-DD>/        <session-id>.jsonl (pi side) · server.jsonl (server, `session` per line)
+└── <slug>/
+    ├── manifest.json         title · owner · sessions · current · versions · responses · pinned · pending · lastActivityAt
+    ├── index.html            the current page: the version with the newest reply over it
+    ├── source.html|md        the agent's latest source
+    ├── versions/v<N>.html · v<N>.json      agent versions as published, append-only
+    ├── responses/v<N>-r<K>.json            page replies, bound to a version
+    ├── comments.json · diagnostics.json · events.jsonl
+```
 
-`.pi/artifacts/<slug>/`: `manifest.json`, `source.<html|md>`, `data.json`,
-`v<N>.html` and `v<N>.json` (append-only), `comments.json`, `events.jsonl`.
-The directory is git-ignored; un-ignore it to version decisions with the code
-(keep `.token`, `.server.json`, and `.server.log` ignored). The files persist
-until deleted.
+Logs are pino JSON lines — `{time, level, pid, component, session, action,
+slug, version, response, msg, …}` — one file per session and one for the
+server per day; `ARTIFACTS_LOG_LEVEL` sets the level. The directory is
+git-ignored.
 
-`/artifacts` lists the pages and opens one; `/artifacts <slug>` opens it;
-`/artifacts stop` stops the server.
+## A demo page
+
+`.tmp/artifact-demo.html` (git-ignored; recreate it from this description if
+it is gone) is the by-hand check of the whole loop: the built-in
+`questions/v1` form with previews, a dependent question, a multi-select, and
+assumptions; a hand-written `data-question`/`data-option` mirror of the first
+question; a `data-artifact-send="approve"` button; a live readout of
+`window.artifact`; a "post a comment" button; and one intentional
+`console.warn` on load so `verify` has something to show. Publish it with the
+tool (`file_path: .tmp/artifact-demo.html`), then walk the checklist the page
+itself lists: the footer badge and `alt+a`, a send (reply 1 to v1), a second
+send (reply 2), a comment, `verify`, and a republish (the tab reloads).
 
 ## Verification
 
-`bun test tests/pi/artifacts` — schemas (Q), render (S), store (T), server
-pages and API (H), tool (A), session hooks (L), layout (B), process (P). The
-server tests start the same `startServer` in-process on real ports; P1–P3
-spawn the real `bun server/serve.ts`; P4 bundles the pi side for Node and
-runs it with this machine's `node` against the Bun server, so the runtime
-split is proven, not assumed; B1–B5 make the layer boundary a failing test.
-The browser runtime is linted and parse-checked (B4, S9). A real-browser pass
-(`Google Chrome --headless=new --dump-dom`) was run by hand during
-development and is not in the suite; after changing `page/runtime.js`, open a
-published questions page and confirm the form, the send bar, and a send
-round-trip before committing.
+`bun test tests/pi/artifacts` — domain rules (D), store (T), HTTP (H),
+process (P), session (S), structure (B); every file opens with its numbered
+contract. The server tests start the same `startServer` in-process; P1–P5
+spawn the real `bun src/server.ts` on a free port and prove the fixed-port
+policy, the lock, token rotation, and the logs. `bun test` pins its own
+process to UTC while a spawned server keeps the host zone, so P5 looks under
+any day's folder. The browser runtime is linted and parse-checked (B5); after
+changing `src/page/runtime.js`, open a published questions page and confirm
+the form, the send bar, a reply round-trip, and `verify` seeing the load
+before committing.
 
 ## Not built yet
 
-Ideas from the design discussion, recorded so a later session starts here
-rather than from scratch. None is promised.
+**Reach beyond this machine** — Tailscale Serve or Cloudflare Tunnel in
+front of this same server; a relay for viewers when the laptop is closed.
 
-**Reach beyond this machine**
-- Tailscale Serve (tailnet-only, no new auth) and Cloudflare Tunnel + Access
-  on the owner's domain; both expose this same server outbound-only. The
-  token check and origin check stay underneath.
-- A decoupled relay (Worker + Durable Objects, or a small Bun server) holding
-  versions and the inbox for viewers when the laptop is closed — Claude Code's
-  "durable wake subscription", rebuilt small. Only if Layers 1–2 prove out.
+**Page capabilities Claude Code has that this does not** — `db`, `assets`,
+`room`, multi-file artifacts, published artifact *types*, whiteboard,
+connectors, org sharing.
 
-**Page capabilities Claude Code has that this does not**
-- `db` (shared document store the page and the session both read/write),
-  `assets` (uploads referenced by the page), `room` (presence and live
-  cursors), runtime `version` pinning, published Artifact *types* with
-  fixed files and a SKILL.md, multi-file artifacts (`files` map).
-- Whiteboard (scene data + a picture read back), connector calls at view
-  time, org sharing, editors, the compliance API.
-
-**Loop refinements**
-- `artifacts.questions: "artifact" | "terminal" | "auto"` routing so
-  `grilling` and other skills produce one question list for either surface.
-- Register more interaction schemas (`decisions`, `annotations`, `form`).
-- A custom TUI renderer for `artifact-feedback` cards; `Ctrl+]` reopen.
-- Round history rendered as settled rows on republish (the workshop loop) —
-  today the agent writes that markup itself.
-- A design skill (palette, typography, project tokens) that loads before any
-  page is written, and page templates (dashboard, report, data table,
-  explainer, PR review, prototype); the questions workflow skill (unknowns
-  first, options shown not described, 3–7 decisions per round).
-- Ingest the current Claude Code artifacts doc into the KB; the archived page
-  predates data islands, wakes, comments-to-Claude, `db`, and `assets`.
+**Loop refinements** — `artifacts.questions: "artifact" | "terminal" |
+"auto"` routing for `grilling`; more interaction schemas (`decisions`,
+`annotations`, `form`); round history rendered as settled rows on republish;
+a design skill and page templates; ingesting the current Claude Code
+artifacts doc into the KB.

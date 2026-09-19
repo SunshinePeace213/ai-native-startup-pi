@@ -20,6 +20,8 @@ export function createCtx(options: {
   /** Scripted answers for dialogs the extension may open. */
   confirm?: (title: string, message: string) => boolean;
   select?: (title: string, choices: string[]) => string | undefined;
+  /** The id ctx.sessionManager.getSessionId() reports. */
+  session?: string;
 }): FakeCtx {
   const status = new Map<string, string | undefined>();
   const notifications: Array<{ message: string; type: string }> = [];
@@ -30,7 +32,14 @@ export function createCtx(options: {
     isProjectTrusted: () => options.trusted ?? true,
     isIdle: () => options.idle ?? true,
     waitForIdle: async () => {},
+    sessionManager: { getSessionId: () => options.session ?? "session-fake" },
     ui: {
+      // A theme that paints nothing, so status text can be asserted as plain strings.
+      theme: {
+        fg: (_color: string, text: string) => text,
+        bg: (_color: string, text: string) => text,
+        bold: (text: string) => text,
+      },
       notify(message: string, type: string) {
         notifications.push({ message, type });
       },

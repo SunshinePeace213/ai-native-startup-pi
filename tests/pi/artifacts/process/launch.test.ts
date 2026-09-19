@@ -1,210 +1,159 @@
-// The server as a process, and the pi side as a Node program — the two
-// runtime facts the in-process suite cannot prove.
+// Contract — the server process and the port policy (src/infra/process, src/server.ts)
 //
-// P1  locateServer with no record → spawns `bun serve.ts` detached; it writes
-//     .server.json with its pid and the bound port, answers /api/health with
-//     its root, and logs to .server.log; a second locate finds it instead of
-//     spawning; stopServer ends it and the record is cleared
-// P2  a stale record (a pid that no longer answers) → a fresh process is spawned
-// P3  findBun prefers the configured path, then PATH, then ~/.bun/bin; none →
-//     null, and locateServer names the fix
-// P4  the pi side runs under Node: index, tool, host, client, launch, feedback,
-//     schemas, config, opener, store, and types bundle for Node and, executed
-//     by the `node` on this machine, publish to a running server, receive the
-//     page's send over the event stream, and acknowledge it (skipped when no
-//     `node` is installed)
+// P1: with the port free, locate spawns the real `bun src/server.ts`, which answers
+//     /api/health with this root; a second locate from another session attaches to
+//     it (spawned false, same pid); stop ends it
+// P2: after the session token file is rotated, the running server accepts the new
+//     token on its next request — no zombie, no respawn
+// P3: when the port is held by another program, locate refuses and names the port;
+//     when it is held by an artifact server for another root, it names that root;
+//     nothing is spawned either way
+// P4: two sessions locating together spawn one server: one takes the lock, the other
+//     waits and attaches
+// P5: the server writes logs/<date>/server.jsonl lines with an action, and the pi
+//     side's logger writes logs/<date>/<session>.jsonl beside it; neither line
+//     carries the token
 
 import { afterEach, describe, expect, test } from "bun:test";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { delimiter, dirname, join } from "node:path";
+import { join } from "node:path";
 
-import { findBun, locateServer, stopServer } from "@ext/artifacts/session/launch";
-import { HEADER } from "@ext/artifacts/shared/protocol";
-import { readServerRecord, readToken, writeServerRecord } from "@ext/artifacts/shared/record";
+import { logDate } from "@ext/artifacts/src/domain/retention";
+import { createLogger } from "@ext/artifacts/src/infra/log/logger";
+import { locateServer, probe, stopServer } from "@ext/artifacts/src/infra/process/launch";
+import { readToken, tokenPath } from "@ext/artifacts/src/infra/store/control";
+import { SESSION_HEADER } from "@ext/artifacts/src/domain/protocol";
 
-import { islandScript, QUESTIONS_ISLAND, serve, stopAll } from "../fixture";
-
-const SERVE = join(import.meta.dir, "../../../../.pi/extensions/artifacts/server/serve.ts");
-const roots: string[] = [];
-
+const cleanups: Array<() => Promise<void> | void> = [];
 afterEach(async () => {
-  await stopAll();
-  for (const root of roots.splice(0)) await stopServer(root, 2000).catch(() => {});
+  while (cleanups.length) await cleanups.pop()?.();
 });
 
-const scratch = () => {
-  const cwd = mkdtempSync(join(tmpdir(), "artifacts-proc-"));
-  const root = join(cwd, ".pi/artifacts");
-  roots.push(root);
-  return { cwd, root, trashDir: mkdtempSync(join(tmpdir(), "artifacts-trash-")) };
-};
-
-describe("artifacts process", () => {
-  test("P1 the server is spawned once, found afterwards, and stopped on request", async () => {
-    const { cwd, root, trashDir } = scratch();
-    const first = await locateServer({
-      root,
-      seed: cwd,
-      port: -1,
-      trashDir,
-      bun: process.execPath,
-      serveScript: SERVE,
+async function freePort(): Promise<number> {
+  return new Promise((resolve) => {
+    const s = createServer();
+    s.listen(0, "127.0.0.1", () => {
+      const port = (s.address() as { port: number }).port;
+      s.close(() => resolve(port));
     });
+  });
+}
+
+function scratch() {
+  const root = mkdtempSync(join(tmpdir(), "artifacts-proc-"));
+  const trashDir = mkdtempSync(join(tmpdir(), "artifacts-proc-trash-"));
+  return { root, trashDir };
+}
+
+const launch = (root: string, trashDir: string, port: number) =>
+  locateServer({ root, port, trashDir, retentionDays: 14, waitMs: 15_000 });
+
+describe("P1 spawn, attach, stop", () => {
+  test("P1 the real server comes up on the port; a second locate attaches; stop ends it", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    cleanups.push(() => void stopServer(root, port, readToken(root)));
+    const first = await launch(root, trashDir, port);
     expect(first.spawned).toBe(true);
-    expect(first.record.root).toBe(root);
-    expect(first.record.origin).toBe(`http://localhost:${first.record.port}`);
-    expect(readServerRecord(root)?.pid).toBe(first.record.pid);
-    const token = readToken(root) as string;
-    const health = await fetch(`${first.record.origin}/api/health`, {
-      headers: { [HEADER]: token },
-    });
-    expect(((await health.json()) as { root: string; pid: number }).pid).toBe(first.record.pid);
-    expect(readFileSync(join(root, ".server.log"), "utf8")).toContain("listening on");
-
-    const second = await locateServer({
-      root,
-      seed: cwd,
-      port: -1,
-      trashDir,
-      bun: process.execPath,
-      serveScript: SERVE,
-    });
+    expect(first.record.port).toBe(port);
+    const health = await probe(port, root);
+    expect(health.kind).toBe("ours");
+    const second = await launch(root, trashDir, port);
     expect(second.spawned).toBe(false);
     expect(second.record.pid).toBe(first.record.pid);
+    expect(await stopServer(root, port, readToken(root))).toBe(true);
+    expect((await probe(port, root)).kind).toBe("free");
+  }, 30_000);
+});
 
-    expect(await stopServer(root)).toBe(true);
-    expect(readServerRecord(root)).toBeNull();
-    await expect(
-      fetch(`${first.record.origin}/api/health`, { headers: { [HEADER]: token } }),
-    ).rejects.toThrow();
-  });
-
-  test("P2 a stale record is replaced by a fresh process", async () => {
-    const { cwd, root, trashDir } = scratch();
-    const dead = serve({ root, seed: cwd, trashDir });
-    const port = dead.server.port;
-    dead.server.stop();
-    writeServerRecord(root, {
-      pid: 999_999,
-      port,
-      requestedPort: port,
-      origin: `http://localhost:${port}`,
-      root,
-      startedAt: "2026-01-01T00:00:00Z",
+describe("P2 token rotation", () => {
+  test("P2 a rotated token file is honoured by the running server", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    cleanups.push(() => void stopServer(root, port, readToken(root)));
+    await launch(root, trashDir, port);
+    const fresh = "f".repeat(48);
+    await new Promise((r) => setTimeout(r, 20));
+    writeFileSync(tokenPath(root), `${fresh}\n`);
+    const res = await fetch(`http://127.0.0.1:${port}/api/artifacts`, {
+      headers: { [SESSION_HEADER]: fresh },
     });
-    const located = await locateServer({
-      root,
-      seed: cwd,
-      port: -1,
-      trashDir,
-      bun: process.execPath,
-      serveScript: SERVE,
+    expect(res.status).toBe(200);
+    const again = await launch(root, trashDir, port);
+    expect(again.spawned).toBe(false);
+  }, 30_000);
+});
+
+describe("P3 a taken port is refused, never worked around", () => {
+  test("P3 another program on the port → error names the port; nothing spawned", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    const sockets = new Set<import("node:net").Socket>();
+    const squatter = createServer((socket) => {
+      sockets.add(socket);
+      socket.end("HTTP/1.1 200 OK\r\nconnection: close\r\ncontent-length: 2\r\n\r\nhi");
     });
-    expect(located.spawned).toBe(true);
-    expect(located.record.pid).not.toBe(999_999);
-  });
-
-  test("P3 findBun resolves in order and names the fix when absent", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "artifacts-bun-"));
-    const fakeBun = join(dir, "bun");
-    writeFileSync(fakeBun, "#!/bin/sh\n");
-    expect(findBun(fakeBun, { PATH: "" })).toBe(fakeBun);
-    expect(findBun(undefined, { PATH: dir })).toBe(fakeBun);
-    expect(findBun(undefined, { PATH: "", BUN_INSTALL: join(dir, "nothing") })).toBeNull();
-    const real = findBun(undefined, { PATH: dirname(process.execPath) + delimiter + "" });
-    expect(real).toBe(join(dirname(process.execPath), "bun"));
-    const { cwd, root, trashDir } = scratch();
-    await expect(
-      locateServer({
-        root,
-        seed: cwd,
-        port: -1,
-        trashDir,
-        bun: join(dir, "missing"),
-        serveScript: SERVE,
-        environment: { PATH: "", BUN_INSTALL: join(dir, "nothing") },
-      }),
-    ).rejects.toThrow(/not found on PATH/);
-  });
-
-  test("P4 the pi side runs under Node against the Bun server", async () => {
-    const node = findNode();
-    if (!node) {
-      console.warn("P4 skipped: no `node` on this machine");
-      return;
-    }
-    const { cwd, root, trashDir } = scratch();
-    const backend = serve({ root, seed: cwd, trashDir });
-    try {
-      const out = mkdtempSync(join(tmpdir(), "artifacts-node-"));
-      const entry = join(out, "entry.ts");
-      writeFileSync(
-        entry,
-        `import { Host } from "${join(import.meta.dir, "../../../../.pi/extensions/artifacts/session/host.ts")}";
-const [origin, token, root] = process.argv.slice(2);
-const events = [];
-const host = new Host({
-  config: { port: 0, autoOpen: false, delivery: "wake", askTimeoutSeconds: 1, wakesPerHour: 60, keepAlive: true },
-  session: "node-session",
-  locate: async () => ({ origin, port: 0, requestedPort: 0, token }),
-  send: (content, options) => events.push({ content, options }),
-  notify: () => {},
-  open: async () => null,
-  stop: async () => true,
-});
-const result = await host.publish({ kind: "html", source: ${JSON.stringify(`<h1>From node</h1>${islandScript(QUESTIONS_ISLAND)}`)}, slug: "from-node" });
-const send = await fetch(origin + "/a/from-node/publish", {
-  method: "POST",
-  headers: { "x-artifact-token": token, "content-type": "application/json", origin },
-  body: JSON.stringify({ base_version: 1, data: ${JSON.stringify({ ...QUESTIONS_ISLAND, answers: { tiering: { selected: ["Seat-based"] } } })} }),
-});
-const deadline = Date.now() + 3000;
-while (events.length === 0 && Date.now() < deadline) await new Promise((r) => setTimeout(r, 20));
-await new Promise((r) => setTimeout(r, 50));
-const list = await host.client.list();
-await host.shutdown(false);
-console.log(JSON.stringify({ runtime: typeof Bun === "undefined" ? "node" : "bun", version: process.version, created: result.created, sendStatus: send.status, events: events.length, options: events[0]?.options, pending: list[0]?.pending.length, owner: list[0]?.owner }));
-`,
-      );
-      const built = await Bun.build({
-        entrypoints: [entry],
-        target: "node",
-        outdir: out,
-        naming: "entry.mjs",
-      });
-      expect(built.success).toBe(true);
-      const proc = Bun.spawn(
-        [node, join(out, "entry.mjs"), backend.server.origin, backend.token, root],
-        {
-          stdout: "pipe",
-          stderr: "pipe",
-        },
-      );
-      const [stdout, stderr] = await Promise.all([
-        new Response(proc.stdout).text(),
-        new Response(proc.stderr).text(),
-      ]);
-      await proc.exited;
-      expect(stderr.trim()).toBe("");
-      const report = JSON.parse(stdout.trim().split("\n").at(-1) as string) as Record<
-        string,
-        unknown
-      >;
-      expect(report.runtime).toBe("node");
-      expect(report.created).toBe(true);
-      expect(report.sendStatus).toBe(200);
-      expect(report.events).toBe(1);
-      expect(report.options).toEqual({ triggerTurn: true, deliverAs: "followUp" });
-      expect(report.pending).toBe(0);
-      expect(report.owner).toBe("node-session");
-    } finally {
-      backend.server.stop();
-    }
-  });
+    await new Promise<void>((r) => squatter.listen(port, "127.0.0.1", () => r()));
+    cleanups.push(() => {
+      for (const s of sockets) s.destroy();
+      squatter.close();
+    });
+    await expect(launch(root, trashDir, port)).rejects.toThrow(new RegExp(`port ${port}`));
+    expect(existsSync(join(root, ".server", "record.json"))).toBe(false);
+  }, 30_000);
+  test("P3 an artifact server for another root → error names that root", async () => {
+    const a = scratch();
+    const b = scratch();
+    const port = await freePort();
+    cleanups.push(() => void stopServer(a.root, port, readToken(a.root)));
+    await launch(a.root, a.trashDir, port);
+    await expect(launch(b.root, b.trashDir, port)).rejects.toThrow(a.root);
+  }, 30_000);
 });
 
-function findNode(): string | null {
-  const candidates = (process.env.PATH ?? "").split(delimiter).map((d) => join(d, "node"));
-  return candidates.find((c) => existsSync(c)) ?? null;
-}
+describe("P4 one server for two sessions starting together", () => {
+  test("P4 concurrent locates: exactly one spawn, both attach to the same pid", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    cleanups.push(() => void stopServer(root, port, readToken(root)));
+    const [x, y] = await Promise.all([launch(root, trashDir, port), launch(root, trashDir, port)]);
+    expect([x.spawned, y.spawned].filter(Boolean)).toHaveLength(1);
+    expect(x.record.pid).toBe(y.record.pid);
+  }, 30_000);
+});
+
+describe("P5 logs", () => {
+  test("P5 server and session lines land under logs/<date>/ without the token", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    cleanups.push(() => void stopServer(root, port, readToken(root)));
+    await launch(root, trashDir, port);
+    const log = createLogger({
+      root,
+      name: "session-p5",
+      base: { component: "session", session: "session-p5" },
+    });
+    log.info({ action: "publish", token: readToken(root), slug: "x" }, "published");
+    // bun test pins this process to UTC while the spawned server keeps the host's
+    // zone, so the two may name different days; each lands under logs/<date>/.
+    const days = readdirSync(join(root, "logs")).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
+    const find = (name: string) =>
+      days.map((d) => join(root, "logs", d, name)).find((p) => existsSync(p));
+    expect(days).toContain(logDate(new Date()));
+    const serverFile = find("server.jsonl");
+    const sessionFile = find("session-p5.jsonl");
+    expect(serverFile).toBeDefined();
+    expect(sessionFile).toBeDefined();
+    const serverLines = readFileSync(serverFile as string, "utf8")
+      .trim()
+      .split("\n")
+      .map((l) => JSON.parse(l) as Record<string, unknown>);
+    expect(serverLines.some((l) => l.action === "start")).toBe(true);
+    const sessionLine = readFileSync(sessionFile as string, "utf8");
+    expect(sessionLine).toContain('"action":"publish"');
+    expect(sessionLine).not.toContain(readToken(root) as string);
+    expect(sessionLine).toContain("[redacted]");
+  }, 30_000);
+});

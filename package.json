@@ -24,5 +24,8 @@
     "markdownlint-cli2": "^0.23.0",
     "prettier": "^3.9.4",
     "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "pino": "^10.3.1"
   }
 }

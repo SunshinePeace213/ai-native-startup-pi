@@ -378,7 +378,8 @@ llm-wiki/**/states/.lock
 .tmp/
 
 # =============================================================================
-# Artifact pages the artifacts extension publishes (versions, answers, comments,
-# and the per-project token). Un-ignore to version decisions with the code.
+# Artifact pages the artifacts extension publishes (versions, replies, comments,
+# logs/<date>/*.jsonl, and the .server control files). Un-ignore the slug folders
+# to version decisions with the code; keep .server/ and logs/ ignored.
 # =============================================================================
 .pi/artifacts/

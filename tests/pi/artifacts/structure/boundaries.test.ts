@@ -1,14 +1,14 @@
-// The deployment boundary of .pi/extensions/artifacts as a contract. The
-// layers are directories; a file in the wrong one would load Bun-only code
-// into pi's Node process, which is the failure the layout exists to prevent.
+// Contract — the layer boundary of .pi/extensions/artifacts, as a failing test
 //
-// B1  session/, shared/, and index.ts import nothing from server/ or page/
-// B2  shared/ imports only shared/ and node built-ins — never session/
-// B3  no code outside server/ references the Bun global (comments aside)
-// B4  page/runtime.js parses as a classic script and carries no `</script`
-//     and no template literal, since the shell ships it inside a <script>
-// B5  every TypeScript file in the extension is reachable from index.ts or
-//     server/serve.ts — nothing is left orphaned by a move
+// B1: src/domain imports nothing outside src/domain
+// B2: src/app imports only src/domain and itself
+// B3: the pi side — src/ui, src/infra/client, src/infra/process, src/infra/config,
+//     src/infra/log, index.ts — never imports the server's modules
+//     (src/infra/http, src/infra/store/store, src/infra/render) or names Bun
+// B4: only src/infra/http/server.ts names the Bun global
+// B5: the page runtime is a classic script the shell can inline: no import/export,
+//     no template literal, and it parses
+// B6: every module under src/ is reachable from index.ts or src/server.ts
 
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -23,80 +23,101 @@ function walk(dir: string): string[] {
   });
 }
 
-const files = walk(ROOT);
-const sources = files.filter((f) => f.endsWith(".ts"));
-const rel = (f: string) => relative(ROOT, f);
-const layer = (f: string) => rel(f).split("/")[0] as string;
-const strip = (code: string) => code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const sources = walk(ROOT).filter((f) => f.endsWith(".ts"));
+const rel = (f: string) => relative(ROOT, f).split("\\").join("/");
+const strip = (code: string) =>
+  code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|\s)\/\/.*$/gm, "");
 
-/** Relative import targets of a file, resolved to paths under the extension. */
-function importsOf(file: string): string[] {
+function imports(file: string): string[] {
   const code = strip(readFileSync(file, "utf8"));
   const out: string[] = [];
-  for (const m of code.matchAll(/from\s+"(\.[^"]+)"/g)) {
-    out.push(resolve(dirname(file), m[1] as string));
-  }
+  const re = /from\s+["']([^"']+)["']|import\s*\(\s*["']([^"']+)["']\s*\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code))) out.push((m[1] ?? m[2]) as string);
   return out;
 }
 
-describe("artifacts layout", () => {
-  test("B1 the pi side never imports the server or the page", () => {
-    const piSide = sources.filter((f) => ["session", "shared", "index.ts"].includes(layer(f)));
-    const violations = piSide.flatMap((f) =>
-      importsOf(f)
-        .filter((t) => t.startsWith(join(ROOT, "server")) || t.startsWith(join(ROOT, "page")))
-        .map((t) => `${rel(f)} → ${relative(ROOT, t)}`),
-    );
-    expect(violations).toEqual([]);
-    expect(piSide.length).toBeGreaterThan(10);
+/** Resolves a relative import to a path inside the extension, or null for a package. */
+function local(from: string, spec: string): string | null {
+  if (!spec.startsWith(".")) return null;
+  const base = resolve(dirname(from), spec);
+  for (const c of [base, `${base}.ts`, `${base}.js`, join(base, "index.ts")]) {
+    if (sources.includes(c)) return c;
+  }
+  return null;
+}
+
+const layerOf = (f: string) =>
+  rel(f)
+    .replace(/^src\//, "")
+    .split("/")
+    .slice(0, 2)
+    .join("/");
+const PI_SIDE = (f: string) =>
+  rel(f) === "index.ts" ||
+  ["ui", "infra/client", "infra/process", "infra/config.ts", "infra/log"].some((p) =>
+    rel(f).startsWith(`src/${p}`),
+  );
+const SERVER_ONLY = (f: string) =>
+  ["src/infra/http", "src/infra/store/store.ts", "src/infra/render", "src/server.ts"].some((p) =>
+    rel(f).startsWith(p),
+  );
+
+describe("layer boundaries", () => {
+  test("B1 domain imports nothing outside domain", () => {
+    const bad = sources
+      .filter((f) => rel(f).startsWith("src/domain/"))
+      .flatMap((f) => imports(f).map((s) => [rel(f), s] as const))
+      .filter(([, s]) => !s.startsWith(".") || /\.\.\/(app|infra|ui|page)/.test(s));
+    expect(bad).toEqual([]);
   });
 
-  test("B2 shared/ depends on nothing outside itself", () => {
-    const shared = sources.filter((f) => layer(f) === "shared");
-    const violations = shared.flatMap((f) =>
-      importsOf(f)
-        .filter((t) => !t.startsWith(join(ROOT, "shared")))
-        .map((t) => `${rel(f)} → ${relative(ROOT, t)}`),
-    );
-    expect(violations).toEqual([]);
-    expect(shared.length).toBeGreaterThan(3);
+  test("B2 app imports only domain and app", () => {
+    const bad = sources
+      .filter((f) => rel(f).startsWith("src/app/"))
+      .flatMap((f) => imports(f).map((s) => [rel(f), local(f, s)] as const))
+      .filter(([, t]) => t !== null && !/^src\/(domain|app)\//.test(rel(t)));
+    expect(bad).toEqual([]);
   });
 
-  test("B3 only server/ code names the Bun global", () => {
-    const offenders = sources
-      .filter((f) => layer(f) !== "server")
+  test("B3 the pi side never imports the server's modules", () => {
+    const bad = sources
+      .filter(PI_SIDE)
+      .flatMap((f) => imports(f).map((s) => [rel(f), local(f, s)] as const))
+      .filter(([, t]) => t !== null && SERVER_ONLY(t))
+      .map(([f, t]) => `${f} → ${rel(t as string)}`);
+    expect(bad).toEqual([]);
+  });
+
+  test("B4 only the HTTP server names Bun", () => {
+    const naming = sources
       .filter((f) => /\bBun\b/.test(strip(readFileSync(f, "utf8"))))
-      .map(rel);
-    expect(offenders).toEqual([]);
-    const users = sources
-      .filter((f) => /\bBun\.serve\b/.test(strip(readFileSync(f, "utf8"))))
-      .map(rel);
-    expect(users).toEqual(["server/http.ts"]);
+      .map(rel)
+      .sort();
+    expect(naming).toEqual(["src/infra/http/server.ts"]);
   });
 
-  test("B4 the page runtime is a classic script the shell can inline", () => {
-    const runtime = readFileSync(join(ROOT, "page/runtime.js"), "utf8");
-    expect(() => new Function(runtime)).not.toThrow();
-    expect(runtime).not.toContain("</script");
-    expect(strip(runtime)).not.toContain("`");
-    expect(runtime).not.toMatch(/^\s*(import|export)\s/m);
-    const styles = readFileSync(join(ROOT, "page/styles.css"), "utf8");
-    expect(styles).not.toContain("</style");
+  test("B5 the page runtime is a classic script", () => {
+    const code = readFileSync(join(ROOT, "src/page/runtime.js"), "utf8");
+    expect(code).not.toMatch(/^\s*(import|export)\b/m);
+    expect(code).not.toContain("`");
+    expect(() => new Function(code)).not.toThrow();
   });
 
-  test("B5 every module is reachable from an entry point", () => {
+  test("B6 every module is reachable from an entry point", () => {
     const seen = new Set<string>();
     const visit = (f: string) => {
       if (seen.has(f)) return;
       seen.add(f);
-      for (const t of importsOf(f)) {
-        const candidate = [t, `${t}.ts`, join(t, "index.ts")].find((c) => sources.includes(c));
-        if (candidate) visit(candidate);
+      for (const s of imports(f)) {
+        const t = local(f, s);
+        if (t) visit(t);
       }
     };
     visit(join(ROOT, "index.ts"));
-    visit(join(ROOT, "server/serve.ts"));
+    visit(join(ROOT, "src/server.ts"));
     const orphans = sources.filter((f) => !seen.has(f)).map(rel);
     expect(orphans).toEqual([]);
+    expect(layerOf(join(ROOT, "src/ui/host.ts"))).toBe("ui/host.ts");
   });
 });

@@ -1,55 +1,66 @@
 // The artifacts extension: Claude Code's Artifact tool, hosted locally by a
 // Bun server process this extension starts and talks to over HTTP.
 //
-//   shared/    the contract both processes and the page agree on
-//   session/   runs inside pi (Node today): the tool, /artifacts, the session
-//              hooks, the HTTP client, and the delivery decision
-//   server/    the Bun process: routes, rendering, the store's only writer
-//   page/      the script and styles inside every published page
+//   src/domain/   the rules: types, protocol, schemas, versioning, retention, text
+//   src/app/      the use-cases over ports: the core, routing and delivery decisions
+//   src/infra/    the adapters: fs store and control files, Bun HTTP, renderer,
+//                 fetch client, process launch, pino logs
+//   src/ui/       inside pi: the tool, /artifacts, the hooks, the footer strip
+//   src/page/     the script and styles inside every published page
+//   src/server.ts the Bun entry
 //
-// The factory registers and wires; it starts nothing. The server is found or
-// spawned on session_start when the project already has artifacts, or by the
-// first publish; a page send reaches the model as an `artifact-feedback`
+// This file is the composition root for the pi process: it wires and
+// registers, and starts nothing. The server is found or spawned on
+// session_start; a page send reaches the model as an `artifact-feedback`
 // message, labelled as the user's answer and never as an instruction.
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-import type { Locator } from "./session/client";
-import { registerCommand } from "./session/command";
-import { FEEDBACK_TYPE } from "./session/feedback";
-import { registerHooks, STORE_DIR } from "./session/hooks";
-import { Host, type HostDeps } from "./session/host";
-import { locateServer, stopServer } from "./session/launch";
-import { makeOpener } from "./session/opener";
-import { createArtifactTool } from "./session/tool";
-import { readConfig } from "./shared/config";
-import { readToken } from "./shared/record";
-import type { Config } from "./shared/types";
+import type { Logger } from "./src/app/ports";
+import { FEEDBACK_TYPE } from "./src/domain/envelope";
+import type { Config } from "./src/domain/types";
+import type { Locator } from "./src/infra/client/client";
+import { readConfig } from "./src/infra/config";
+import { createLogger } from "./src/infra/log/logger";
+import { locateServer, stopServer } from "./src/infra/process/launch";
+import { makeOpener } from "./src/infra/process/opener";
+import { readToken, readViewer } from "./src/infra/store/control";
+import { registerCommand } from "./src/ui/command";
+import { registerHooks, STORE_DIR } from "./src/ui/hooks";
+import { Host, type HostDeps } from "./src/ui/host";
+import { createArtifactTool } from "./src/ui/tool";
 
 export { STORE_DIR };
 
 export interface Deps {
   /** Everything a Host needs except what Pi supplies; tests inject a locator and a clock. */
-  hostDeps: (cwd: string, config: Config) => Omit<HostDeps, "send" | "notify" | "config">;
+  hostDeps: (
+    cwd: string,
+    session: string,
+    config: Config,
+  ) => Omit<HostDeps, "send" | "notify" | "config" | "session">;
   config?: (cwd: string) => Config;
 }
 
-export function register(pi: ExtensionAPI, deps: Deps): { hostFor: (cwd: string) => Host } {
+export function register(
+  pi: ExtensionAPI,
+  deps: Deps,
+): { hostFor: (cwd: string, session: string) => Host } {
   const hosts = new Map<string, Host>();
   let notify: HostDeps["notify"] = () => {};
   let config: Config | null = null;
   const configFor = (cwd: string) => (config ??= (deps.config ?? readConfig)(cwd));
 
-  const hostFor = (cwd: string): Host => {
+  const hostFor = (cwd: string, session: string): Host => {
     const existing = hosts.get(cwd);
     if (existing) return existing;
     const cfg = configFor(cwd);
     const host = new Host({
-      ...deps.hostDeps(cwd, cfg),
+      ...deps.hostDeps(cwd, session, cfg),
       config: cfg,
+      session,
       send: (content, options, details) =>
         pi.sendMessage({ customType: FEEDBACK_TYPE, content, display: true, details }, options),
       notify: (message, type) => notify(message, type),
@@ -79,31 +90,44 @@ export function register(pi: ExtensionAPI, deps: Deps): { hostFor: (cwd: string)
   return { hostFor };
 }
 
-/** The production locator: the record's server when it answers, else a fresh process. */
+/** The production locator: the server on the configured port, started when the port is free. */
 export function productionLocator(cwd: string, config: Config): Locator {
   const root = join(cwd, STORE_DIR);
   return async () => {
     const { record } = await locateServer({
       root,
-      seed: cwd,
       port: config.port,
       trashDir: join(homedir(), ".Trash"),
+      retentionDays: config.retentionDays,
       bun: config.bun,
     });
     const token = readToken(root);
-    if (!token) throw new Error("the artifact server started but wrote no token");
-    return { origin: record.origin, port: record.port, requestedPort: record.requestedPort, token };
+    const viewer = readViewer(root);
+    if (!token || !viewer)
+      throw new Error("the artifact server is up but its control files are missing");
+    return { origin: record.origin, port: record.port, token, viewer };
   };
 }
 
 export default function (pi: ExtensionAPI) {
-  const session = process.env.PI_SESSION_ID || `pi-${randomUUID()}`;
+  const loggers = new Map<string, Logger>();
   register(pi, {
-    hostDeps: (cwd, config) => ({
-      session,
-      locate: productionLocator(cwd, config),
-      open: makeOpener((command, args, options) => pi.exec(command, args, options)),
-      stop: () => stopServer(join(cwd, STORE_DIR)),
-    }),
+    hostDeps: (cwd, session, config) => {
+      const root = join(cwd, STORE_DIR);
+      const log =
+        loggers.get(session) ??
+        createLogger({
+          root,
+          name: session,
+          base: { pid: process.pid, component: "session", session },
+        });
+      loggers.set(session, log);
+      return {
+        locate: productionLocator(cwd, config),
+        open: makeOpener((command, args, options) => pi.exec(command, args, options)),
+        stop: () => stopServer(root, config.port, readToken(root)),
+        log,
+      };
+    },
   });
 }

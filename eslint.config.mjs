@@ -24,12 +24,13 @@ export default defineConfig([
   {
     // The artifact page runtime ships inside every published page and runs in
     // the browser: a classic script (an IIFE, no imports) against DOM globals.
-    files: [".pi/extensions/artifacts/page/*.js"],
+    files: [".pi/extensions/artifacts/src/page/*.js"],
     languageOptions: {
       sourceType: "script",
       globals: {
         window: "readonly",
         document: "readonly",
+        navigator: "readonly",
         location: "readonly",
         console: "readonly",
         fetch: "readonly",

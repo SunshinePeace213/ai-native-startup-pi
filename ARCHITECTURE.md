@@ -36,7 +36,7 @@ ai-native-startup/
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── access-guard/ — Sensitive-file and vendored-path access guard on every tool call
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
-│   │   ├── artifacts/ — Claude Code's Artifact tool hosted locally: pages that send answers back to the session
+│   │   ├── artifacts/ — Claude Code's Artifact tool hosted locally: pages on localhost:5834 that send replies back to the session
 │   │   ├── destructive-guard/ — Deny/ask gate on destructive bash, write, and edit calls
 │   │   ├── fast-search/ — ripgrep and fd as the grep and find tools, spawned directly
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
@@ -60,7 +60,7 @@ ai-native-startup/
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── access-guard/ — Sensitive, vendored, and toggle contract tests
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
-│   │   ├── artifacts/ — Shared, session, server, page-structure, and process contracts on a scratch project
+│   │   ├── artifacts/ — Domain, store, HTTP, process, session, and structure contracts on a scratch project
 │   │   ├── destructive-guard/ — Parser, path, catalog, config, and hook contract tests
 │   │   ├── fast-search/ — grep, find, binary resolution, and live rg/fd contracts
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
@@ -126,22 +126,22 @@ ai-native-startup/
   `tokens/` owns the session's context length and the badge the footer pins to
   its bottom-right corner, kept apart from layout so counting can change alone. It
   paints only with theme tokens, never blocks render on I/O, and persists nothing.
-- **Artifacts extension:** layered by runtime, because three of them meet here.
-  `shared/` is the contract (types, the HTTP protocol, the interaction schemas, the
-  control files beside the store) and imports nothing else. `session/` runs inside
-  pi: `hooks.ts` and `command.ts` are the lifecycle and `/artifacts`; `tool/` is the
-  model-facing contract (`schema.ts`, `format.ts`, one module per action group under
-  `actions/`); `host.ts` is the delivery decision (resolve a blocked `ask`, wake,
-  queue, or hold); `client.ts` the HTTP client and event stream; `launch.ts` finds or
-  spawns the server; `feedback.ts` phrases what the session is told, with provenance.
-  `server/` is the Bun process (`serve.ts`): `http.ts` binds and dispatches, `auth.ts`
-  is the token, Host, and Origin rules, `routes/` the page and API surfaces,
-  `events.ts` the SSE fan-out with owner routing, `core.ts` the operations and the
-  store's only writer, `store.ts` the append-only versions, `render/` the file-to-page
-  shell and Markdown. `page/` is the script and styles inlined into every page.
-  `index.ts` only wires; the session side never imports `server/` or `page/`, which
-  `tests/pi/artifacts/structure` enforces. Feedback is a republish of the page;
-  nothing reaches the model unlabelled, and a page never answers a permission
+- **Artifacts extension:** layered by responsibility under `src/`, with the
+  pi/Bun runtime split enforced as a test. `domain/` is the rules and imports nothing:
+  types, the HTTP protocol and its two capabilities, the interaction schemas,
+  versioning (agent versions, page replies), retention, the feedback envelope, and
+  terminal-safe text. `app/` is the use-cases over ports: `core.ts` (publish, respond,
+  comments, pin, diagnostics, sweep — the store's only writer) and `routing.ts` (the
+  owner-only route and the delivery decision). `infra/` is the adapters: `store/`
+  (the fs layout and the `.server/` control files), `http/` (Bun.serve on one fixed
+  port, viewer/session auth, SSE hub, page and API routes), `render/`, `client/`,
+  `process/` (probe, lock, spawn, stop), `log/` (pino). `ui/` runs inside pi:
+  `host.ts` per project per session, `hooks.ts` the lifecycle and the `alt+a` /
+  `alt+1…5` shortcuts, `strip.ts` and `overlay.ts` the footer badges and their
+  selector, `command.ts` `/artifacts`, `tool/` the model-facing contract. `page/` is
+  the script and styles inlined into every page; `server.ts` the Bun entry;
+  `index.ts` only wires. Replies never make versions, only the owning session is
+  woken, nothing reaches the model unlabelled, and a page never answers a permission
   prompt. Operating reference: [docs/artifacts.md](docs/artifacts.md).
 - **State engine:** Python CLIs apply observations and maintain state. Rendering
   derives pages and index rows, and appends render audit records. Graph and retrieval
