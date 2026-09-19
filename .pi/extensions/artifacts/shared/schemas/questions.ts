@@ -1,10 +1,10 @@
-// Interaction schemas: the contracts a data island can declare so the session
-// can validate what the page sends back instead of trusting it. One schema is
-// registered — `questions/v1`, the shape of ask_user_question plus ids,
-// required flags, dependencies, and assumptions — and an island without a
-// known schema is returned to the model as untyped data.
+// The questions/v1 interaction schema: the shape of ask_user_question plus
+// ids, required flags, dependencies, and assumptions. `validateQuestionsShape`
+// checks what the author wrote; `validateAnswers` checks what the page sent
+// against it, so the session acts only on answers that name real questions
+// and real options.
 
-import type { Island, Validation } from "./types";
+import type { Island, Validation } from "../types";
 
 export interface QuestionOption {
   label: string;
@@ -50,10 +50,7 @@ export interface QuestionsIsland extends Island {
   action?: string;
 }
 
-export type { Validation };
-
 export const QUESTIONS_SCHEMA = "questions/v1";
-export const SCHEMAS = [QUESTIONS_SCHEMA] as const;
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
@@ -182,17 +179,4 @@ export function validateAnswers(island: unknown): Validation {
     }
   }
   return { ok: errors.length === 0, errors, unanswered, answered, total };
-}
-
-/** The schema the island declares, when it is one this extension knows. */
-export function declaredSchema(island: Island | null): string | null {
-  if (!island || typeof island.schema !== "string") return null;
-  return (SCHEMAS as readonly string[]).includes(island.schema) ? island.schema : null;
-}
-
-/** Runs the right validator for the island's schema; null when it has none. */
-export function validateIsland(island: Island | null): Validation | null {
-  if (!island) return null;
-  if (declaredSchema(island) === QUESTIONS_SCHEMA) return validateAnswers(island);
-  return null;
 }

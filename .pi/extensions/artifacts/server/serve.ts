@@ -1,6 +1,6 @@
 // The artifact server process. Run by bun, never imported by the pi side:
 //
-//   bun serve.ts --root <store dir> [--port <n>] [--seed <project path>] [--trash <dir>]
+//   bun server/serve.ts --root <store dir> [--port <n>] [--seed <project path>] [--trash <dir>]
 //
 // It binds Bun.serve on 127.0.0.1, writes .server.json beside the store once
 // listening, logs to stdout, and exits on SIGTERM/SIGINT or POST /api/stop.
@@ -10,11 +10,12 @@
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 
+import { PREFIX } from "../shared/protocol";
+import { clearServerRecord, ensureToken, writeServerRecord } from "../shared/record";
+import { DEFAULT_PORT } from "../shared/types";
 import { Core } from "./core";
-import { PREFIX } from "./server-const";
-import { startServer } from "./server";
-import { clearServerRecord, ensureToken, Store, writeServerRecord } from "./store";
-import { DEFAULT_PORT } from "./types";
+import { startServer } from "./http";
+import { Store } from "./store";
 
 function arg(name: string, fallback?: string): string | undefined {
   const k = process.argv.indexOf(`--${name}`);
@@ -24,7 +25,7 @@ function arg(name: string, fallback?: string): string | undefined {
 const root = arg("root");
 if (!root) {
   console.error(
-    "usage: bun serve.ts --root <store dir> [--port <n>] [--seed <path>] [--trash <dir>]",
+    "usage: bun server/serve.ts --root <store dir> [--port <n>] [--seed <path>] [--trash <dir>]",
   );
   process.exit(2);
 }

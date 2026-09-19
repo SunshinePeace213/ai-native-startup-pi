@@ -27,14 +27,13 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { slugify, Store } from "@ext/artifacts/server/store";
 import {
   clearServerRecord,
   readServerRecord,
   readToken,
-  slugify,
-  Store,
   writeServerRecord,
-} from "@ext/artifacts/store";
+} from "@ext/artifacts/shared/record";
 
 const scratch = () => mkdtempSync(join(tmpdir(), "artifacts-store-"));
 const input = (title: string) => ({

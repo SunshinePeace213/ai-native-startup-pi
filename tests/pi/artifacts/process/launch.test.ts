@@ -19,13 +19,13 @@ import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { delimiter, dirname, join } from "node:path";
 
-import { findBun, locateServer, stopServer } from "@ext/artifacts/launch";
-import { HEADER } from "@ext/artifacts/server";
-import { readServerRecord, readToken, writeServerRecord } from "@ext/artifacts/store";
+import { findBun, locateServer, stopServer } from "@ext/artifacts/session/launch";
+import { HEADER } from "@ext/artifacts/shared/protocol";
+import { readServerRecord, readToken, writeServerRecord } from "@ext/artifacts/shared/record";
 
 import { islandScript, QUESTIONS_ISLAND, serve, stopAll } from "../fixture";
 
-const SERVE = join(import.meta.dir, "../../../../.pi/extensions/artifacts/serve.ts");
+const SERVE = join(import.meta.dir, "../../../../.pi/extensions/artifacts/server/serve.ts");
 const roots: string[] = [];
 
 afterEach(async () => {
@@ -141,7 +141,7 @@ describe("artifacts process", () => {
       const entry = join(out, "entry.ts");
       writeFileSync(
         entry,
-        `import { Host } from "${join(import.meta.dir, "../../../../.pi/extensions/artifacts/host.ts")}";
+        `import { Host } from "${join(import.meta.dir, "../../../../.pi/extensions/artifacts/session/host.ts")}";
 const [origin, token, root] = process.argv.slice(2);
 const events = [];
 const host = new Host({

@@ -44,16 +44,20 @@ tests/
 │   │   ├── find/tool.test.ts        params → fd argv, rows, limits, errors
 │   │   ├── binaries/probe.test.ts   session_start status, /fast-search, resolution order
 │   │   └── live/binaries.test.ts    the real rg and fd on a scratch repo; skipped when absent
-│   └── artifacts/                   the local artifact loop on a scratch project with a
-│       │                            real loopback server, a recording opener, a scratch trash
+│   └── artifacts/                   the local artifact loop on a scratch project with an
+│       │                            in-process Bun server, a recording opener, a scratch trash;
+│       │                            directories mirror the extension's layers
 │       ├── fixture.ts               the wired extension; tool runner; page-style HTTP helpers
-│       ├── shell/page.test.ts       S1–S9  wrap · inject · Markdown · islands · title · size · runtime parses
-│       ├── store/store.test.ts      T1–T7  layout · versions · pending · owner · trash · token · server record
+│       ├── shared/schemas.test.ts   Q1–Q4  questions/v1 shape · answers refused · required and hidden · registry
+│       ├── server/render.test.ts    S1–S9  wrap · inject · Markdown · islands · title · size · runtime parses
+│       ├── server/store.test.ts     T1–T7  layout · versions · pending · owner · trash · token · server record
 │       ├── server/http.test.ts      H1–H15 pages: token/cookie · Host/Origin · stale · schema · limits · SSE · gallery · ports;
 │       │                            api: header token · publish · owner routing and ack · stop
-│       ├── tool/actions.test.ts     A1–A16 publish · ask (answer/timeout/abort) · read · watch · notify · cap · comments · delete · two sessions
-│       ├── hook/session.test.ts     L1–L4  session_start replay · keepAlive · /artifacts · stop
-│       └── process/launch.test.ts   P1–P4  the real `bun serve.ts` · stale record · findBun · the pi side under Node
+│       ├── session/tool.test.ts     A1–A16 publish · ask (answer/timeout/abort) · read · watch · notify · cap · comments · delete · two sessions
+│       ├── session/hooks.test.ts    L1–L4  session_start replay · keepAlive · /artifacts · stop
+│       ├── structure/boundaries.test.ts B1–B5 no session→server/page imports · shared self-contained · Bun only in server/ ·
+│       │                            runtime is a classic script · no orphan modules
+│       └── process/launch.test.ts   P1–P4  the real `bun server/serve.ts` · stale record · findBun · the pi side under Node
 │   └── destructive-guard/           one directory per layer, on a scratch workspace with
 │       │                            .git, src/, node_modules/, a home, and an escaping symlink
 │       ├── fixture.ts               the workspace, a scriptable select dialog, the wired extension

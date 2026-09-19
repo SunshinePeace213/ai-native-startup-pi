@@ -1,9 +1,6 @@
 // The on-disk store under <root>/ (normally <project>/.pi/artifacts). The
 // server process is its only writer; the session reads nothing here directly.
 //
-//   .token                 the capability token every page URL carries once
-//   .server.json           pid, port, origin of the running server
-//   .server.log            the server's stdout and stderr
 //   <slug>/manifest.json   title, versions, watch state, owner, pending events
 //   <slug>/source.html|md  the agent's latest source, re-rendered on a page send
 //   <slug>/data.json       the current island
@@ -12,33 +9,33 @@
 //   <slug>/comments.json   comment threads
 //   <slug>/events.jsonl    every page event, delivered or not
 //
-// Writes are atomic (tmp + rename). Deleting an artifact moves its folder into
-// the trash directory the caller names; nothing here removes files.
+// The control files beside the slugs (.token, .server.json, .server.log) are
+// shared/record.ts. Writes are atomic (tmp + rename). Deleting an artifact
+// moves its folder into the trash directory the caller names; nothing here
+// removes files.
 
 import { randomBytes } from "node:crypto";
 import {
   appendFileSync,
-  chmodSync,
   existsSync,
   mkdirSync,
   readdirSync,
   readFileSync,
   renameSync,
   statSync,
-  unlinkSync,
-  writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
 
+import { SLUG_RE } from "../shared/protocol";
+import { ensureToken, readJson, writeAtomic } from "../shared/record";
 import type {
   CommentThread,
   Island,
   Manifest,
   PendingEvent,
-  ServerRecord,
   SourceKind,
   VersionRecord,
-} from "./types";
+} from "../shared/types";
 
 const SLUG_MAX = 48;
 
@@ -52,78 +49,6 @@ export function slugify(title: string): string {
     .slice(0, SLUG_MAX)
     .replace(/-+$/g, "");
   return base || "artifact";
-}
-
-export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
-
-function writeAtomic(path: string, content: string): void {
-  const tmp = `${path}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
-  writeFileSync(tmp, content);
-  renameSync(tmp, path);
-}
-
-function readJson<T>(path: string, fallback: T): T {
-  if (!existsSync(path)) return fallback;
-  try {
-    return JSON.parse(readFileSync(path, "utf8")) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-/** Reads the token a store holds, without creating one; null when absent. */
-export function readToken(root: string): string | null {
-  const path = join(root, ".token");
-  if (!existsSync(path)) return null;
-  const existing = readFileSync(path, "utf8").trim();
-  return /^[a-f0-9]{32,}$/.test(existing) ? existing : null;
-}
-
-/** The token, created on first use, readable by the owner only. */
-export function ensureToken(root: string): string {
-  mkdirSync(root, { recursive: true });
-  const existing = readToken(root);
-  if (existing) return existing;
-  const fresh = randomBytes(24).toString("hex");
-  writeAtomic(join(root, ".token"), `${fresh}\n`);
-  try {
-    chmodSync(join(root, ".token"), 0o600);
-  } catch {
-    // Windows and some mounts refuse; the token still lives inside the project.
-  }
-  return fresh;
-}
-
-/** Whether the store holds at least one artifact; a pure directory read. */
-export function hasArtifacts(root: string): boolean {
-  if (!existsSync(root)) return false;
-  return readdirSync(root, { withFileTypes: true }).some(
-    (d) =>
-      d.isDirectory() && SLUG_RE.test(d.name) && existsSync(join(root, d.name, "manifest.json")),
-  );
-}
-
-export const serverRecordPath = (root: string) => join(root, ".server.json");
-export const serverLogPath = (root: string) => join(root, ".server.log");
-
-export function readServerRecord(root: string): ServerRecord | null {
-  const record = readJson<ServerRecord | null>(serverRecordPath(root), null);
-  return record && typeof record.pid === "number" && typeof record.port === "number"
-    ? record
-    : null;
-}
-
-export function writeServerRecord(root: string, record: ServerRecord): void {
-  mkdirSync(root, { recursive: true });
-  writeAtomic(serverRecordPath(root), `${JSON.stringify(record, null, 2)}\n`);
-}
-
-export function clearServerRecord(root: string): void {
-  try {
-    unlinkSync(serverRecordPath(root));
-  } catch {
-    // already gone
-  }
 }
 
 export interface CreateInput {

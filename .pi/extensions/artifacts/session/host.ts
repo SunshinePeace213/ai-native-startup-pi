@@ -5,9 +5,10 @@
 // the session is told goes through `deps.send`, what the user is told through
 // `deps.notify`; nothing here knows about Pi or about Bun.
 
+import { slugFromRef } from "../shared/protocol";
+import type { Config, PageEvent, PublishRequest, PublishResponse } from "../shared/types";
 import { ArtifactClient, type Endpoint, type Locator } from "./client";
 import { envelope, pendingSummary } from "./feedback";
-import type { Config, PageEvent, PublishRequest, PublishResponse } from "./types";
 
 export type SendOptions = { triggerTurn?: boolean; deliverAs?: "steer" | "followUp" | "nextTurn" };
 export type SendFn = (
@@ -70,9 +71,9 @@ export class Host {
     return this.client.connected;
   }
 
-  /** Closes this session's stream; stops the server only when asked. */
+  /** Closes this session's stream; stops the server only when asked. Idempotent. */
   async shutdown(stopServer: boolean): Promise<void> {
-    this.stream?.close();
+    if (this.stream) this.stream.close();
     this.stream = null;
     this.started = false;
     for (const resolve of this.waiters.values()) resolve(null);
@@ -86,19 +87,8 @@ export class Host {
 
   /** Accepts a slug, a path, or a page URL and returns the slug when it exists. */
   async resolveSlug(ref: string | undefined): Promise<string | null> {
-    if (!ref) return null;
-    let candidate = ref.trim();
-    if (/^https?:\/\//i.test(candidate)) {
-      try {
-        candidate = new URL(candidate).pathname;
-      } catch {
-        return null;
-      }
-    }
-    candidate = candidate.replace(/^\/+/, "");
-    if (candidate.startsWith("a/")) candidate = candidate.slice(2);
-    candidate = candidate.split(/[/?#]/)[0] ?? "";
-    if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(candidate)) return null;
+    const candidate = ref ? slugFromRef(ref) : null;
+    if (!candidate) return null;
     return (await this.client.get(candidate)) ? candidate : null;
   }
 

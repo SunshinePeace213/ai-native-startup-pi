@@ -39,10 +39,12 @@ import { mkdtempSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { COOKIE, derivedPort, HEADER, PREFIX, startServer } from "@ext/artifacts/server";
-import { Core } from "@ext/artifacts/core";
-import { ensureToken, Store } from "@ext/artifacts/store";
-import type { PageEvent } from "@ext/artifacts/types";
+import { derivedPort, startServer } from "@ext/artifacts/server/http";
+import { COOKIE, HEADER, PREFIX } from "@ext/artifacts/shared/protocol";
+import { Core } from "@ext/artifacts/server/core";
+import { ensureToken } from "@ext/artifacts/shared/record";
+import { Store } from "@ext/artifacts/server/store";
+import type { PageEvent } from "@ext/artifacts/shared/types";
 
 import { firstSseData, islandScript, QUESTIONS_ISLAND, stopAll, wire } from "../fixture";
 

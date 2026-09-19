@@ -8,6 +8,32 @@ before publishing pages, changing the extension, or writing the skills that
 will drive it. The extension lives in `.pi/extensions/artifacts/`; its contract
 tests are `tests/pi/artifacts/`.
 
+## Layout
+
+Three runtimes meet in this extension, so it is layered by runtime first and
+by feature inside each layer — the "directory with `index.ts`" style from
+pi's extension docs, extended with the subfolders the repo's other extensions
+use. The boundary is a contract: `tests/pi/artifacts/structure` fails when the
+session side imports the server or the page, or names the `Bun` global.
+
+```text
+.pi/extensions/artifacts/
+├── index.ts                the factory: registers and wires, starts nothing
+├── shared/                 the contract; imports only itself and node built-ins
+│   ├── types.ts · protocol.ts · config.ts · record.ts
+│   └── schemas/            questions/v1 and the registry
+├── session/                inside pi (Node today, Bun if pi is ever run on it)
+│   ├── hooks.ts · command.ts · host.ts · client.ts · launch.ts · feedback.ts · opener.ts
+│   └── tool/               index.ts · schema.ts · format.ts · files.ts · context.ts
+│       └── actions/        publish.ts · read.ts · watch.ts · comments.ts · manage.ts
+├── server/                 the Bun process: `bun server/serve.ts --root …`
+│   ├── serve.ts · http.ts · auth.ts · respond.ts · events.ts · core.ts · store.ts
+│   ├── routes/             pages.ts · api.ts · gallery.ts
+│   └── render/             shell.ts · markdown.ts
+└── page/                   runtime.js · styles.css — inlined into every page; the
+                            runtime is linted as browser code by the repo's ESLint
+```
+
 ## The loop
 
 ```text
@@ -145,14 +171,15 @@ until deleted.
 
 ## Verification
 
-`bun test tests/pi/artifacts` — shell (S), store (T), server pages and API
-(H), tool (A), session hooks (L), process (P). The server tests start the
-same `startServer` in-process on real ports; P1–P3 spawn the real
-`bun serve.ts`; P4 bundles the pi side for Node and runs it with this
-machine's `node` against the Bun server, so the runtime split is proven, not
-assumed. The browser runtime is parse-checked (S9). A real-browser pass
+`bun test tests/pi/artifacts` — schemas (Q), render (S), store (T), server
+pages and API (H), tool (A), session hooks (L), layout (B), process (P). The
+server tests start the same `startServer` in-process on real ports; P1–P3
+spawn the real `bun server/serve.ts`; P4 bundles the pi side for Node and
+runs it with this machine's `node` against the Bun server, so the runtime
+split is proven, not assumed; B1–B5 make the layer boundary a failing test.
+The browser runtime is linted and parse-checked (B4, S9). A real-browser pass
 (`Google Chrome --headless=new --dump-dom`) was run by hand during
-development and is not in the suite; after changing `runtime.ts`, open a
+development and is not in the suite; after changing `page/runtime.js`, open a
 published questions page and confirm the form, the send bar, and a send
 round-trip before committing.
 

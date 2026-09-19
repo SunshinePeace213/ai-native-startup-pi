@@ -5,9 +5,17 @@
 // injected into, never wrapped twice; a fragment or a Markdown body is wrapped.
 // Pure: no filesystem, no network.
 
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+import { type Island, MAX_PAGE_BYTES, type SourceKind } from "../../shared/types";
 import { markdownTitle, renderMarkdown } from "./markdown";
-import { RUNTIME_SCRIPT, RUNTIME_STYLES } from "./runtime";
-import { type Island, MAX_PAGE_BYTES, type SourceKind } from "./types";
+
+/** The page layer, read once: what every published page carries. */
+const pageFile = (name: string) =>
+  readFileSync(fileURLToPath(new URL(`../../page/${name}`, import.meta.url)), "utf8");
+export const RUNTIME_SCRIPT = pageFile("runtime.js");
+export const RUNTIME_STYLES = pageFile("styles.css");
 
 /** The page policy, as a <meta> for a file opened from disk; the server also sends it as a header. */
 export const CSP =
@@ -195,12 +203,4 @@ function inject(input: PageInput, title: string, island: Island | null, source: 
   else html = `${html}\n${runtimeTag()}`;
   if (!/<!doctype/i.test(html)) html = `<!doctype html>\n${html}`;
   return html;
-}
-
-/**
- * A default page for `ask` when the agent supplies questions rather than a file.
- * The island's `intro` is rendered by the runtime inside the questions root.
- */
-export function questionsPage(title: string): string {
-  return `<h1>${escapeHtml(title)}</h1>\n<div data-artifact-questions></div>`;
 }

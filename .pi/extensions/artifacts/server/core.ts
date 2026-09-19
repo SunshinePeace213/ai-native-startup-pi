@@ -6,9 +6,10 @@
 
 import { randomBytes } from "node:crypto";
 
-import { declaredSchema, validateAnswers, validateQuestionsShape } from "./schemas";
-import { buildPage, extractTitle } from "./shell";
-import { SLUG_RE, Store } from "./store";
+import { SLUG_RE } from "../shared/protocol";
+import { declaredSchema, validateAnswers, validateQuestionsShape } from "../shared/schemas";
+import { buildPage, extractTitle } from "./render/shell";
+import { Store } from "./store";
 import type {
   CommentThread,
   Island,
@@ -19,7 +20,7 @@ import type {
   PublishResponse,
   SourceKind,
   Validation,
-} from "./types";
+} from "../shared/types";
 
 export interface Outcome {
   status: number;

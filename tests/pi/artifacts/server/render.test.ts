@@ -22,8 +22,8 @@
 
 import { describe, expect, test } from "bun:test";
 
-import { RUNTIME_SCRIPT } from "@ext/artifacts/runtime";
-import { buildPage, CSP } from "@ext/artifacts/shell";
+import { RUNTIME_SCRIPT } from "@ext/artifacts/server/render/shell";
+import { buildPage, CSP } from "@ext/artifacts/server/render/shell";
 
 const base = { slug: "demo", version: 3, endpoint: "/a/demo" };
 const island = (html: string) =>

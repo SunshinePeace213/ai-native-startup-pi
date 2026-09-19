@@ -4,7 +4,7 @@
 // they are not (instructions to change scope, or a permission approval), and
 // carries the validated island so the model can act without re-asking.
 
-import type { CommentThread, Island, PageEvent } from "./types";
+import type { CommentThread, Island, PageEvent } from "../shared/types";
 
 const ISLAND_INLINE_LIMIT = 24 * 1024;
 

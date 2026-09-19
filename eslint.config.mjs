@@ -21,5 +21,23 @@ export default defineConfig([
     // Switch to `detect` once react lands as a dependency.
     settings: { react: { version: "19.0" } },
   },
+  {
+    // The artifact page runtime ships inside every published page and runs in
+    // the browser: a classic script (an IIFE, no imports) against DOM globals.
+    files: [".pi/extensions/artifacts/page/*.js"],
+    languageOptions: {
+      sourceType: "script",
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        location: "readonly",
+        console: "readonly",
+        fetch: "readonly",
+        EventSource: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+      },
+    },
+  },
   prettier,
 ]);

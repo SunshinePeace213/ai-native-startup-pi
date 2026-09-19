@@ -15,8 +15,8 @@
 
 import { afterEach, describe, expect, test } from "bun:test";
 import { register } from "@ext/artifacts/index";
-import { HEADER } from "@ext/artifacts/server";
-import { ensureToken } from "@ext/artifacts/store";
+import { HEADER } from "@ext/artifacts/shared/protocol";
+import { ensureToken } from "@ext/artifacts/shared/record";
 import { createCtx } from "@harness/fake-ctx";
 import { createFakePi } from "@harness/fake-pi";
 import { scriptedExec } from "@harness/scripted-exec";

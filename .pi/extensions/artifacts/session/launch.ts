@@ -8,9 +8,9 @@ import { homedir } from "node:os";
 import { delimiter, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { HEADER } from "./server-const";
-import { readServerRecord, readToken, serverLogPath } from "./store";
-import type { ServerRecord } from "./types";
+import { HEADER } from "../shared/protocol";
+import { readServerRecord, readToken, serverLogPath } from "../shared/record";
+import type { ServerRecord } from "../shared/types";
 
 const SPAWN_WAIT_MS = 8_000;
 const POLL_MS = 60;
@@ -28,9 +28,9 @@ export function findBun(configured?: string, env: NodeJS.ProcessEnv = process.en
   return candidates.find((c) => existsSync(c)) ?? null;
 }
 
-/** serve.ts next to this file; the extension directory is where it is loaded from. */
+/** The server entry, resolved from this file so it follows the extension wherever it is loaded from. */
 export function serveScriptPath(): string {
-  return join(dirname(fileURLToPath(import.meta.url)), "serve.ts");
+  return join(dirname(fileURLToPath(import.meta.url)), "..", "server", "serve.ts");
 }
 
 export interface Located {

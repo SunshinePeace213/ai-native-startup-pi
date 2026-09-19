@@ -5,12 +5,14 @@
 // the tool as the model would, the HTTP routes as the page would, and read
 // what the session was sent and what landed on disk.
 
-import { Core } from "@ext/artifacts/core";
-import type { Host } from "@ext/artifacts/host";
+import { Core } from "@ext/artifacts/server/core";
+import type { Host } from "@ext/artifacts/session/host";
 import { type Deps, register, STORE_DIR } from "@ext/artifacts/index";
-import { type ArtifactServer, COOKIE, HEADER, PREFIX, startServer } from "@ext/artifacts/server";
-import { ensureToken, Store } from "@ext/artifacts/store";
-import { type Config, DEFAULT_CONFIG } from "@ext/artifacts/types";
+import { type ArtifactServer, startServer } from "@ext/artifacts/server/http";
+import { COOKIE, HEADER, PREFIX } from "@ext/artifacts/shared/protocol";
+import { ensureToken } from "@ext/artifacts/shared/record";
+import { Store } from "@ext/artifacts/server/store";
+import { type Config, DEFAULT_CONFIG } from "@ext/artifacts/shared/types";
 import { createCtx } from "@harness/fake-ctx";
 import { createFakePi } from "@harness/fake-pi";
 import { scriptedExec } from "@harness/scripted-exec";

@@ -3,7 +3,7 @@
 // so it runs under Node or Bun. The origin comes from a locator (find-or-spawn
 // in production, a fixed origin in tests).
 
-import { HEADER, PREFIX } from "./server-const";
+import { API_PREFIX, galleryUrl, HEADER, pageUrl } from "../shared/protocol";
 import type {
   CommentThread,
   Island,
@@ -12,7 +12,7 @@ import type {
   PublishRequest,
   PublishResponse,
   SourceKind,
-} from "./types";
+} from "../shared/types";
 
 export interface Endpoint {
   origin: string;
@@ -60,20 +60,20 @@ export class ArtifactClient {
   pageUrl(slug: string, withToken = true): string {
     const e = this.endpoint;
     if (!e) throw new Error("artifact server not connected");
-    return `${e.origin}${PREFIX}/${slug}${withToken ? `?t=${encodeURIComponent(e.token)}` : ""}`;
+    return pageUrl(e.origin, slug, withToken ? e.token : undefined);
   }
 
   galleryUrl(): string {
     const e = this.endpoint;
     if (!e) throw new Error("artifact server not connected");
-    return `${e.origin}${PREFIX}/?t=${encodeURIComponent(e.token)}`;
+    return galleryUrl(e.origin, e.token);
   }
 
   private async call<T>(method: "GET" | "POST", path: string, body?: unknown): Promise<T> {
     const e = await this.connect();
     let res: Response;
     try {
-      res = await fetch(`${e.origin}/api${path}`, {
+      res = await fetch(`${e.origin}${API_PREFIX}${path}`, {
         method,
         headers: {
           [HEADER]: e.token,
@@ -184,7 +184,7 @@ export class ArtifactClient {
         controller = new AbortController();
         try {
           const res = await fetch(
-            `${endpoint.origin}/api/events?session=${encodeURIComponent(this.session)}`,
+            `${endpoint.origin}${API_PREFIX}/events?session=${encodeURIComponent(this.session)}`,
             {
               headers: { [HEADER]: endpoint.token },
               signal: controller.signal,
