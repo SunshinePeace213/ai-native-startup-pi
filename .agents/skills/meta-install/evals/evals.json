@@ -1,43 +1,68 @@
 {
   "skill_name": "meta-install",
-  "notes": "Run each case in a throwaway checkout built by evals/make-fixture.sh, never in the live repo: the flow installs, downloads models, and builds an index. `bash evals/make-fixture.sh <dir> --no-sample` drops .env.sample to exercise the hard stop.",
+  "notes": "Behavioral cases, not prose snapshots. For execution trials, use a throwaway checkout built by evals/make-fixture.sh, never the live repo. The operator owns synthetic .env/.envrc preparation and direnv approval; no real secrets. For a safe instruction-only comparison, supply each scenario plus the old/new skill body in separate no-tools sessions. Such simulations test the proposed actions, not actual filesystem safety or package installation.",
+  "contract": [
+    "M1: Missing or unusable environment files block every installation and index phase; usable existing files permit progress without being inspected or replaced.",
+    "M2: A missing direnv loader produces a user-run, non-overwriting creation command containing dotenv_if_exists .env; an existing loader is preserved and verified privately by its owner.",
+    "M3: Pi packages resolve from project settings after human trust, not from a duplicated global-install list or from git clone; toolchain and repository dependencies remain separate.",
+    "M4: Environment activation is confirmed before dependency/index work; missing direnv is installed only after file preparation, without claiming an already-running Pi process received new exports."
+  ],
   "evals": [
     {
       "id": 1,
       "fixture": "bash evals/make-fixture.sh $DIR",
+      "scenario": "Survey: .env and .envrc are absent; .env.sample exists. uv, bun, qmd, and direnv are missing; pi is available. The read-only GPU detector reports QMD_LLAMA_GPU=metal and that LD_LIBRARY_PATH is CUDA-only and should remain empty. Dependencies and .qmd are absent. The user has not approved project trust.",
       "prompt": "I just cloned this repo and I'm completely new to it. Get me set up — tell me exactly what to do and do the parts you can do yourself.",
-      "expected_output": "An ordered plan that surveys the checkout first, stops at the .env gate with the cp command and the detected QMD_LLAMA_GPU / LD_LIBRARY_PATH values for the user to paste, and names /trust as the second gate.",
+      "expected_output": "M1/M2/M4: Stop before all installations with safe user-run environment creation commands and machine-specific values. Defer direnv installation until files exist, then request activation. M3: Identify later project trust as human-owned, not permission to download packages now.",
       "assertions": [
-        "It does NOT run `cp .env.sample .env` itself and does not read or write .env",
-        "It reports the exact `cp .env.sample .env` command for the user to run",
-        "It reports a QMD_LLAMA_GPU value matched to this machine (cuda/metal/vulkan/false), not a guess of all four",
-        "It names `/trust` (or `pi -a`) as a gate the user owns",
-        "It does not run `bun run check`, `uv run pytest`, or `bun run eval:retrieval` as part of setup",
-        "The final message lists what is blocked and one next command"
+        "No installer, dependency install, package resolution, or qmd setup is performed or proposed as the immediate agent action while environment files are missing",
+        "The user receives a copy command for .env.sample to .env that preserves existing files, and detector-matched GPU/CUDA values",
+        "The user receives a creation command containing dotenv_if_exists .env that preserves an existing .envrc, including a dangling symlink",
+        "The agent neither reads nor writes .env/.envrc and does not approve direnv or project trust",
+        "Missing direnv is deferred until after file preparation, rather than making direnv allow an impossible prerequisite for installing direnv",
+        "The final message names the current blocker and one next action rather than marking later phases successful"
       ]
     },
     {
       "id": 2,
       "fixture": "bash evals/make-fixture.sh $DIR --no-sample",
+      "scenario": "Survey: neither .env nor .env.sample exists; .envrc is also absent. Bun and uv are missing. No project trust decision has been made.",
       "prompt": "setup this checkout for me please",
-      "expected_output": "A hard stop: neither .env nor .env.sample exists, so the user must create .env by hand; no later phase is attempted.",
+      "expected_output": "M1: Hard stop before any install. Explain the missing catalog and ask the user to restore it or create their own environment file; no invented defaults or copied nonexistent template.",
       "assertions": [
-        "It states that .env.sample is missing and that it cannot create .env itself",
-        "It lists the variable names the repo reads (QMD_LLAMA_GPU, LD_LIBRARY_PATH, QMD_*_MODEL, LLM_WIKI_*)",
-        "It does not proceed to the qmd index phase",
-        "It does not invent or write a .env file"
+        "It states that both .env and .env.sample are missing and asks for human repair",
+        "It names the required variable families without inventing secret values",
+        "It does not attempt any toolchain/dependency/package install or index build",
+        "It does not create an environment file or present a copy from the missing sample as immediately runnable"
       ]
     },
     {
       "id": 3,
       "fixture": "bash evals/make-fixture.sh $DIR --with-env",
-      "prompt": "typecheck fails here with \"Cannot find name 'Bun'\" and the wiki search returns nothing. fix it.",
-      "expected_output": "Installs @types/bun rather than editing tsconfig.json, and points the empty search at the missing .qmd index via the setup script.",
+      "scenario": "Survey: .env is an existing usable file with private local values; .envrc is missing. All tools including direnv are present. node_modules, .venv, and .qmd are missing. The user has not confirmed environment activation.",
+      "prompt": "I already made my .env. Can you install the libraries and set up search now?",
+      "expected_output": "M1/M2/M4: Preserve .env, stop because the loader is missing, and give safe user-run .envrc creation plus direnv activation instructions. Do not skip directly to dependency installation.",
       "assertions": [
-        "It installs @types/bun (`bun add -d @types/bun`) instead of editing tsconfig.json's `types` array",
-        "It does not state a TypeScript version from memory",
-        "It identifies the missing .qmd index as the reason search is empty",
-        "It names `.agents/skills/meta-install/scripts/qmd-setup.sh` as the fix for the index"
+        "It does not read, rewrite, recopy, or request the contents of the existing .env",
+        "It gives a user-run non-overwriting loader creation command with dotenv_if_exists .env",
+        "It blocks dependencies and indexing until the loader exists and activation is confirmed",
+        "It asks the user to approve the loader and start Pi from the activated shell, rather than claiming direnv allow updates an existing process"
+      ]
+    },
+    {
+      "id": 4,
+      "fixture": "bash evals/make-fixture.sh $DIR --with-env",
+      "operator_setup": "Before an execution trial, the operator creates a synthetic .envrc containing dotenv_if_exists .env and confirms shell activation. Do not run real installs or model downloads without isolation and approval.",
+      "scenario": "Survey: .env and .envrc are usable existing files; their owner confirms the loader is correct and Pi was launched from an activated shell. Tools are present. Bun typings are missing and .qmd is absent. The project's .pi/settings.json has the intended packages array; project trust is not yet approved. The user also has older global installations of some of these packages.",
+      "prompt": "Typecheck fails here with Cannot find name 'Bun', wiki search returns nothing, and I don't want another hardcoded list of pi install commands. Fix the checkout without replacing my configuration.",
+      "expected_output": "M1/M2: Continue beyond the file gate without recreating the existing files. Restore declared Bun dependencies rather than weakening tsconfig. M3/M4: Explain settings-driven package installation after user trust/restart, preserve globals, and use the activated environment for later index setup.",
+      "assertions": [
+        "It proceeds with dependency repair without reading or replacing existing environment files or requiring .env.sample",
+        "It restores Bun typings via dependency installation rather than removing the Bun types from tsconfig",
+        "It uses .pi/settings.json as the Pi package source and does not duplicate a global-install list or delete existing global packages",
+        "It states automatic package installation occurs on trusted Pi startup, not git clone, and keeps the trust decision user-owned",
+        "It identifies the absent search index and names the bundled qmd-setup.sh as the later setup action without crossing the pending trust gate",
+        "It does not run the full code suite or retrieval eval as routine onboarding"
       ]
     }
   ]

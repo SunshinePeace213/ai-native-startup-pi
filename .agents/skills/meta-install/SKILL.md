@@ -1,8 +1,8 @@
 ---
 name: meta-install
 description: >-
-  Bootstraps a checkout of this repository in order — toolchain, environment
-  file, dependencies, project trust, the qmd search index — and reports what is
+  Bootstraps a checkout of this repository in order — environment files,
+  toolchain, dependencies, project trust, the qmd search index — and reports what is
   still missing. Use when somebody is new to this repo or a clone is not working
   yet: set this up, get me started, onboard me, I just cloned this, what do I
   install, nothing runs, `qmd`/`uv` not found, which QMD_LLAMA_GPU value do I
@@ -20,16 +20,17 @@ description: >-
 # Meta Install
 
 Bring a checkout from "just cloned" to "usable" in a fixed order, and stop at
-the two gates the agent is not allowed to pass on its own: the environment file
-and project trust.
+the two gates the agent is not allowed to pass on its own: environment setup
+and project trust. Missing environment files block all installation phases.
 
 Installs, model downloads, and index builds have side effects. Never run any of
 this incidentally during a read-only review, and never replace configuration
 that a returning checkout already has.
 
 **Absolute rule:** the agent never reads, writes, copies, or edits `.env` or
-`.envrc`. Testing whether `.env` exists is allowed; opening it is not. Every
-value the user needs is *reported* to them, and they paste it themselves.
+`.envrc`. Existence/type checks are allowed; opening either file is not. Every
+value and creation command the user needs is *reported* to them, and they run
+it themselves. Never source either file or dump the environment to inspect it.
 
 ## Bundled files
 
@@ -37,7 +38,7 @@ Both scripts ship with this skill and are run from the repository root:
 
 | Path from the repo root | Use |
 | --- | --- |
-| `.agents/skills/meta-install/scripts/detect-gpu.sh` | Phase 2 — prints the `QMD_LLAMA_GPU` and `LD_LIBRARY_PATH` lines for this machine. Read-only. |
+| `.agents/skills/meta-install/scripts/detect-gpu.sh` | Phase 1 — prints the `QMD_LLAMA_GPU` and `LD_LIBRARY_PATH` lines for this machine. Read-only. |
 | `.agents/skills/meta-install/scripts/qmd-setup.sh` | Phase 5 — builds the search index; `--check` is the Phase 6 health check. |
 | `references/typescript.md` | Typecheck or lint failure that looks like a toolchain problem. |
 | `references/troubleshooting.md` | A phase failed, or setup finished but search is empty. |
@@ -49,10 +50,11 @@ and it writes nothing:
 
 ```bash
 cd "$(git rev-parse --show-toplevel)"
+printf '%-8s %s\n' ".env" "$([ -e .env ] || [ -L .env ] && echo present || echo MISSING)"
+printf '%-8s %s\n' ".envrc" "$([ -e .envrc ] || [ -L .envrc ] && echo present || echo MISSING)"
+printf '%-8s %s\n' "sample" "$([ -f .env.sample ] && echo present || echo MISSING)"
 for bin in uv bun qmd direnv pi git rg; do printf '%-8s %s\n' "$bin" "$(command -v $bin || echo MISSING)"; done
 printf '%-8s %s\n' "fd" "$(command -v fd || command -v fdfind || ls ~/.pi/agent/bin/fd 2>/dev/null || echo MISSING)"
-printf '%-8s %s\n' ".env" "$([ -e .env ] || [ -L .env ] && echo present || echo MISSING)"
-printf '%-8s %s\n' "sample" "$([ -f .env.sample ] && echo present || echo MISSING)"
 printf '%-8s %s\n' "deps" "$([ -d node_modules ] && echo node_modules || echo no-node_modules) $([ -d .venv ] && echo .venv || echo no-.venv)"
 printf '%-8s %s\n' "types" "$([ -d node_modules/@types/bun ] && echo '@types/bun ok' || echo '@types/bun MISSING')"
 printf '%-8s %s\n' "index" "$([ -d .qmd ] && echo .qmd || echo no-.qmd)"
@@ -60,88 +62,116 @@ printf '%-8s %s\n' "index" "$([ -d .qmd ] && echo .qmd || echo no-.qmd)"
 
 A missing `.qmd/` is the normal state of a fresh clone, not an error.
 
-## Phase 1 — Toolchain
+## Phase 1 — Environment files (GATE: the user does this)
 
-Install only what Phase 0 printed as `MISSING`:
+Branch on what Phase 0 found **before installing anything**, even if `uv`,
+`bun`, or `direnv` is missing. The detector needs only bash and OS probes.
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh   # uv  — Python runner
-curl -fsSL https://bun.sh/install | bash          # bun — JS/TS runner
-bun install -g @tobilu/qmd                        # qmd — needs bun first
-```
+**`.env` present** — preserve it. Do not inspect it, diff it against the
+sample, or "merge newly needed keys". Still check whether `.envrc` exists.
+A missing sample does not block an already-configured checkout.
 
-`direnv` comes from the OS package manager (`sudo apt install direnv`,
-`brew install direnv`). `rg` and `fd` are the search binaries behind the
-`grep` and `find` tools (`.pi/extensions/fast-search`); without them those
-tools fail with an install hint instead of searching:
+**`.env` missing and `.env.sample` missing** — hard stop. Explain that the
+committed variable catalog is absent and cannot be invented. Ask the user to
+restore `.env.sample` from the repository or create `.env` by hand with:
+`QMD_LLAMA_GPU`, `LD_LIBRARY_PATH`, `LLM_WIKI_ACTOR`, `LLM_WIKI_QMD`,
+`QMD_EMBED_MODEL`, `QMD_RERANK_MODEL`, and `QMD_GENERATE_MODEL`. Do not install
+anything or attempt any later phase.
 
-```bash
-sudo apt install ripgrep fd-find   # Debian/Ubuntu — fd is installed as `fdfind`, which is found
-brew install ripgrep fd            # macOS
-```
-
-`pi` is the coding agent this repo is built for; install
-it per <https://pi.dev>, then the three packages the harness expects, globally:
-
-```bash
-pi install npm:pi-subagents                       # subagent tool (.pi/agents/)
-pi install npm:pi-web-access                      # web_search + fetch_content
-pi install npm:@juicesharp/rpiv-ask-user-question # ask_user_question for llm-wiki-review
-```
-
-`uv` and `bun` land in `~/.local/bin` and `~/.bun/bin`. If a freshly installed
-binary is still not on `PATH`, the shell must be reopened — say so rather than
-looping on `command -v`.
-
-## Phase 2 — Environment file (GATE: the user does this)
-
-Branch on what Phase 0 found.
-
-**`.env` present** — nothing to do. Do not inspect it, do not diff it against
-the sample, do not "merge newly needed keys". Move to Phase 3.
-
-**`.env` missing and `.env.sample` missing** — hard stop. Report exactly this
-and do not continue to any later phase:
-
-```text
-✗ Cannot configure this checkout: neither .env nor .env.sample exists.
-  .env.sample is the committed catalog of every variable this repo reads, and I
-  am not allowed to invent it. Please create .env by hand with at least:
-    QMD_LLAMA_GPU=      LD_LIBRARY_PATH=      LLM_WIKI_ACTOR=      LLM_WIKI_QMD=
-    QMD_EMBED_MODEL=    QMD_RERANK_MODEL=     QMD_GENERATE_MODEL=
-  Then run `direnv allow` and ask me to continue.
-```
-
-**`.env` missing, `.env.sample` present** — do not copy it yourself. Run the
-detector, then hand the user one block containing the copy command and the two
-machine-specific values it printed:
+**`.env` missing, `.env.sample` present** — do not copy it yourself. Run:
 
 ```bash
 bash .agents/skills/meta-install/scripts/detect-gpu.sh
 ```
 
 It prints `QMD_LLAMA_GPU=` for this machine (`cuda` on NVIDIA, `metal` on macOS,
-`vulkan` on AMD/Intel, `false` for CPU) and, on Linux + NVIDIA only, the
-`LD_LIBRARY_PATH=` line for a CUDA `targets/<arch>/lib` directory that actually
-contains `libcudart`. Report its output verbatim — it is the user's paste
-material — wrapped as:
+`vulkan` on AMD/Intel, `false` for CPU; `auto` for an unrecognized OS) and, on
+Linux + NVIDIA only, the `LD_LIBRARY_PATH=` line for a CUDA library directory.
+Report its output verbatim as the user's paste material. Give this **user-run**
+copy command, which leaves an existing file or symlink alone:
 
-```text
-Run these yourself (I do not touch .env):
-  cp .env.sample .env
-  # then set in .env:
-  QMD_LLAMA_GPU=<from the detector>
-  LD_LIBRARY_PATH=<from the detector, CUDA only — leave empty otherwise>
-  direnv allow
+```bash
+if [ ! -e .env ] && [ ! -L .env ]; then
+  cp -n .env.sample .env
+fi
 ```
 
-Only the two variables above ever need a decision. The `QMD_*_MODEL` variables
-are optional: left as the sample ships them the index uses those models, and
-commenting them out lets qmd fall back to its own smaller defaults. Everything
-else in the sample can stay untouched.
+Ask the user to set the detector's `QMD_LLAMA_GPU` and `LD_LIBRARY_PATH` values
+in `.env` (leave the latter empty outside CUDA). The sample's `QMD_*_MODEL`
+values may stay as shipped; commenting them out permits inherited or qmd
+default models. Other sample values can stay untouched.
 
-Wait for the user to confirm before Phase 5 — `qmd-setup.sh` reads those
-variables from the environment direnv exports.
+**`.envrc` missing** — give this **user-run** script, not a tool call. It
+creates the direnv loader with exactly `dotenv_if_exists .env` and refuses to
+replace an existing path, including a dangling symlink:
+
+```bash
+if [ ! -e .envrc ] && [ ! -L .envrc ]; then
+  (set -C; printf '%s\n' 'dotenv_if_exists .env' > .envrc)
+fi
+```
+
+**`.envrc` present** — leave it untouched. Ask the user to verify privately
+that it loads `.env` (normally with `dotenv_if_exists .env`); do not append,
+replace, read, or request its contents. If either path is a directory, broken
+symlink, or otherwise unusable, stop for the user to repair it, not overwrite it.
+
+If either file was missing, **end this turn here** with the user commands and
+one next action; resume only after user confirmation and existence checks.
+Do not run installers, `bun install`, `uv sync`, Pi package resolution, or qmd
+setup while this gate is blocked. `dotenv_if_exists` tolerates a missing `.env`
+at runtime; it does not relax this skill's setup gate.
+
+If direnv is already installed and hooked into the user's shell, ask them to
+review `.envrc` and run `direnv allow`. If it is missing, defer activation until
+Phase 2; file creation does not depend on direnv being installed.
+
+## Phase 2 — Toolchain and environment activation
+
+Only after Phase 1 passes, install what Phase 0 printed as `MISSING`:
+
+```bash
+# why: install the missing uv Python runner from its official installer
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# why: install the missing Bun JS/TS runner from its official installer
+curl -fsSL https://bun.sh/install | bash
+bun install -g @tobilu/qmd   # qmd — needs bun first
+```
+
+Respect approval prompts for installers; a refusal is a stop, not permission
+to try another route. `direnv`, `rg`, and `fd` come from the OS package manager
+(choose the matching OS and only missing packages):
+
+```bash
+# why: install missing shell-loading and search tools on Debian/Ubuntu
+sudo apt install direnv ripgrep fd-find
+brew install direnv ripgrep fd   # macOS
+```
+
+`fd-find` provides `fdfind`, which the fast-search extension accepts. `rg` and
+`fd` back `grep` and `find`; without them those tools report an install hint.
+
+Install the Pi CLI itself per <https://pi.dev> if missing. **Pi packages are
+declared only in `.pi/settings.json` → `packages`**, not a duplicated list of
+`pi install` commands here and not root `package.json` dependencies. Read the
+settings for the current list. Pi installs missing project packages on startup
+**after project trust** (Phase 4), under `.pi/npm/` or `.pi/git/`. Git cloning
+alone downloads none of them. Do not install them globally as a workaround.
+These declarations do not install uv, Bun, qmd, or the repo's JS/Python libraries.
+Pi can resolve packages even for `pi --help` in a trusted checkout. The skill's
+environment gate controls its own actions, not Pi's earlier startup: prepare
+files before granting trust if no package downloads should happen first.
+
+`uv` and `bun` land in `~/.local/bin` and `~/.bun/bin`. If a freshly installed
+binary is still not on `PATH`, tell the user to reopen the shell, not rerun
+its installer.
+
+Before Phase 3, have the user enable the appropriate
+[direnv shell hook](https://direnv.net/docs/hook.html), review `.envrc`, and run
+`direnv allow` from the repo. They should restart Pi from that activated shell
+so its tools inherit the exports. Wait for confirmation; do not call
+`direnv allow` on their behalf or print exported secrets. An already-activated
+returning checkout needs no repeated approval.
 
 ## Phase 3 — Dependencies
 
@@ -175,15 +205,24 @@ If a plugin or a version pin looks wrong, read
 ## Phase 4 — Trust the project (GATE: the user does this)
 
 Project skills (`.agents/skills/`), agents (`.pi/agents/`), settings, and
-extensions load only after Pi trusts the folder, so the user should review the
-repo before trusting it. Report the instruction; do not try to write the trust
-decision:
+extensions load only after Pi trusts the folder. Trust also permits automatic
+installation of the `packages` declared in `.pi/settings.json`; these packages
+run with full system access. Have the user review the repo and package sources
+first. Report the instruction; do not write the trust decision or launch a
+trust-approved Pi process on their behalf:
 
 ```text
 In this repo: open `pi`, run `/trust`, then restart Pi for it to take effect.
 ```
 
-Non-interactive runs approve for a single run with `-a`:
+After restart, use `pi list` to check the resolved package paths. If package
+installation failed, report that failure; do not claim the harness is ready or
+fall back to global installs. Project entries take precedence over matching
+global packages, so an existing global installation need not be removed.
+
+For a deliberately user-approved non-interactive run, `-a` grants trust for
+that run (and can therefore install missing packages). This is a **user-run**
+example, not a way for the agent to cross either gate:
 
 ```bash
 pi -a -p "/skill:llm-wiki-query what does the wiki know about pi skills"
@@ -245,25 +284,23 @@ install; name them as available and let the user choose
 
 ```text
 Setup status for <repo path>
-  ✓ toolchain     uv 0.9.x · bun 1.4.x · qmd 2.8.3 · direnv · pi · rg 15.x · fd 10.x
-  ⚠ .env          missing — you must run: cp .env.sample .env
-                  QMD_LLAMA_GPU=cuda
-                  LD_LIBRARY_PATH=/home/you/miniconda3/envs/llm/targets/x86_64-linux/lib
-                  then: direnv allow
-  ✓ dependencies  bun install · uv sync · @types/bun present
-  ⚠ trust         you must run /trust in pi and restart
-  ✓ qmd index     wiki 193 files · raw 106 files · 3 models cached · doctor clean
-  Blocked on: .env, /trust.  Next: <the single next command>
+  ⚠ environment   .env missing; .envrc missing — user creation commands above
+  ⏸ toolchain     surveyed only; installs blocked by Phase 1
+  ⏸ dependencies  not attempted
+  ⏸ trust/packages user review + /trust + restart still required
+  ⏸ qmd index     not attempted
+  Blocked on: environment files. Next: <the first applicable user command>
 ```
 
 State every gate the user still owns, and give one next command — never a list
-of five things to do in an unspecified order.
+of five things to do in an unspecified order. Mark a phase successful only when
+observed; list tool versions, resolved packages, and index counts when verified.
 
 ## Gotchas
 
-- **`.env` and `.envrc` are off limits.** Existence checks only. The user copies
-  the sample, sets the values, and runs `direnv allow`; an agent that edits
-  `.env` silently clobbers local values.
+- **`.env` and `.envrc` are user-owned.** Existence/type checks only. Missing
+  either blocks installation. Give safe creation commands to the user; never
+  execute them yourself or overwrite local configuration.
 - **`@types/bun` is the step agents forget.** `"types": ["bun"]` in
   `tsconfig.json` is load-bearing and TypeScript no longer auto-includes
   `@types/*`, so a missing package breaks `Bun`, `bun:test`, and `Request` at
@@ -271,9 +308,10 @@ of five things to do in an unspecified order.
 - **Never pin or announce a TypeScript version from memory.** The repo tracks
   the latest stable TypeScript 7 (the Go-native compiler) as its only
   `typescript`; read `package.json` if the exact version matters.
-- **`direnv allow` is required after every `.env` edit**, and again after
-  `.envrc` changes. Without it the setup script sees no `QMD_*` values and
-  quietly records qmd's defaults.
+- **Approve new or changed `.envrc` with `direnv allow`.** With the shell hook,
+  `dotenv_if_exists .env` watches `.env` for reloads; ordinary `.env` edits do
+  not themselves require reapproval. An already-running Pi process retains its
+  old environment: restart it from the activated shell before index setup.
 - **qmd distrusts a project-local config unattended.** Custom `hf:` models in
   `.qmd/index.yml` are a gated field: with no terminal to ask, qmd skips them
   and uses its defaults. `qmd-setup.sh` sets `QMD_TRUST_LOCAL_CONFIG=1` for its
