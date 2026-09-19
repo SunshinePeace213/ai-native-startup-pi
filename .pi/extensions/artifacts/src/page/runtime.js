@@ -424,7 +424,8 @@
 
   // ---- hand-written bindings ----------------------------------------------
   function syncBindings() {
-    var a = answers();
+    // Read only: answers() would create an island, and a page without one has no send bar.
+    var a = (island && island.answers) || {};
     document.querySelectorAll("[data-question] [data-option]").forEach(function (opt) {
       var holder = opt.closest("[data-question]");
       var id = holder && holder.getAttribute("data-question");

@@ -2,7 +2,10 @@
 // only: this file runs inside pi. The port policy is fixed: the configured
 // port (5834) is the only one ever bound. What answers there decides:
 //
-//   our server (same root)        attach — whichever session started it
+//   our server (same root)        attach — whichever session started it; but one
+//                                 started before its own source last changed is
+//                                 stopped and replaced, so /reload after an edit
+//                                 never leaves the old code serving pages
 //   an artifact server, other root refuse, naming the root and pid
 //   another program               refuse, naming the port
 //   nothing                       spawn, under a lock so two sessions starting
@@ -12,7 +15,7 @@
 // it survives the session.
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, openSync } from "node:fs";
+import { existsSync, mkdirSync, openSync, readdirSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { delimiter, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,6 +29,7 @@ import {
   ensureViewer,
   pidAlive,
   readServerRecord,
+  readToken,
   releaseLock,
   serverLogPath,
 } from "../store/control";
@@ -49,6 +53,16 @@ export function findBun(configured?: string, env: NodeJS.ProcessEnv = process.en
 /** The server entry, resolved from this file so it follows the extension wherever it is loaded from. */
 export function serveScriptPath(): string {
   return join(dirname(fileURLToPath(import.meta.url)), "..", "..", "server.ts");
+}
+
+/** When the newest file under the server's source tree last changed (ms). */
+export function codeChangedAt(dir: string = dirname(serveScriptPath())): number {
+  let newest = 0;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    newest = Math.max(newest, entry.isDirectory() ? codeChangedAt(path) : statSync(path).mtimeMs);
+  }
+  return newest;
 }
 
 export type Probe =
@@ -114,6 +128,7 @@ export interface LaunchOptions {
   serveScript?: string;
   waitMs?: number;
   environment?: NodeJS.ProcessEnv;
+  codeChangedAt?: () => number;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -129,7 +144,19 @@ const recordFrom = (health: Health): ServerRecord => ({
 /** Returns the running server for `root` on the port, starting one when the port is free. */
 export async function locateServer(options: LaunchOptions): Promise<Located> {
   const first = await probe(options.port, options.root);
-  if (first.kind === "ours") return { record: recordFrom(first.health), spawned: false };
+  if (first.kind === "ours") {
+    const changed = (options.codeChangedAt ?? codeChangedAt)();
+    if (changed <= Date.parse(first.health.startedAt)) {
+      return { record: recordFrom(first.health), spawned: false };
+    }
+    // Its code is older than the source on disk: replace it. Pending replies are on
+    // disk, and every other session's stream reconnects to the new process.
+    if (!(await stopServer(options.root, options.port, readToken(options.root)))) {
+      throw new Error(
+        `the artifact server on port ${options.port} (pid ${first.health.pid}) is running older code and did not stop; end that process and try again`,
+      );
+    }
+  }
   if (first.kind === "other-root") {
     throw new Error(
       `port ${options.port} is serving another project's artifacts (${first.health.root}, pid ${first.health.pid}); ` +

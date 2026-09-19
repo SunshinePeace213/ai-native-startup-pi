@@ -19,6 +19,9 @@ ai-native-startup/
 ├── .agents/ — Reusable agent workflows
 │   └── skills/ — Task-specific skills and their evals
 │       ├── agent-self-evals/ — Contract-first test and eval design
+│       ├── artifact-design/ — The design pass for an artifact page: the read, the design plan, the generic looks to avoid, and building it cleanly
+│       ├── artifact-diagramming/ — When a figure earns its place on an artifact page and how to draw it in inline SVG
+│       ├── artifact-pages/ — The artifact page contract: page rules, how the shell serves a fragment, the island and window.artifact
 │       ├── commit-message/ — Commit message formatting and validation
 │       ├── grilling/ — Structured requirement interviews
 │       ├── llm-wiki-crystallize/ — Preserve session findings in the KB
@@ -136,9 +139,9 @@ ai-native-startup/
   (the fs layout and the `.server/` control files), `http/` (Bun.serve on one fixed
   port, viewer/session auth, SSE hub, page and API routes), `render/`, `client/`,
   `process/` (probe, lock, spawn, stop), `log/` (pino). `ui/` runs inside pi:
-  `host.ts` per project per session, `hooks.ts` the lifecycle and the `alt+a` /
-  `alt+1…5` shortcuts, `strip.ts` and `overlay.ts` the footer badges and their
-  selector, `command.ts` `/artifacts`, `tool/` the model-facing contract. `page/` is
+  `host.ts` per project per session, `hooks.ts` the lifecycle and `alt+a`,
+  `strip.ts` the footer badges, `selector.ts` and `editor.ts` the footer's keys and
+  the editor that hands it focus on `down`, `command.ts` and `gallery.ts` `/artifacts`, `tool/` the model-facing contract. `page/` is
   the script and styles inlined into every page; `server.ts` the Bun entry;
   `index.ts` only wires. Replies never make versions, only the owning session is
   woken, nothing reaches the model unlabelled, and a page never answers a permission

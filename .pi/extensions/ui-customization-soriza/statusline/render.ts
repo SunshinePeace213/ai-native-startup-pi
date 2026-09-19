@@ -11,6 +11,12 @@
 //   🟢 OpenAI  5h ⛁ …  pct ↻ left · at         7d ⛁ …  pct ↻ left · at
 //   🏗️ architecture …   📚 wiki …   🎨 theme ██ …                       114k Tokens
 //
+// and, once the session has published an artifact, the strip takes the token
+// line and the other statuses keep the line above:
+//
+//   🏗️ architecture …   📚 wiki …   🎨 theme ██ …
+//   ⧉  beaufort · article 2                                             114k Tokens
+//
 // The middle lines are a grid: one row for the context, one per provider,
 // their names padded into a shared column so the bars, the percentages and
 // everything after them line up (see `layoutGrid`). The last line carries the
@@ -99,8 +105,11 @@ export const ICON = {
 export const STATUS_ICONS: ReadonlyArray<[key: string, icon: string]> = [
   ["architecture-sync", "🏗️"],
   ["llm-wiki", "📚"],
-  ["artifacts", "🧩"],
 ];
+
+/** The artifacts extension's strip: drawn on the token line, not among the statuses. */
+export const ARTIFACTS_STATUS_KEY = "artifacts";
+const ARTIFACTS_ICON = "⧉";
 
 const CONTEXT_CELLS = 10;
 const QUOTA_CELLS = 10;
@@ -480,7 +489,9 @@ function quotaCompact(p: Paint, snap: Snapshot): Segment[] {
 
 function statusLine(statuses: ReadonlyMap<string, string>): Segment[] {
   const known = new Map(STATUS_ICONS);
-  const keys = [...statuses.keys()].filter((k) => k !== THEME_STATUS_KEY && statuses.get(k));
+  const keys = [...statuses.keys()].filter(
+    (k) => k !== THEME_STATUS_KEY && k !== ARTIFACTS_STATUS_KEY && statuses.get(k),
+  );
   const ordered = [
     ...STATUS_ICONS.map(([k]) => k).filter((k) => keys.includes(k)),
     ...keys.filter((k) => !known.has(k)).sort((a, b) => a.localeCompare(b)),
@@ -516,6 +527,18 @@ export function renderStatusline(
     lines.push(...layoutGrid([session, ...quotaLines(p, snap, labelWidth)], width));
   }
   // The badge owns the bottom-right corner whether or not anything shares the line.
-  lines.push(layoutRight(statusLine(snap.statuses), tokenBadge(theme, snap.context), width));
+  const badge = tokenBadge(theme, snap.context);
+  const artifacts = snap.statuses.get(ARTIFACTS_STATUS_KEY);
+  if (artifacts) {
+    // The icon joins after sanitize, which would fold its two spaces into one.
+    const strip: Segment = {
+      full: `${p.dim(ARTIFACTS_ICON)}  ${sanitize(artifacts)}`,
+      priority: Infinity,
+    };
+    lines.push(layout(statusLine(snap.statuses), width));
+    lines.push(layoutRight([strip], badge, width));
+  } else {
+    lines.push(layoutRight(statusLine(snap.statuses), badge, width));
+  }
   return lines.filter((line, i) => i === 0 || line.trim().length > 0);
 }

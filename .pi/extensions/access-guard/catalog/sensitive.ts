@@ -253,6 +253,8 @@ export const SENSITIVE_CATALOG: readonly SensitiveCategory[] = [
       "/.codex/auth.json",
       "/.pi/agent/auth.json", // + Pi's own API keys and OAuth tokens
       "/.gemini/oauth_creds.json", // + Gemini CLI
+      "/.pi/artifacts/.server/token", // + the artifact server's session token: pages are authored one folder away
+      "/.pi/artifacts/.server/viewer", // + and the token that opens every page
     ],
   },
 ];

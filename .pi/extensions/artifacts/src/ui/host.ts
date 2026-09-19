@@ -8,7 +8,7 @@
 
 import { type Logger, silentLogger } from "../app/ports";
 import { decideDelivery } from "../app/routing";
-import { envelope, pendingSummary } from "../domain/envelope";
+import { attachedNote, envelope, pendingSummary } from "../domain/envelope";
 import { slugFromRef } from "../domain/protocol";
 import type {
   Config,
@@ -58,6 +58,8 @@ export class Host {
   private readonly wakes = new Map<string, number[]>();
   /** The version this session last saw of each artifact: the stale guard on republish. */
   private readonly seen = new Map<string, number>();
+  /** Source path → slug, so the same file_path republished carries the guard too. */
+  private readonly slugByPath = new Map<string, string>();
   private readonly heldNoticed = new Set<string>();
   private readonly now: () => Date;
   private readonly log: Logger;
@@ -109,6 +111,13 @@ export class Host {
     this.log.info({ action: "disconnect" }, "disconnected");
   }
 
+  /** Ends the server process and starts a fresh one; this session keeps its badges and versions. */
+  async restart(): Promise<Endpoint> {
+    await this.shutdown(true);
+    this.client.forget();
+    return this.start();
+  }
+
   url(slug: string, withToken = true): string {
     return this.client.pageUrl(slug, withToken);
   }
@@ -124,7 +133,9 @@ export class Host {
 
   async publish(request: Omit<PublishRequest, "session" | "baseVersion">): Promise<Published> {
     await this.start();
-    const baseVersion = request.update ? this.seen.get(request.update) : undefined;
+    const slug =
+      request.update ?? (request.sourcePath ? this.slugByPath.get(request.sourcePath) : undefined);
+    const baseVersion = slug ? this.seen.get(slug) : undefined;
     const result = await this.client.publish({ ...request, baseVersion });
     this.remember(result.manifest);
     this.log.info(
@@ -142,11 +153,27 @@ export class Host {
   /** Records that this session now holds this version, and shows it in the strip. */
   remember(m: Manifest): void {
     this.seen.set(m.slug, m.current);
+    if (m.sourcePath) this.slugByPath.set(m.sourcePath, m.slug);
     this.strip.upsert(badgeFrom(m, this.client.pageUrl(m.slug)));
+  }
+
+  /** The user's attach from /artifacts: adopt the page, show it, and tell the model with the next prompt. */
+  async attach(slug: string): Promise<Manifest> {
+    const m = await this.client.watch(slug, true);
+    this.remember(m);
+    const url = this.client.pageUrl(slug, false);
+    this.deps.send(
+      attachedNote(m.title, slug, m.current, url),
+      { deliverAs: "nextTurn" },
+      { slug, version: m.current, kind: "attach", url },
+    );
+    this.log.info({ action: "attach", slug }, "attached");
+    return m;
   }
 
   forget(slug: string): void {
     this.seen.delete(slug);
+    for (const [path, s] of this.slugByPath) if (s === slug) this.slugByPath.delete(path);
     this.strip.remove(slug);
   }
 

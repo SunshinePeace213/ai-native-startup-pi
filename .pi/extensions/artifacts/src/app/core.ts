@@ -5,7 +5,7 @@
 // the server installs; the event stays pending until a session acknowledges
 // it. No filesystem, no network: the ports do that.
 
-import { PREFIX, SLUG_RE } from "../domain/protocol";
+import { PREFIX, SLUG_RE, slugForSourcePath } from "../domain/protocol";
 import { expiredLogDates, isExpired } from "../domain/retention";
 import { declaredSchema, validateAnswers, validateQuestionsShape } from "../domain/schemas";
 import {
@@ -125,9 +125,17 @@ export class Core {
     let existing = input.update ? this.store.get(input.update) : null;
     if (input.update && !existing)
       throw new PublishError(`no artifact "${input.update}" to update`, 404);
-    // Claude Code's rule: the same source file republishes to the same URL.
-    if (!existing && !input.slug && input.sourcePath) {
-      existing = this.store.findBySourcePath(input.sourcePath);
+    // The artifact is its folder: a page authored inside the store names its slug.
+    const folderSlug = input.sourcePath ? slugForSourcePath(input.sourcePath) : null;
+    if (folderSlug && input.slug && input.slug.trim().toLowerCase() !== folderSlug) {
+      throw new PublishError(
+        `${input.sourcePath} is in the folder of "${folderSlug}", so it publishes there; drop slug "${input.slug}" or write the page in that slug's folder`,
+      );
+    }
+    // Claude Code's rule: the same source file republishes to the same URL,
+    // for a session that published or attached it; any other gets its own.
+    if (!existing && input.sourcePath && (!input.slug || folderSlug)) {
+      existing = this.store.findBySourcePath(input.sourcePath, input.session);
     }
     if (
       existing &&
@@ -147,7 +155,9 @@ export class Core {
       this.renderer.title(input.source, input.kind) ||
       existing?.title ||
       "artifact";
-    const slug = existing ? existing.slug : this.newSlug(input.slug, title);
+    const slug = existing
+      ? existing.slug
+      : this.newSlug(input.slug ?? folderSlug ?? undefined, title);
     const page = this.renderer.build({
       source: input.source,
       kind: input.kind,
@@ -425,7 +435,7 @@ export class Core {
     }
     if (this.store.exists(slug)) {
       throw new PublishError(
-        `an artifact already lives at ${PREFIX}/${slug}; pass url "${slug}" to update it, or choose another slug`,
+        `an artifact already lives at ${PREFIX}/${slug}; pass url "${slug}" to update it (the user can attach it from /artifacts), or choose another slug`,
       );
     }
     return slug;

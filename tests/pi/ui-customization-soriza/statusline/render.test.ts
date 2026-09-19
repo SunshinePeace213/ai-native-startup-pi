@@ -35,7 +35,9 @@
 //     Every icon is followed by a space; sibling icon groups are separated by ·.
 // R6: the last line lists other extensions' statuses with their icons in the
 //     fixed order (architecture-sync, llm-wiki, then unknown keys) and the
-//     theme status last on its left, and the session's context length as
+//     theme status last on its left — the artifact strip apart, which takes the
+//     token line as `⧉  <strip>` and leaves the rest the line above — and the
+//     session's context length as
 //     `<count> Tokens` — the exact count, not the Context row's abbreviation —
 //     flush against its right edge; with no statuses the badge still holds the
 //     corner, it follows the Context row's own figure, and control characters
@@ -480,6 +482,25 @@ describe("R6 status line", () => {
     expect(positions.every((i) => i >= 0)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
     expect(line).toContain("██");
+  });
+
+  test("R6 the artifact strip takes the token line as ⧉; the other statuses keep the line above", () => {
+    const statuses = new Map([
+      ["artifacts", "beaufort · article 2"],
+      ["soriza-theme", themeStatus(theme)],
+      ["llm-wiki", "wiki queue 2"],
+    ]);
+    const lines = plain(snapshot({ statuses }));
+    expect(lines).toHaveLength(6);
+    expect(lines[4]).toContain("📚 wiki queue 2");
+    expect(lines[4]).toContain("🎨 nord");
+    expect(lines[4]).not.toContain("Tokens");
+    expect(lines[5]!.startsWith("⧉  beaufort · article 2")).toBe(true);
+    expect(lines[5]).toMatch(/ {2,}84,000 Tokens$/);
+    // with nothing else to show, the strip and the badge are the only last line
+    const alone = plain(snapshot({ statuses: new Map([["artifacts", "beaufort"]]) }));
+    expect(alone).toHaveLength(5);
+    expect(alone[4]!.startsWith("⧉  beaufort")).toBe(true);
   });
 
   test("R6 no statuses → the badge still holds the line; newlines stay on one line", () => {

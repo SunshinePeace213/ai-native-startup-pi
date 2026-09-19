@@ -27,6 +27,19 @@ export const API_PREFIX = "/api";
 /** A slug: lowercase letters, digits, and hyphens, starting with a letter or digit. */
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
+/** The store, relative to the project: where artifacts live and where pages are authored. */
+export const STORE_DIR = ".pi/artifacts";
+/** Inside an artifact's folder: the server's files, beside the page the agent authors. */
+export const STORE_SUBDIR = ".store";
+
+/** The artifact is its folder: a page authored at <STORE_DIR>/<slug>/<file> publishes to that slug. */
+export function slugForSourcePath(sourcePath: string): string | null {
+  const parts = sourcePath.split("\\").join("/").split("/");
+  const [pi, artifacts] = STORE_DIR.split("/");
+  if (parts.length !== 4 || parts[0] !== pi || parts[1] !== artifacts) return null;
+  return SLUG_RE.test(parts[2] as string) ? (parts[2] as string) : null;
+}
+
 export const pagePath = (slug: string) => `${PREFIX}/${slug}`;
 export const galleryPath = () => `${PREFIX}/`;
 

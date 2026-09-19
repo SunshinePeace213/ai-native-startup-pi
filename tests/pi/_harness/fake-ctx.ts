@@ -10,6 +10,8 @@ export interface FakeCtx {
   status: Map<string, string | undefined>;
   notifications: Array<{ message: string; type: string }>;
   dialogs: Array<{ kind: "confirm" | "select"; title: string; detail: string | string[] }>;
+  /** Whether an extension has replaced the editor. */
+  customEditor: () => boolean;
 }
 
 export function createCtx(options: {
@@ -26,6 +28,7 @@ export function createCtx(options: {
   const status = new Map<string, string | undefined>();
   const notifications: Array<{ message: string; type: string }> = [];
   const dialogs: FakeCtx["dialogs"] = [];
+  let editorFactory: unknown;
   const ctx = {
     cwd: options.cwd,
     hasUI: options.hasUI ?? true,
@@ -46,6 +49,9 @@ export function createCtx(options: {
       setStatus(key: string, text: string | undefined) {
         status.set(key, text);
       },
+      setEditorComponent(factory: unknown) {
+        editorFactory = factory;
+      },
       async confirm(title: string, message: string) {
         dialogs.push({ kind: "confirm", title, detail: message });
         if (!options.confirm) throw new Error("fake-ctx: ui.confirm is not scripted");
@@ -58,5 +64,5 @@ export function createCtx(options: {
       },
     },
   } as unknown as ExtensionCommandContext;
-  return { ctx, status, notifications, dialogs };
+  return { ctx, status, notifications, dialogs, customEditor: () => editorFactory !== undefined };
 }

@@ -10,9 +10,13 @@
 //     nothing is spawned either way
 // P4: two sessions locating together spawn one server: one takes the lock, the other
 //     waits and attaches
-// P5: the server writes logs/<date>/server.jsonl lines with an action, and the pi
+// P5: the server writes logs/<date>/server.jsonl lines with an action and a local
+//     time carrying its offset, and the pi
 //     side's logger writes logs/<date>/<session>.jsonl beside it; neither line
 //     carries the token
+// P6: a server started before its own source last changed is replaced, not attached
+//     to: /reload after an edit must never leave the old process serving pages; a
+//     server newer than its source is attached to as before
 
 import { afterEach, describe, expect, test } from "bun:test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -151,9 +155,34 @@ describe("P5 logs", () => {
       .split("\n")
       .map((l) => JSON.parse(l) as Record<string, unknown>);
     expect(serverLines.some((l) => l.action === "start")).toBe(true);
+    // local wall clock with its offset, never a bare UTC "Z"
+    for (const l of serverLines)
+      expect(l.time).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}$/);
     const sessionLine = readFileSync(sessionFile as string, "utf8");
     expect(sessionLine).toContain('"action":"publish"');
     expect(sessionLine).not.toContain(readToken(root) as string);
     expect(sessionLine).toContain("[redacted]");
   }, 30_000);
+});
+
+describe("P6 a server older than its code", () => {
+  test("P6 locate stops it and starts a fresh one; a current server is attached to", async () => {
+    const { root, trashDir } = scratch();
+    const port = await freePort();
+    cleanups.push(async () => {
+      await stopServer(root, port, readToken(root));
+    });
+    const first = await launch(root, trashDir, port);
+    expect(first.spawned).toBe(true);
+    const base = { root, port, trashDir, retentionDays: 14, waitMs: 15_000 };
+    // the code is older than the server: attach
+    const current = await locateServer({ ...base, codeChangedAt: () => 0 });
+    expect(current).toMatchObject({ spawned: false, record: { pid: first.record.pid } });
+    // the code changed after the server started: replace it
+    const edited = Date.parse(first.record.startedAt) + 1;
+    const replaced = await locateServer({ ...base, codeChangedAt: () => edited });
+    expect(replaced.spawned).toBe(true);
+    expect(replaced.record.pid).not.toBe(first.record.pid);
+    expect(Date.parse(replaced.record.startedAt)).toBeGreaterThanOrEqual(edited);
+  }, 40_000);
 });

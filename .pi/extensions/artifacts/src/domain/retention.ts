@@ -22,6 +22,19 @@ export function logDate(now: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+/**
+ * A log line's time: the local wall clock with its offset
+ * (`2026-09-20T07:22:36.062+08:00`), so it reads like the folder it sits in
+ * and still parses to the exact instant. `offsetMinutes` is east of UTC.
+ */
+export function localIso(now: Date, offsetMinutes = -now.getTimezoneOffset()): string {
+  const shifted = new Date(now.getTime() + offsetMinutes * 60_000).toISOString().slice(0, -1);
+  const abs = Math.abs(offsetMinutes);
+  const hh = String(Math.floor(abs / 60)).padStart(2, "0");
+  const mm = String(abs % 60).padStart(2, "0");
+  return `${shifted}${offsetMinutes < 0 ? "-" : "+"}${hh}:${mm}`;
+}
+
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Which of the named log folders are older than the retention window. */

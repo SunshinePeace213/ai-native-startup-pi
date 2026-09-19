@@ -52,8 +52,8 @@ export interface ArtifactStore {
   list(): Manifest[];
   get(slug: string): Manifest | null;
   exists(slug: string): boolean;
-  /** The artifact last published from this project-relative path, if any. */
-  findBySourcePath(path: string): Manifest | null;
+  /** The artifact this session published or attached from this project-relative path, if any. */
+  findBySourcePath(path: string, session: string): Manifest | null;
   freeSlug(title: string): string;
   create(input: CreateInput): Manifest;
   addVersion(slug: string, input: VersionInput): VersionRecord;

@@ -1,6 +1,9 @@
-/* Base page styles and the runtime's own controls (af-* classes). Inlined
-   into every published page by server/render/shell.ts; a page's own CSS wins
-   on specificity because it comes later in the document. */
+/* The runtime's own controls (af-* classes) and two grounds, inlined into
+   every published page by infra/render/shell.ts. `.af-base` is the look for a
+   page that brings no stylesheet (a bare fragment, Markdown): its element
+   rules (`.af-base h1`) outrank a page's own `h1`, which is why a fragment
+   with a <style> gets `.af-ground` instead — margin, ground, ink and face
+   at zero specificity, and not one element rule. */
 
 :root {
   --af-bg: #fff;
@@ -29,6 +32,13 @@
   }
 }
 .af-base {
+  margin: 0;
+  background: var(--af-bg);
+  color: var(--af-fg);
+  font: 16px/1.55 var(--af-font);
+}
+/* Zero specificity: a designed page paints its own `body`, and must win. */
+:where(.af-ground) {
   margin: 0;
   background: var(--af-bg);
   color: var(--af-fg);

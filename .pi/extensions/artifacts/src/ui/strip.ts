@@ -1,14 +1,16 @@
 // The footer strip: the artifacts this session published, as clickable
 // badges on the status line — Claude Code's footer links, hosted locally.
 //
-//   🧩 1 pricing-plan v2 · 2 ● roadmap v1 · +3
+//   ⧉ pricing-plan · ● roadmap · +3
+//   ⧉  pricing-plan  · ● roadmap · +3 · Enter to open · x to dismiss
 //
-// A badge is `<n> <icon?> <title> <version>`, `●` when a reply is waiting;
-// its text is wrapped in an OSC 8 hyperlink so Ctrl/Cmd+click opens the page
-// in terminals that support it. At most five badges show; the rest fold into
-// `+N`. Titles pass through terminalSafe first: a title can never rewrite the
-// line. Rendering is a pure function of the badges so the overlay draws the
-// same row with one badge highlighted.
+// A badge is its title, `●` first when a reply is waiting; its text is
+// wrapped in an OSC 8 hyperlink so Ctrl/Cmd+click opens the page in terminals
+// that support it. At most five badges show; the rest fold into `+N`. When
+// one is selected (the editor handed focus to the footer) it is drawn as a
+// filled pill, the window of five follows it, and the keys are named after
+// the row. Titles pass through terminalSafe first: a title can never rewrite
+// the line. The `⧉` is the statusline's to draw.
 
 import { terminalSafe } from "../domain/text";
 import type { Manifest } from "../domain/types";
@@ -17,7 +19,6 @@ import { versionLabel } from "../domain/versioning";
 export interface Badge {
   slug: string;
   title: string;
-  icon?: string;
   /** "v2" or "v2 · 1 reply". */
   version: string;
   /** With the viewer token, so a click authenticates. */
@@ -30,6 +31,7 @@ export interface Badge {
 
 export const STRIP_KEY = "artifacts";
 export const MAX_BADGES = 5;
+export const SELECT_HINT = "Enter to open · x to dismiss";
 
 export interface Paint {
   accent(text: string): string;
@@ -52,7 +54,6 @@ export function badgeFrom(m: Manifest, url: string): Badge {
   return {
     slug: m.slug,
     title: m.title,
-    icon: m.icon,
     version: versionLabel(m),
     url,
     pending: m.pending.length,
@@ -60,16 +61,14 @@ export function badgeFrom(m: Manifest, url: string): Badge {
   };
 }
 
-export function badgeText(b: Badge, index: number): string {
-  const icon = b.icon ? `${terminalSafe(b.icon, 4)} ` : "";
-  const mark = b.pending ? "● " : "";
-  return `${index + 1} ${mark}${icon}${terminalSafe(b.title, 28)} ${terminalSafe(b.version, 16)}`;
+export function badgeText(b: Badge): string {
+  return `${b.pending ? "● " : ""}${terminalSafe(b.title, 28)}`;
 }
 
 export interface RenderOptions {
   paint?: Paint;
-  /** Index of the highlighted badge (overlay mode). */
-  selected?: number;
+  /** Index of the selected badge, while the footer has focus. */
+  selected?: number | null;
   /** Wrap badges in OSC 8 links (off when the text is measured or tested). */
   links?: boolean;
   max?: number;
@@ -80,12 +79,14 @@ export function renderStrip(badges: readonly Badge[], options: RenderOptions = {
   const paint = options.paint ?? plainPaint;
   const max = options.max ?? MAX_BADGES;
   if (!badges.length) return "";
-  const shown = badges.slice(0, max);
+  const selected = options.selected ?? null;
+  const start = selected === null ? 0 : Math.max(0, selected - max + 1);
+  const shown = badges.slice(start, start + max);
   const parts = shown.map((b, i) => {
-    const text = badgeText(b, i);
+    const text = badgeText(b);
     const painted =
-      options.selected === i
-        ? paint.selected(text)
+      selected === start + i
+        ? paint.selected(` ${text} `)
         : b.pending
           ? paint.warn(text)
           : paint.accent(text);
@@ -93,6 +94,7 @@ export function renderStrip(badges: readonly Badge[], options: RenderOptions = {
   });
   const more = badges.length - shown.length;
   if (more > 0) parts.push(paint.dim(`+${more}`));
+  if (selected !== null) parts.push(paint.dim(SELECT_HINT));
   return parts.join(paint.dim(" · "));
 }
 
@@ -100,6 +102,21 @@ export function renderStrip(badges: readonly Badge[], options: RenderOptions = {
 export class Strip {
   private readonly badges = new Map<string, Badge>();
   private listeners: Array<() => void> = [];
+  private index: number | null = null;
+
+  /** The selected badge's index, or null while the editor has the focus. */
+  get selected(): number | null {
+    return this.index;
+  }
+
+  /** Selects a badge (clamped to the list) or, with null, hands focus back. */
+  select(index: number | null): void {
+    const n = this.badges.size;
+    const next = index === null || n === 0 ? null : Math.min(Math.max(index, 0), n - 1);
+    if (next === this.index) return;
+    this.index = next;
+    this.emit();
+  }
 
   onChange(fn: () => void): () => void {
     this.listeners.push(fn);
@@ -127,11 +144,14 @@ export class Strip {
   }
 
   remove(slug: string): void {
-    if (this.badges.delete(slug)) this.emit();
+    if (!this.badges.delete(slug)) return;
+    if (this.index !== null)
+      this.index = this.badges.size ? Math.min(this.index, this.badges.size - 1) : null;
+    this.emit();
   }
 
   render(options: RenderOptions = {}): string {
-    return renderStrip(this.list(), options);
+    return renderStrip(this.list(), { selected: this.index, ...options });
   }
 
   private emit(): void {

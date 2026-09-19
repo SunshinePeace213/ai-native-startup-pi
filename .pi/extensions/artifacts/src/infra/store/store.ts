@@ -3,18 +3,18 @@
 //
 //   .server/                     control files (control.ts)
 //   logs/<date>/*.jsonl          pino, one file per session and one for the server
-//   <slug>/manifest.json         title, owner, sessions, versions, responses, pin, pending
-//   <slug>/index.html            the current page: the version with the newest reply over it
-//   <slug>/source.html|md        the agent's latest source
-//   <slug>/versions/v<N>.html    every agent version as published, append-only
-//   <slug>/versions/v<N>.json    the island of that version
-//   <slug>/responses/v<N>-r<K>.json   what the page sent back to version N
-//   <slug>/comments.json
-//   <slug>/diagnostics.json      what viewers' browsers reported
-//   <slug>/events.jsonl          every page event, delivered or not
+//   <slug>/<file>.html|md        the page the agent authors, when it writes it here;
+//                                the server never writes it
+//   <slug>/.store/               everything below is the server's
+//     manifest.json              title, owner, sessions, versions, responses, pin, pending
+//     index.html                 the current page: the version with the newest reply over it
+//     source.html|md             the source as last published (the authored page may move on)
+//     versions/v<N>.html|json    every agent version as published, and its island; append-only
+//     responses/v<N>-r<K>.json   what the page sent back to version N
+//     comments.json · diagnostics.json · events.jsonl
 //
-// Writes are atomic (tmp + rename). Deleting an artifact moves its folder
-// into the trash directory; only expired log folders are removed outright.
+// Writes are atomic (tmp + rename). Deleting an artifact moves its whole
+// folder, authored page included, into the trash directory; only expired log folders are removed outright.
 
 import { randomBytes } from "node:crypto";
 import {
@@ -28,7 +28,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 
-import { SLUG_RE } from "../../domain/protocol";
+import { SLUG_RE, STORE_SUBDIR } from "../../domain/protocol";
 import { logDate } from "../../domain/retention";
 import { SLUG_MAX, slugify } from "../../domain/text";
 import type {
@@ -47,6 +47,9 @@ import type { ArtifactStore, CreateInput, ResponseInput, VersionInput } from "..
 import { CONTROL_DIR, readJson, writeAtomic } from "./control";
 
 export const LOGS_DIR = "logs";
+/** What the server wrote at the top of an artifact's folder before `.store`. */
+const FLAT_LAYOUT =
+  /^(manifest\.json|index\.html|source\.(html|md)|versions|responses|comments\.json|diagnostics\.json|events\.jsonl)$/;
 /** Views touch the manifest at most this often. */
 const TOUCH_MIN_MS = 60 * 60 * 1000;
 
@@ -57,8 +60,30 @@ export class Store implements ArtifactStore {
     private readonly now: () => Date = () => new Date(),
   ) {}
 
-  private dir(slug: string): string {
+  /** The artifact's folder: the authored page and the store beside it. */
+  private folder(slug: string): string {
     return join(this.root, slug);
+  }
+
+  /** Where the server's files for an artifact live. */
+  private dir(slug: string): string {
+    return join(this.root, slug, STORE_SUBDIR);
+  }
+
+  /** Moves artifacts written before `.store` existed under it; returns their slugs. */
+  migrate(): string[] {
+    if (!existsSync(this.root)) return [];
+    const moved: string[] = [];
+    for (const d of readdirSync(this.root, { withFileTypes: true })) {
+      if (!d.isDirectory() || !SLUG_RE.test(d.name) || d.name === LOGS_DIR) continue;
+      const folder = this.folder(d.name);
+      if (!existsSync(join(folder, "manifest.json")) || existsSync(this.dir(d.name))) continue;
+      const names = readdirSync(folder).filter((name) => FLAT_LAYOUT.test(name));
+      mkdirSync(this.dir(d.name));
+      for (const name of names) renameSync(join(folder, name), join(this.dir(d.name), name));
+      moved.push(d.name);
+    }
+    return moved;
   }
 
   list(): Manifest[] {
@@ -80,8 +105,8 @@ export class Store implements ArtifactStore {
     return this.get(slug) !== null;
   }
 
-  findBySourcePath(path: string): Manifest | null {
-    return this.list().find((m) => m.sourcePath === path) ?? null;
+  findBySourcePath(path: string, session: string): Manifest | null {
+    return this.list().find((m) => m.sourcePath === path && m.sessions.includes(session)) ?? null;
   }
 
   /** A slug for a new artifact: the title's, made unique. */
@@ -303,7 +328,7 @@ export class Store implements ArtifactStore {
     mkdirSync(day, { recursive: true });
     let dest = join(day, slug);
     while (existsSync(dest)) dest = `${join(day, slug)}-${randomBytes(2).toString("hex")}`;
-    renameSync(this.dir(slug), dest);
+    renameSync(this.folder(slug), dest);
     return dest;
   }
 

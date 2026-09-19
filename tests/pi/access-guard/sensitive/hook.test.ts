@@ -51,6 +51,18 @@ const BLOCKED: Array<[id: string, tool: string, input: Record<string, unknown>, 
   ["S2 find under ~/.gnupg", "find", { pattern: "*", path: "/home/u/.gnupg" }, "Certificates"],
   ["S2 read Pi's own auth store", "read", { path: "~/.pi/agent/auth.json" }, "AI-tool auth"],
   [
+    "S2 read the artifact server's session token",
+    "read",
+    { path: ".pi/artifacts/.server/token" },
+    "AI-tool auth",
+  ],
+  [
+    "S2 read the artifact server's viewer token",
+    "read",
+    { path: ".pi/artifacts/.server/viewer" },
+    "AI-tool auth",
+  ],
+  [
     "S2 read cargo's current credentials name",
     "read",
     { path: "/home/u/.cargo/credentials.toml" },

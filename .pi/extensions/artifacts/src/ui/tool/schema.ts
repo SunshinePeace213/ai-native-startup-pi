@@ -74,7 +74,10 @@ const assumptionSchema = Type.Object({
 export const artifactSchema = Type.Object({
   action: Type.Optional(StringEnum(ACTIONS, { description: "Default publish" })),
   file_path: Type.Optional(
-    Type.String({ description: "publish/ask: an .html, .htm, or .md file inside the project" }),
+    Type.String({
+      description:
+        "publish/ask: an .html, .htm, or .md file inside the project; by default .pi/artifacts/<slug>/<slug>.html, where the folder names the slug",
+    }),
   ),
   url: Type.Optional(
     Type.String({

@@ -4,7 +4,8 @@
 //     a page reply is stale unless it names the current version, and the island a
 //     reader sees is the version with the newest reply laid over it
 // D2: an artifact expires only when unpinned and idle past retention; log folders
-//     expire by their date; a malformed name never expires
+//     expire by their date; a malformed name never expires; a log line's time is
+//     the local wall clock with its offset, the same instant as the UTC reading
 // D3: config keeps the port fixed at 5834 unless the file names one; bad values fall
 //     back per key, never as a whole
 // D4: a questions island is validated against itself: answers naming real options
@@ -18,7 +19,7 @@ import { describe, expect, test } from "bun:test";
 
 import { parseConfig } from "@ext/artifacts/src/domain/config";
 import { envelope } from "@ext/artifacts/src/domain/envelope";
-import { expiredLogDates, isExpired } from "@ext/artifacts/src/domain/retention";
+import { expiredLogDates, isExpired, localIso } from "@ext/artifacts/src/domain/retention";
 import { validateAnswers } from "@ext/artifacts/src/domain/schemas";
 import { terminalSafe } from "@ext/artifacts/src/domain/text";
 import type { Manifest, PageEvent } from "@ext/artifacts/src/domain/types";
@@ -78,6 +79,16 @@ describe("D1 versions are agent publishes; replies answer a version", () => {
 });
 
 describe("D2 retention", () => {
+  test("D2 log time is local wall clock with its offset", () => {
+    const at = new Date("2026-09-19T23:22:36.062Z");
+    expect(localIso(at, 480)).toBe("2026-09-20T07:22:36.062+08:00");
+    expect(localIso(at, -210)).toBe("2026-09-19T19:52:36.062-03:30");
+    expect(localIso(at, 0)).toBe("2026-09-19T23:22:36.062+00:00");
+    for (const offset of [480, -210, 0, 345])
+      expect(Date.parse(localIso(at, offset))).toBe(at.getTime());
+    // the default is this process's own zone
+    expect(Date.parse(localIso(at))).toBe(at.getTime());
+  });
   const now = new Date("2026-01-20T00:00:00.000Z");
   test.each([
     ["idle 19 days, unpinned", { lastActivityAt: "2026-01-01T00:00:00.000Z" }, true],

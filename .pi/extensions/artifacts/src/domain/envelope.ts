@@ -104,6 +104,12 @@ export function pendingSummary(rows: PendingRow[]): string {
   return lines.join("\n");
 }
 
+/** What the session is told when the user attaches a page to it from /artifacts. */
+export const attachedNote = (title: string, slug: string, version: number, url: string): string =>
+  `The user attached the artifact "${title}" (${slug}), now v${version}, to this session from /artifacts: this session owns it, ` +
+  `its sends wake this session, and publishing its source file again republishes it in place. Another session may have written it, ` +
+  `so use action "read" (url ${slug}) before changing it. Page: ${url}`;
+
 export const threadSummary = (t: CommentThread): string =>
   `${t.id}${t.anchor ? ` · ${t.anchor}` : ""} · ${t.toAgent ? "sent to agent" : "note"}${t.resolved ? " · resolved" : ""}\n` +
   t.messages.map((m) => `  - ${m.author} (${m.at}): ${m.text}`).join("\n");

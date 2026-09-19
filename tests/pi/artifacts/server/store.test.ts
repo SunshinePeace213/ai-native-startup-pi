@@ -1,9 +1,9 @@
 // Contract — the store on disk (src/infra/store) through the core
 //
-// T1: a publish writes <slug>/index.html, source, versions/v1.html+json, and a
-//     manifest owned by the publishing session; a republish appends v2 and
+// T1: a publish writes <slug>/.store/index.html, source, versions/v1.html+json, and
+//     a manifest owned by the publishing session; a republish appends v2 and
 //     rewrites index.html; the old version stays readable
-// T2: a page reply writes responses/v<N>-r<K>.json, leaves `current` alone, and the
+// T2: a page reply writes .store/responses/v<N>-r<K>.json, leaves `current` alone, and the
 //     current island is the version with the reply over it; a second reply is r2
 // T3: a republish or watch from another session makes it the owner and lists it
 //     among the sessions; pin flips the flag; a view moves lastActivityAt
@@ -11,10 +11,24 @@
 //     from the store; nothing is unlinked
 // T5: the sweep trashes only unpinned artifacts idle past retention and removes only
 //     log folders dated past it
-// T6: the same source path republishes in place; a different path is a new slug
+// T6: the same source path republishes in place for a session that published or
+//     attached it; a different path, or a session that never saw it, is a new slug
+// T7: the artifact is its folder: a page authored at .pi/artifacts/<slug>/<file>
+//     publishes to that slug whatever its title, and republishes it; the server's
+//     files live under <slug>/.store and the authored page is never written to;
+//     delete moves the whole folder, authored page included; a slug another session
+//     owns is refused; a flat folder from the old layout is moved under .store
 
 import { afterEach, describe, expect, test } from "bun:test";
-import { existsSync, mkdirSync, readdirSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -41,7 +55,7 @@ describe("T1 versions on disk", () => {
       session: "A",
       sourcePath: "plan.html",
     });
-    const dir = join(s.root, first.manifest.slug);
+    const dir = join(s.root, first.manifest.slug, ".store");
     expect(existsSync(join(dir, "index.html"))).toBe(true);
     expect(existsSync(join(dir, "source.html"))).toBe(true);
     expect(existsSync(join(dir, "versions", "v1.html"))).toBe(true);
@@ -79,7 +93,7 @@ describe("T2 replies", () => {
     });
     expect(out.status).toBe(200);
     expect(out.body).toMatchObject({ version: 1, response: 1 });
-    expect(existsSync(join(s.root, slug, "responses", "v1-r1.json"))).toBe(true);
+    expect(existsSync(join(s.root, slug, ".store", "responses", "v1-r1.json"))).toBe(true);
     expect(s.store.get(slug)?.current).toBe(1);
     expect(s.store.readIsland(slug)).toEqual({ schema: "x", a: 1, b: 2 });
     expect(s.store.readVersionIsland(slug, 1)).toEqual({ schema: "x", a: 1 });
@@ -100,7 +114,9 @@ describe("T2 replies", () => {
     const p = s.core.publish({ kind: "html", source: html(""), session: "A" });
     s.core.publish({ kind: "html", source: html("v2"), update: p.manifest.slug, session: "A" });
     expect(s.core.respondFromPage(p.manifest.slug, { base_version: 1, data: {} }).status).toBe(409);
-    expect(existsSync(join(s.root, p.manifest.slug, "responses", "v1-r1.json"))).toBe(false);
+    expect(existsSync(join(s.root, p.manifest.slug, ".store", "responses", "v1-r1.json"))).toBe(
+      false,
+    );
     s.server.stop();
   });
 });
@@ -138,7 +154,7 @@ describe("T4 delete", () => {
     const p = s.core.publish({ kind: "html", source: html(""), session: "A" });
     const dest = s.core.remove(p.manifest.slug);
     expect(dest.startsWith(join(s.trashDir, "pi-artifacts", "2026-03-04"))).toBe(true);
-    expect(existsSync(join(dest, "manifest.json"))).toBe(true);
+    expect(existsSync(join(dest, ".store", "manifest.json"))).toBe(true);
     expect(s.store.get(p.manifest.slug)).toBeNull();
     s.server.stop();
   });
@@ -198,6 +214,35 @@ describe("T6 the same file republishes in place", () => {
     expect(c.manifest.slug).not.toBe(a.manifest.slug);
     s.server.stop();
   });
+  test("T6 a session that never published or attached the path gets its own artifact", () => {
+    const s = scratch();
+    const a = s.core.publish({
+      kind: "html",
+      source: html("1"),
+      sourcePath: "docs/plan.html",
+      session: "A",
+    });
+    const b = s.core.publish({
+      kind: "html",
+      source: html("2"),
+      sourcePath: "docs/plan.html",
+      session: "B",
+    });
+    expect(b.created).toBe(true);
+    expect(b.manifest.slug).not.toBe(a.manifest.slug);
+    expect(s.store.get(a.manifest.slug)).toMatchObject({ current: 1, owner: "A" });
+    // Attaching is how B opts in: the same path then republishes A's page.
+    s.core.setWatched(a.manifest.slug, true, "C");
+    const c = s.core.publish({
+      kind: "html",
+      source: html("3"),
+      sourcePath: "docs/plan.html",
+      session: "C",
+    });
+    expect(c.manifest.slug).toBe(a.manifest.slug);
+    expect(c.version).toBe(2);
+    s.server.stop();
+  });
   test("T6 a republish carrying a stale baseVersion is refused with the current one", () => {
     const s = scratch();
     const a = s.core.publish({ kind: "html", source: html("1"), session: "A" });
@@ -211,6 +256,64 @@ describe("T6 the same file republishes in place", () => {
         session: "A",
       }),
     ).toThrow(/v2/);
+    s.server.stop();
+  });
+});
+
+describe("T7 the artifact is its folder", () => {
+  const authored = (root: string, slug: string, body: string) => {
+    mkdirSync(join(root, slug), { recursive: true });
+    writeFileSync(join(root, slug, "page.html"), body);
+    return `.pi/artifacts/${slug}/page.html`;
+  };
+  test("T7 the folder names the slug; the store sits beside the authored page", () => {
+    const s = scratch();
+    const sourcePath = authored(s.root, "shortwave-dial", "<h1>A Different Title</h1>");
+    const first = s.core.publish({
+      kind: "html",
+      source: "<h1>A Different Title</h1>",
+      sourcePath,
+      session: "A",
+    });
+    expect(first.manifest.slug).toBe("shortwave-dial");
+    expect(first.manifest.title).toBe("A Different Title");
+    expect(readdirSync(join(s.root, "shortwave-dial")).sort()).toEqual([".store", "page.html"]);
+    expect(readFileSync(join(s.root, "shortwave-dial", "page.html"), "utf8")).toBe(
+      "<h1>A Different Title</h1>",
+    );
+    const again = s.core.publish({ kind: "html", source: html("2"), sourcePath, session: "A" });
+    expect(again).toMatchObject({ version: 2, created: false });
+    const dest = s.core.remove("shortwave-dial");
+    expect(existsSync(join(dest, "page.html"))).toBe(true);
+    expect(existsSync(join(s.root, "shortwave-dial"))).toBe(false);
+    s.server.stop();
+  });
+  test("T7 a folder another session owns, or a slug that disagrees with it, is refused", () => {
+    const s = scratch();
+    const sourcePath = authored(s.root, "plan", html(""));
+    s.core.publish({ kind: "html", source: html(""), sourcePath, session: "A" });
+    expect(() =>
+      s.core.publish({ kind: "html", source: html("b"), sourcePath, session: "B" }),
+    ).toThrow(/already lives at/);
+    expect(() =>
+      s.core.publish({ kind: "html", source: html(""), sourcePath, slug: "other", session: "A" }),
+    ).toThrow(/plan/);
+    s.server.stop();
+  });
+  test("T7 an artifact in the old flat layout is moved under .store and still reads", () => {
+    const s = scratch();
+    const p = s.core.publish({ kind: "html", source: html("old"), session: "A" });
+    const dir = join(s.root, p.manifest.slug);
+    // undo the layout: what a store written before .store looks like
+    for (const name of readdirSync(join(dir, ".store")))
+      renameSync(join(dir, ".store", name), join(dir, name));
+    rmSync(join(dir, ".store"), { recursive: true });
+    expect(s.store.get(p.manifest.slug)).toBeNull();
+    expect(s.store.migrate()).toEqual([p.manifest.slug]);
+    expect(s.store.get(p.manifest.slug)?.current).toBe(1);
+    expect(s.store.readPage(p.manifest.slug)).toContain("old");
+    expect(readdirSync(dir)).toEqual([".store"]);
+    expect(s.store.migrate()).toEqual([]);
     s.server.stop();
   });
 });

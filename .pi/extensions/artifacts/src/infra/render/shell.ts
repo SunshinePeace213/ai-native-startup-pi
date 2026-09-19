@@ -2,7 +2,10 @@
 // browser gets. It finds the title and the data island in the source, renders
 // Markdown, and injects the CSP, the favicon, the normalized island, the page
 // meta (slug, version, endpoint) and the runtime. A complete HTML document is
-// injected into, never wrapped twice; a fragment or a Markdown body is wrapped.
+// injected into, never wrapped twice; a fragment or a Markdown body is wrapped:
+// on the base look (`af-base`, an 860px column) when it brings no stylesheet,
+// on a blank ground (`af-ground`) when it does, so a designed page is never
+// boxed in or restyled by the base rules.
 // Reads the page layer once; otherwise pure.
 
 import { readFileSync } from "node:fs";
@@ -172,15 +175,18 @@ export function buildPage(input: RenderInput): RenderedPage {
   let html: string;
   if (input.kind === "md") {
     const body = `<main class="af-md">${renderMarkdown(source)}</main>`;
-    html = wrap(input, title, island, body, true);
+    html = wrap(input, title, island, body, "af-base");
   } else if (
     /<html[\s>]/i.test(source) ||
     /<head[\s>]/i.test(source) ||
     /<body[\s>]/i.test(source)
   ) {
     html = inject(input, title, island, source);
+  } else if (/<style[\s>]/i.test(source)) {
+    // A fragment with its own stylesheet owns its design: a blank ground, no column.
+    html = wrap(input, title, island, source, "af-ground");
   } else {
-    html = wrap(input, title, island, `<div class="af-wrap">${source}</div>`, true);
+    html = wrap(input, title, island, `<div class="af-wrap">${source}</div>`, "af-base");
   }
   const bytes = Buffer.byteLength(html, "utf8");
   if (bytes > MAX_PAGE_BYTES) {
@@ -196,7 +202,7 @@ function wrap(
   title: string,
   island: Island | null,
   body: string,
-  baseStyles: boolean,
+  ground: "af-base" | "af-ground",
 ): string {
   return [
     "<!doctype html>",
@@ -205,7 +211,7 @@ function wrap(
     `<meta charset="utf-8">`,
     headInjection(input, title, island, false),
     "</head>",
-    `<body class="${baseStyles ? "af-base" : ""}">`,
+    `<body class="${ground}">`,
     body,
     runtimeTag(),
     "</body>",

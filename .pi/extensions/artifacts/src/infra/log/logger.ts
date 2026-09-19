@@ -1,4 +1,5 @@
-// Structured logs with pino, one JSON line per action:
+// Structured logs with pino, one JSON line per action, timed in the local
+// zone with its offset (`2026-09-20T07:22:36.062+08:00`):
 //
 //   <root>/logs/<YYYY-MM-DD>/<session-id>.jsonl   the pi side of one session
 //   <root>/logs/<YYYY-MM-DD>/server.jsonl          the server, `session` on each line
@@ -13,7 +14,7 @@ import { join } from "node:path";
 import pino from "pino";
 
 import type { Logger } from "../../app/ports";
-import { logDate } from "../../domain/retention";
+import { localIso, logDate } from "../../domain/retention";
 
 export const LOG_DIR = "logs";
 
@@ -56,7 +57,8 @@ export function createLogger(options: LoggerOptions): Logger {
     {
       level: options.level ?? process.env.ARTIFACTS_LOG_LEVEL ?? "info",
       base: options.base,
-      timestamp: pino.stdTimeFunctions.isoTime,
+      // Local wall clock with its offset: the line reads like the day folder it is in.
+      timestamp: () => `,"time":"${localIso((options.now ?? (() => new Date()))())}"`,
       redact: {
         paths: [
           "token",

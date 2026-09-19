@@ -53,6 +53,8 @@ const log = createLogger({
   base: { pid: process.pid, component: "server" },
 });
 const store = new Store(absoluteRoot, trashDir);
+const migrated = store.migrate();
+if (migrated.length) log.info({ action: "migrate", slugs: migrated }, "moved under .store");
 const core = new Core(store, renderer, {
   log,
   retentionDays: Number.isFinite(retentionDays) ? retentionDays : 14,

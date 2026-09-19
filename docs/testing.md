@@ -143,9 +143,10 @@ Unknown folder descriptions are reported for curation, not inferred from filenam
   alone do not establish output quality for a skill or its delegated agent.
 - The artifacts browser runtime is parse-checked in the suite; whether it renders,
   sends, and reports diagnostics in a real browser is verified by hand
-  (see [docs/artifacts.md](artifacts.md)) and is not automated. The `alt+a`
-  overlay's placement over the footer is likewise a by-hand check; its key
-  handling is tested through the `Selector` component.
+  (see [docs/artifacts.md](artifacts.md)) and is not automated. How the
+  footer strip and the `/artifacts` gallery look in a real terminal, and `down`
+  handing the editor's focus to the footer, are likewise by-hand checks; their key
+  handling is tested through the `Selector` and `Gallery` components.
 - AGENTS.md adherence requires clean-session behavioral trials (read-only tasks,
   unrelated KB leads, queue reminders, and generated-block ownership), not exact
   string assertions against the instructions. Those behavioral trials were not

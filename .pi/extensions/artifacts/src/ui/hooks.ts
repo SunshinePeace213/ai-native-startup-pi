@@ -8,25 +8,28 @@
 //                     server to sweep
 //   session_shutdown  close the stream; stop the server only when keepAlive
 //                     is off. Idempotent: a second call finds no host.
-//   alt+a             select a page from the strip (enter opens, c copies, x drops)
-//   alt+1 … alt+5     open the nth page directly
+//   down              on an empty prompt: focus moves into the strip (the
+//                     Selector's keys: ←/→, enter opens, c copies, x dismisses)
+//   alt+a             open the newest page, as Claude Code's ctrl+] does
 //
-// The strip is one status text: the soriza statusline (and pi's default
-// footer) draws extension statuses bottom-left on the token line.
+// The strip is one status text; the soriza statusline draws it on the token
+// line, and pi's default footer shows it with the other statuses.
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { copyToClipboard } from "@earendil-works/pi-coding-agent";
-import { type KeyId, matchesKey, truncateToWidth } from "@earendil-works/pi-tui";
+import { type KeyId, matchesKey } from "@earendil-works/pi-tui";
 
 import { FEEDBACK_TYPE } from "../domain/envelope";
+import { STORE_DIR } from "../domain/protocol";
 import type { Config } from "../domain/types";
 import type { Host } from "./host";
-import { type Choice, Selector } from "./overlay";
+import { ArtifactEditor } from "./editor";
+import { type Choice, Selector } from "./selector";
 import { type Paint, STRIP_KEY } from "./strip";
 
-export const STORE_DIR = ".pi/artifacts";
-export const SELECT_SHORTCUT = "alt+a" as const;
-export const DIRECT_SHORTCUTS = ["alt+1", "alt+2", "alt+3", "alt+4", "alt+5"] as const;
+export { STORE_DIR };
+
+export const OPEN_SHORTCUT = "alt+a" as const;
 
 export interface HookDeps {
   hostFor: (cwd: string, session: string) => Host;
@@ -71,6 +74,19 @@ export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
     }
     unbind.get(ctx.cwd)?.();
     unbind.set(ctx.cwd, bindStrip(host, ctx));
+    if (ctx.hasUI) {
+      const selector = new Selector(host.strip, (data, key) => matchesKey(data, key as KeyId));
+      ctx.ui.setEditorComponent(
+        (tui, theme, keybindings) =>
+          new ArtifactEditor(
+            tui,
+            theme,
+            keybindings,
+            selector,
+            (choice) => void act(ctx, host, choice),
+          ),
+      );
+    }
     void host.client.sweep().catch(() => {});
     // A reload replays session_start against the same conversation, which was
     // already told; the pending sends were also acknowledged by that first replay.
@@ -92,67 +108,42 @@ export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
     if (!host) return;
     unbind.get(ctx.cwd)?.();
     unbind.delete(ctx.cwd);
-    if (ctx.hasUI) ctx.ui.setStatus(STRIP_KEY, undefined);
+    if (ctx.hasUI) {
+      ctx.ui.setStatus(STRIP_KEY, undefined);
+      ctx.ui.setEditorComponent(undefined);
+    }
     await host.shutdown(!deps.configFor(ctx.cwd).keepAlive);
     deps.forgetHost(ctx.cwd);
   });
 
-  const openBadge = async (ctx: ExtensionContext, host: Host, slug: string) => {
-    const error = await host.open(slug);
-    if (error) ctx.ui.notify(`Could not open the browser: ${error}`, "warning");
-  };
-
-  pi.registerShortcut(SELECT_SHORTCUT, {
-    description: "Select an artifact page from the footer strip",
+  pi.registerShortcut(OPEN_SHORTCUT, {
+    description: "Open the newest artifact page",
     handler: async (ctx) => {
       const host = deps.existingHost(ctx.cwd);
-      const badges = host?.badges() ?? [];
-      if (!host || !badges.length) {
+      const badge = host?.badges()[0];
+      if (!host || !badge) {
         ctx.ui.notify("No artifact pages in this session yet.", "info");
         return;
       }
-      const choice = await ctx.ui.custom<Choice>(
-        (_tui, theme, _keys, done) =>
-          new Selector({
-            badges,
-            paint: {
-              accent: (t) => theme.fg("accent", t),
-              dim: (t) => theme.fg("dim", t),
-              warn: (t) => theme.fg("warning", t),
-              selected: (t) => theme.bg("selectedBg", theme.bold(t)),
-            },
-            matches: (data, key) => matchesKey(data, key as KeyId),
-            done,
-            hint: (t) => theme.fg("dim", t),
-            fit: (text, width) => truncateToWidth(text, width),
-          }),
-        { overlay: true, overlayOptions: { anchor: "bottom-left", width: "100%", offsetY: -1 } },
-      );
-      if (!choice) return;
-      if (choice.action === "open") return openBadge(ctx, host, choice.slug);
-      if (choice.action === "dismiss") return host.strip.remove(choice.slug);
-      if (choice.action === "copy") {
-        const badge = host.strip.get(choice.slug);
-        if (!badge) return;
-        try {
-          await copyToClipboard(badge.url);
-          ctx.ui.notify(`Copied the link to "${badge.title}".`, "info");
-        } catch (e) {
-          ctx.ui.notify(`Could not copy: ${(e as Error).message}`, "warning");
-        }
-      }
+      await act(ctx, host, { action: "open", slug: badge.slug });
     },
   });
+}
 
-  DIRECT_SHORTCUTS.forEach((key, index) => {
-    pi.registerShortcut(key, {
-      description: `Open artifact page ${index + 1} from the footer strip`,
-      handler: async (ctx) => {
-        const host = deps.existingHost(ctx.cwd);
-        const badge = host?.badges()[index];
-        if (!host || !badge) return;
-        await openBadge(ctx, host, badge.slug);
-      },
-    });
-  });
+/** What a choice made in the footer does. */
+async function act(ctx: ExtensionContext, host: Host, choice: Choice): Promise<void> {
+  if (choice.action === "dismiss") return host.strip.remove(choice.slug);
+  if (choice.action === "open") {
+    const error = await host.open(choice.slug);
+    if (error) ctx.ui.notify(`Could not open the browser: ${error}`, "warning");
+    return;
+  }
+  const badge = host.strip.get(choice.slug);
+  if (!badge) return;
+  try {
+    await copyToClipboard(badge.url);
+    ctx.ui.notify(`Copied the link to "${badge.title}".`, "info");
+  } catch (e) {
+    ctx.ui.notify(`Could not copy: ${(e as Error).message}`, "warning");
+  }
 }
