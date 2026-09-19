@@ -376,3 +376,9 @@ llm-wiki/**/states/.lock
 
 # scratch an eval or review session leaves behind
 .tmp/
+
+# =============================================================================
+# Artifact pages the artifacts extension publishes (versions, answers, comments,
+# and the per-project token). Un-ignore to version decisions with the code.
+# =============================================================================
+.pi/artifacts/

@@ -38,12 +38,22 @@ tests/
 │   │   ├── sensitive/hook.test.ts   tool_call — secret-bearing files, every tool
 │   │   ├── vendored/hook.test.ts    tool_call — generated trees, writes only
 │   │   └── toggle/command.test.ts   /access-guard session toggle
-│   └── fast-search/                 the grep and find tools with both seams scripted
-│       ├── fixture.ts               scripted probe and runner, the wired extension
-│       ├── grep/tool.test.ts        params → ripgrep argv, rows, limits, errors
-│       ├── find/tool.test.ts        params → fd argv, rows, limits, errors
-│       ├── binaries/probe.test.ts   session_start status, /fast-search, resolution order
-│       └── live/binaries.test.ts    the real rg and fd on a scratch repo; skipped when absent
+│   ├── fast-search/                 the grep and find tools with both seams scripted
+│   │   ├── fixture.ts               scripted probe and runner, the wired extension
+│   │   ├── grep/tool.test.ts        params → ripgrep argv, rows, limits, errors
+│   │   ├── find/tool.test.ts        params → fd argv, rows, limits, errors
+│   │   ├── binaries/probe.test.ts   session_start status, /fast-search, resolution order
+│   │   └── live/binaries.test.ts    the real rg and fd on a scratch repo; skipped when absent
+│   └── artifacts/                   the local artifact loop on a scratch project with a
+│       │                            real loopback server, a recording opener, a scratch trash
+│       ├── fixture.ts               the wired extension; tool runner; page-style HTTP helpers
+│       ├── shell/page.test.ts       S1–S9  wrap · inject · Markdown · islands · title · size · runtime parses
+│       ├── store/store.test.ts      T1–T7  layout · versions · pending · owner · trash · token · server record
+│       ├── server/http.test.ts      H1–H15 pages: token/cookie · Host/Origin · stale · schema · limits · SSE · gallery · ports;
+│       │                            api: header token · publish · owner routing and ack · stop
+│       ├── tool/actions.test.ts     A1–A16 publish · ask (answer/timeout/abort) · read · watch · notify · cap · comments · delete · two sessions
+│       ├── hook/session.test.ts     L1–L4  session_start replay · keepAlive · /artifacts · stop
+│       └── process/launch.test.ts   P1–P4  the real `bun serve.ts` · stale record · findBun · the pi side under Node
 │   └── destructive-guard/           one directory per layer, on a scratch workspace with
 │       │                            .git, src/, node_modules/, a home, and an escaping symlink
 │       ├── fixture.ts               the workspace, a scriptable select dialog, the wired extension
@@ -80,6 +90,7 @@ Every test file opens with its numbered contract; every case is named
 | `bun test tests/pi/fast-search` | grep and find tools, binary resolution, and the live rg/fd contracts |
 | `bun test tests/pi/destructive-guard` | Destructive guard: parser, paths, catalog, config, and hook contracts |
 | `bun test tests/pi/destructive-guard/engine` | The rule catalog alone — run after adding or changing a rule |
+| `bun test tests/pi/artifacts` | Artifacts: shell, store, server, tool, and session-hook contracts |
 | `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
 | `bun test tests/docs` | Local documentation links and heading targets |
 | `bun run architecture:check` | Generated map matches the current projected tree; no repairs |
@@ -129,6 +140,9 @@ Unknown folder descriptions are reported for curation, not inferred from filenam
 - A directory convention is not proof of eval coverage. The librarian has a
   standalone eval file; `source-archiver` currently does not. Trigger-eval files
   alone do not establish output quality for a skill or its delegated agent.
+- The artifacts browser runtime is parse-checked in the suite; whether it renders
+  and sends in a real browser was verified by hand with headless Chrome
+  (see [docs/artifacts.md](artifacts.md)) and is not automated.
 - AGENTS.md adherence requires clean-session behavioral trials (read-only tasks,
   unrelated KB leads, queue reminders, and generated-block ownership), not exact
   string assertions against the instructions. Those behavioral trials were not

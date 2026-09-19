@@ -1,5 +1,7 @@
 // The ExtensionContext an event handler receives, reduced to what tests observe:
-// the cwd, whether a UI exists, and the status text the extension sets.
+// the cwd, whether a UI exists, the status text the extension sets, and the
+// dialogs it opens. A dialog with no scripted answer throws, so an extension
+// that starts asking something new fails loudly instead of passing by silence.
 
 import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 
@@ -7,6 +9,7 @@ export interface FakeCtx {
   ctx: ExtensionCommandContext;
   status: Map<string, string | undefined>;
   notifications: Array<{ message: string; type: string }>;
+  dialogs: Array<{ kind: "confirm" | "select"; title: string; detail: string | string[] }>;
 }
 
 export function createCtx(options: {
@@ -14,9 +17,13 @@ export function createCtx(options: {
   hasUI?: boolean;
   trusted?: boolean;
   idle?: boolean;
+  /** Scripted answers for dialogs the extension may open. */
+  confirm?: (title: string, message: string) => boolean;
+  select?: (title: string, choices: string[]) => string | undefined;
 }): FakeCtx {
   const status = new Map<string, string | undefined>();
   const notifications: Array<{ message: string; type: string }> = [];
+  const dialogs: FakeCtx["dialogs"] = [];
   const ctx = {
     cwd: options.cwd,
     hasUI: options.hasUI ?? true,
@@ -30,7 +37,17 @@ export function createCtx(options: {
       setStatus(key: string, text: string | undefined) {
         status.set(key, text);
       },
+      async confirm(title: string, message: string) {
+        dialogs.push({ kind: "confirm", title, detail: message });
+        if (!options.confirm) throw new Error("fake-ctx: ui.confirm is not scripted");
+        return options.confirm(title, message);
+      },
+      async select(title: string, choices: string[]) {
+        dialogs.push({ kind: "select", title, detail: choices });
+        if (!options.select) throw new Error("fake-ctx: ui.select is not scripted");
+        return options.select(title, choices);
+      },
     },
   } as unknown as ExtensionCommandContext;
-  return { ctx, status, notifications };
+  return { ctx, status, notifications, dialogs };
 }

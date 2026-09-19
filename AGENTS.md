@@ -32,6 +32,7 @@ Load references when their condition applies, not the whole docs folder.
 | Set up a checkout or resolve dependencies | [meta-install skill](.agents/skills/meta-install/SKILL.md) |
 | Change code, tests, evals, or verification instructions | [Testing](docs/testing.md) |
 | Change what agents may destroy, or be asked about, before it runs | [Destructive guard](docs/destructive-guard.md) |
+| Publish a page for the user, ask questions on one, or change the artifact loop | [Artifacts](docs/artifacts.md) |
 | Maintain the generated tree or folder descriptions | [Architecture sync](docs/architecture-sync.md) |
 | Query, ingest, review, or maintain the KB | [KB operations](docs/llm-wiki/operations.md) |
 | Change archive, citation, privacy, or page conventions | [KB standards](docs/llm-wiki/standards.md) |

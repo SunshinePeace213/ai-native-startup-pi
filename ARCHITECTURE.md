@@ -36,6 +36,7 @@ ai-native-startup/
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── access-guard/ — Sensitive-file and vendored-path access guard on every tool call
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
+│   │   ├── artifacts/ — Claude Code's Artifact tool hosted locally: pages that send answers back to the session
 │   │   ├── destructive-guard/ — Deny/ask gate on destructive bash, write, and edit calls
 │   │   ├── fast-search/ — ripgrep and fd as the grep and find tools, spawned directly
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
@@ -59,6 +60,7 @@ ai-native-startup/
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── access-guard/ — Sensitive, vendored, and toggle contract tests
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
+│   │   ├── artifacts/ — Shell, store, server, tool, and session-hook contracts on a scratch project
 │   │   ├── destructive-guard/ — Parser, path, catalog, config, and hook contract tests
 │   │   ├── fast-search/ — grep, find, binary resolution, and live rg/fd contracts
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
@@ -124,6 +126,19 @@ ai-native-startup/
   `tokens/` owns the session's context length and the badge the footer pins to
   its bottom-right corner, kept apart from layout so counting can change alone. It
   paints only with theme tokens, never blocks render on I/O, and persists nothing.
+- **Artifacts extension:** two processes. Inside pi: `index.ts` wires the `artifact`
+  tool, `/artifacts`, and the session hooks; `tool.ts` is the model-facing contract;
+  `host.ts` is the delivery decision (resolve a blocked `ask`, wake, queue, or hold);
+  `client.ts` is the HTTP client and event stream; `launch.ts` finds or spawns the
+  server; `feedback.ts` phrases what the session is told, with provenance. In the
+  Bun process (`serve.ts`): `server.ts` is the loopback `Bun.serve` with the token,
+  Host/Origin checks, body limits, page and API routes, and SSE fan-out; `core.ts`
+  is the operations and the store's only writer; `store.ts` the append-only
+  versions under `.pi/artifacts/<slug>/`; `shell.ts` and `markdown.ts` turn a file
+  into the page; `runtime.ts` is the browser script inside every page. Shared:
+  `types.ts`, `schemas.ts` (`questions/v1`), `server-const.ts`, `config.ts`. Feedback
+  is a republish of the page; nothing reaches the model unlabelled, and a page never
+  answers a permission prompt. Operating reference: [docs/artifacts.md](docs/artifacts.md).
 - **State engine:** Python CLIs apply observations and maintain state. Rendering
   derives pages and index rows, and appends render audit records. Graph and retrieval
   commands inspect the layer. qmd maintains the separate machine-local search index.
@@ -153,6 +168,7 @@ the current policy; its existence is not permission to use it or proof of readin
 | --- | --- |
 | Bootstrap or reconfigure a checkout | [meta-install skill](.agents/skills/meta-install/SKILL.md) |
 | Verify a change or understand coverage | [Testing](docs/testing.md) |
+| Publish pages, change the artifact loop, or plan its next layer | [Artifacts](docs/artifacts.md) |
 | Operate or troubleshoot this generated map | [Architecture sync](docs/architecture-sync.md) |
 | Choose a KB operation and understand its side effects | [KB operations](docs/llm-wiki/operations.md) |
 | Archive, citation, privacy, and page conventions | [KB standards](docs/llm-wiki/standards.md) |
