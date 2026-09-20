@@ -27,7 +27,7 @@ import type { ServerRecord } from "../../domain/types";
 export const CONTROL_DIR = ".server";
 
 /** Atomic write: a sibling temp file renamed into place. */
-export function writeAtomic(path: string, content: string): void {
+export function writeAtomic(path: string, content: string | Uint8Array): void {
   const tmp = `${path}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
   writeFileSync(tmp, content);
   renameSync(tmp, path);

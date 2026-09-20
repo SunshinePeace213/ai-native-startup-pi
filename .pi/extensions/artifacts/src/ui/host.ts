@@ -76,6 +76,11 @@ export class Host {
     return this.deps.session;
   }
 
+  /** This session's settings, as /artifacts status reads them back. */
+  get config(): Config {
+    return this.deps.config;
+  }
+
   // ---- server ----------------------------------------------------------------
 
   /** Locates or starts the server and opens the event stream; idempotent. */
@@ -131,11 +136,18 @@ export class Host {
 
   // ---- publish ---------------------------------------------------------------
 
-  async publish(request: Omit<PublishRequest, "session" | "baseVersion">): Promise<Published> {
+  /**
+   * A republish carries the version this session last saw, so the server refuses to
+   * overwrite one it has not read; `force` drops that guard, as Claude Code's does.
+   */
+  async publish(
+    request: Omit<PublishRequest, "session" | "baseVersion">,
+    options: { force?: boolean } = {},
+  ): Promise<Published> {
     await this.start();
     const slug =
       request.update ?? (request.sourcePath ? this.slugByPath.get(request.sourcePath) : undefined);
-    const baseVersion = slug ? this.seen.get(slug) : undefined;
+    const baseVersion = slug && !options.force ? this.seen.get(slug) : undefined;
     const result = await this.client.publish({ ...request, baseVersion });
     this.remember(result.manifest);
     this.log.info(
@@ -188,6 +200,7 @@ export class Host {
   // ---- delivery --------------------------------------------------------------
 
   private onMessage(message: StreamMessage): void {
+    if (message.kind === "removed") return this.forget(message.slug);
     if (message.kind === "held") {
       this.strip.setPending(message.slug, message.pending);
       if (!this.heldNoticed.has(message.slug)) {

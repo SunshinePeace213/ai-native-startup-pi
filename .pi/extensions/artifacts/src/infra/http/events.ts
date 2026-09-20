@@ -1,12 +1,15 @@
-// Server-sent events, two audiences: browser tabs watching one artifact
-// (reload on a new version or reply, refresh on a comment) and sessions
+// Server-sent events, two audiences: viewer shells watching one artifact
+// (a new version, a reply, a comment, the documents a database write moved,
+// or "state" when what the header draws may have changed) and sessions
 // watching the project (one PageEvent or HeldNotice per message). A page
 // event goes to its artifact's owner when that session is connected;
 // otherwise it stays pending and every connected session hears that a reply
-// is held. Nothing is ever delivered to a session that did not publish.
+// is held. Nothing is ever delivered to a session that did not publish. A
+// session coming or going tells every shell, whose header shows whether the
+// page's owner is listening.
 
 import { routeEvent } from "../../app/routing";
-import type { HeldNotice, Manifest, PageEvent } from "../../domain/types";
+import type { HeldNotice, Manifest, PageEvent, RemovedNotice } from "../../domain/types";
 
 type Controller = ReadableStreamDefaultController<Uint8Array>;
 
@@ -43,10 +46,14 @@ export class EventHub {
   /** A session's stream for the whole project. */
   sessionStream(session: string): Response {
     return this.sse(
-      (controller) => this.sessionStreams.push({ session, controller, since: Date.now() }),
+      (controller) => {
+        this.sessionStreams.push({ session, controller, since: Date.now() });
+        this.sessionsChanged();
+      },
       (controller) => {
         const k = this.sessionStreams.findIndex((s) => s.controller === controller);
         if (k >= 0) this.sessionStreams.splice(k, 1);
+        this.sessionsChanged();
       },
     );
   }
@@ -59,6 +66,7 @@ export class EventHub {
       const k = this.sessionStreams.indexOf(s);
       if (k >= 0) this.sessionStreams.splice(k, 1);
     }
+    if (mine.length) this.sessionsChanged();
     return mine.length;
   }
 
@@ -66,6 +74,10 @@ export class EventHub {
     const set = this.pageClients.get(slug);
     if (!set) return;
     for (const controller of set) if (!this.push(controller, payload)) set.delete(controller);
+  }
+
+  private sessionsChanged(): void {
+    for (const slug of this.pageClients.keys()) this.broadcastPage(slug, { type: "state" });
   }
 
   /** Delivers to the owner, or tells everyone connected that the event is held. */
@@ -88,6 +100,11 @@ export class EventHub {
     };
     for (const s of live) this.push(s.controller, notice);
     return "held";
+  }
+
+  /** An artifact is gone, whoever deleted it: every session drops what it shows of it. */
+  tellSessions(notice: RemovedNotice): void {
+    for (const s of this.live()) this.push(s.controller, notice);
   }
 
   /** Connected session ids, longest-connected first. */

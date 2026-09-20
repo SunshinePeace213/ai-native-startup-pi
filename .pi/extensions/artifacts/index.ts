@@ -1,12 +1,15 @@
-// The artifacts extension: Claude Code's Artifact tool, hosted locally by a
-// Bun server process this extension starts and talks to over HTTP.
+// The artifacts extension: Claude Code's Artifact tool — and ArtifactData, the
+// tool for a page's database — hosted locally by a Bun server process this
+// extension starts and talks to over HTTP.
 //
-//   src/domain/   the rules: types, protocol, schemas, versioning, retention, text
+//   src/domain/   the rules: types, protocol, schemas, versioning, files, capabilities,
+//                 the page database, retention, text
 //   src/app/      the use-cases over ports: the core, routing and delivery decisions
 //   src/infra/    the adapters: fs store and control files, Bun HTTP, renderer,
 //                 fetch client, process launch, pino logs
 //   src/ui/       inside pi: the tool, /artifacts, the hooks, the footer strip
-//   src/page/     the script and styles inside every published page
+//   src/page/     the runtime every published page loads: window.claude and the bridge
+//   src/shell/    the viewer shell the browser sees around a page
 //   src/server.ts the Bun entry
 //
 // This file is the composition root for the pi process: it wires and
@@ -31,6 +34,7 @@ import { registerCommand } from "./src/ui/command";
 import { registerHooks, STORE_DIR } from "./src/ui/hooks";
 import { Host, type HostDeps } from "./src/ui/host";
 import { createArtifactTool } from "./src/ui/tool";
+import { createArtifactDataTool } from "./src/ui/tool/data";
 
 export { STORE_DIR };
 
@@ -78,6 +82,7 @@ export function register(
       },
     }),
   );
+  pi.registerTool(createArtifactDataTool({ hostFor }));
   registerHooks(pi, {
     hostFor,
     existingHost: (cwd) => hosts.get(cwd),
@@ -99,6 +104,7 @@ export function productionLocator(cwd: string, config: Config): Locator {
       port: config.port,
       trashDir: join(homedir(), ".Trash"),
       retentionDays: config.retentionDays,
+      isolation: config.isolation,
       bun: config.bun,
     });
     const token = readToken(root);

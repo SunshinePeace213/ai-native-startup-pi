@@ -31,11 +31,17 @@
 // S8: session_shutdown restores Pi's footer; extension statuses other
 //     extensions set render on the last line with their icons, and the
 //     session's token total sits flush right on that same line.
+// S10: on pi's fullscreen screen a plain left click on a cell of an OSC 8 link
+//     inside the artifact strip opens that link's URL, focused row or not; a
+//     click on the strip's icon, a separator or the token badge opens nothing,
+//     and a drag across the row still selects text — the footer keeps the link
+//     ranges intact and takes no mouse event from pi.
 
 import { describe, expect, test } from "bun:test";
 import extension from "@ext/ui-customization-soriza/index";
 import type { FetchFn } from "@ext/ui-customization-soriza/statusline/quota-fetch";
 import { createFakePi, type ExecScript } from "@harness/fake-pi";
+import { mountFullscreen } from "@harness/fullscreen";
 import { assistantEntry, createUiCtx, gitExec, strip, type UiCtxOptions } from "../fixture";
 
 const HOME = "/home/someone";
@@ -495,5 +501,56 @@ describe("S8 shutdown and statuses", () => {
     expect(last).toMatch(/ {2,}\S+ Tokens$/);
     ui.ctx.ui.setStatus("llm-wiki", "wiki queue 2");
     expect(lines().at(-1)!.endsWith("Tokens")).toBe(true);
+  });
+});
+
+describe("S10 fullscreen clicks", () => {
+  const url = (slug: string) => `http://localhost:5834/a/${slug}?t=viewer-token`;
+  const pill = (slug: string, text = slug) => `\x1b]8;;${url(slug)}\x1b\\${text}\x1b]8;;\x1b\\`;
+  const mount = async (status: string) => {
+    const { ui } = await start(gitExec({ status: CLEAN }));
+    ui.ctx.ui.setStatus("artifacts", status);
+    return mountFullscreen(ui.footer!);
+  };
+
+  test("S10 a click on a pill opens that pill's URL, and only that one", async () => {
+    const screen = await mount(`⧉ ${pill("sunny-sixteen")} · ${pill("parity-audit")}`);
+    screen.click("parity-audit");
+    screen.click("sunny-sixteen");
+    expect(screen.opened).toEqual([url("parity-audit"), url("sunny-sixteen")]);
+    screen.stop();
+  });
+
+  test("S10 the focused row: the filled pill's padding is its link, the separator beside it is not", async () => {
+    const screen = await mount(
+      `❯ ⧉ ${pill("sunny-sixteen")} · ${pill("parity-audit", " parity-audit ")} · ←/→ to navigate · Enter to open · x to dismiss`,
+    );
+    // The middle cell of `·  p` is the pill's leading padding; of `t  ·`, the separator's own space.
+    screen.click("·  p");
+    expect(screen.opened).toEqual([url("parity-audit")]);
+    screen.click("t  ·");
+    expect(screen.opened).toHaveLength(1);
+    screen.stop();
+  });
+
+  test.each([["⧉"], [" · "], ["Enter to open"], ["Tokens"]])(
+    "S10 a click on %p opens nothing",
+    async (text) => {
+      const screen = await mount(
+        `❯ ⧉ ${pill("sunny-sixteen")} · ${pill("parity-audit")} · ←/→ to navigate · Enter to open · x to dismiss`,
+      );
+      screen.click(text);
+      expect(screen.opened).toEqual([]);
+      screen.stop();
+    },
+  );
+
+  test("S10 a drag across the strip still selects text", async () => {
+    const screen = await mount(`⧉ ${pill("sunny-sixteen")} · ${pill("parity-audit")}`);
+    expect(screen.selecting()).toBe(false);
+    screen.drag("sunny", "audit");
+    expect(screen.selecting()).toBe(true);
+    expect(screen.opened).toEqual([]);
+    screen.stop();
   });
 });

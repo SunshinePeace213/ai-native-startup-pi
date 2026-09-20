@@ -15,7 +15,13 @@
 // line and the other statuses keep the line above:
 //
 //   🏗️ architecture …   📚 wiki …   🎨 theme ██ …
-//   ⧉  beaufort · article 2                                             114k Tokens
+//   ⧉ beaufort · article-2                                              114k Tokens
+//
+// The strip arrives as one status text and is placed as it is: its `⧉`, its
+// focus mark and the OSC 8 link around each pill are the artifacts
+// extension's. The links are what make a pill clickable — in fullscreen mode
+// pi's renderer hit-tests a plain click against the links on the row it drew
+// and opens the URL — so this footer handles no mouse of its own.
 //
 // The middle lines are a grid: one row for the context, one per provider,
 // their names padded into a shared column so the bars, the percentages and
@@ -107,9 +113,8 @@ export const STATUS_ICONS: ReadonlyArray<[key: string, icon: string]> = [
   ["llm-wiki", "📚"],
 ];
 
-/** The artifacts extension's strip: drawn on the token line, not among the statuses. */
+/** The artifacts extension's strip: placed on the token line, not among the statuses. */
 export const ARTIFACTS_STATUS_KEY = "artifacts";
-const ARTIFACTS_ICON = "⧉";
 
 const CONTEXT_CELLS = 10;
 const QUOTA_CELLS = 10;
@@ -530,11 +535,7 @@ export function renderStatusline(
   const badge = tokenBadge(theme, snap.context);
   const artifacts = snap.statuses.get(ARTIFACTS_STATUS_KEY);
   if (artifacts) {
-    // The icon joins after sanitize, which would fold its two spaces into one.
-    const strip: Segment = {
-      full: `${p.dim(ARTIFACTS_ICON)}  ${sanitize(artifacts)}`,
-      priority: Infinity,
-    };
+    const strip: Segment = { full: sanitize(artifacts), priority: Infinity };
     lines.push(layout(statusLine(snap.statuses), width));
     lines.push(layoutRight([strip], badge, width));
   } else {

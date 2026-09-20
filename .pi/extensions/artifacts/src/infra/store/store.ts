@@ -7,16 +7,24 @@
 //                                the server never writes it
 //   <slug>/.store/               everything below is the server's
 //     manifest.json              title, owner, sessions, versions, responses, pin, pending
-//     index.html                 the current page: the version with the newest reply over it
 //     source.html|md             the source as last published (the authored page may move on)
-//     versions/v<N>.html|json    every agent version as published, and its island; append-only
-//     responses/v<N>-r<K>.json   what the page sent back to version N
+//     versions/v<N>.html|json    every version's document and island, written once
+//     versions/v<N>.files.json   the version's supporting files, published path →
+//                                {sha256, contentType, bytes}; complete, so an old version
+//                                keeps serving its own; absent when it has none
+//     blobs/<sha256>             their bytes, stored once however many versions name them
+//     responses/v<N>-r<K>.json   what the page sent back to version N; no document changes
+//     db.json                    the page's database, collection path → document id →
+//                                {data, version, updatedAt, lease?}; written on the first write
+//     assets/<id>                what the page uploaded, under an opaque id, whatever the version
+//     assets/index.json          [{id, contentType, sizeBytes, createdAt}], oldest first
 //     comments.json · diagnostics.json · events.jsonl
 //
 // Writes are atomic (tmp + rename). Deleting an artifact moves its whole
-// folder, authored page included, into the trash directory; only expired log folders are removed outright.
+// folder, authored page included, into the trash directory, and the bytes of
+// an asset its page deleted go there too; only expired log folders are removed outright.
 
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import {
   appendFileSync,
   existsSync,
@@ -28,12 +36,15 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 
+import { ASSET_ID_RE, type AssetRecord } from "../../domain/assets";
+import type { DbFile } from "../../domain/db";
 import { SLUG_RE, STORE_SUBDIR } from "../../domain/protocol";
 import { logDate } from "../../domain/retention";
 import { SLUG_MAX, slugify } from "../../domain/text";
 import type {
   CommentThread,
   Diagnostic,
+  FileMap,
   Island,
   Manifest,
   PendingEvent,
@@ -42,16 +53,36 @@ import type {
   VersionRecord,
 } from "../../domain/types";
 import { latestResponse, mergedIsland, nextResponse, responseName } from "../../domain/versioning";
-import { MAX_DIAGNOSTICS } from "../../domain/types";
-import type { ArtifactStore, CreateInput, ResponseInput, VersionInput } from "../../app/ports";
+import { MAX_DIAGNOSTICS, VIEWER } from "../../domain/types";
+import type {
+  ArtifactStore,
+  AssetInput,
+  CreateInput,
+  ResponseInput,
+  VersionFiles,
+  VersionInput,
+} from "../../app/ports";
 import { CONTROL_DIR, readJson, writeAtomic } from "./control";
 
 export const LOGS_DIR = "logs";
-/** What the server wrote at the top of an artifact's folder before `.store`. */
-const FLAT_LAYOUT =
-  /^(manifest\.json|index\.html|source\.(html|md)|versions|responses|comments\.json|diagnostics\.json|events\.jsonl)$/;
 /** Views touch the manifest at most this often. */
 const TOUCH_MIN_MS = 60 * 60 * 1000;
+/** A blob is named by its hash and by nothing else: no other name reaches the blobs folder. */
+const SHA256_RE = /^[a-f0-9]{64}$/;
+
+/** A manifest carries every field the code reads; anything less is not an artifact. */
+function isManifest(value: unknown, slug: string): value is Manifest {
+  if (typeof value !== "object" || value === null) return false;
+  const m = value as Record<string, unknown>;
+  return (
+    m.slug === slug &&
+    typeof m.title === "string" &&
+    typeof m.owner === "string" &&
+    typeof m.current === "number" &&
+    typeof m.updatedAt === "string" &&
+    [m.versions, m.responses, m.sessions, m.pending].every(Array.isArray)
+  );
+}
 
 export class Store implements ArtifactStore {
   constructor(
@@ -70,35 +101,31 @@ export class Store implements ArtifactStore {
     return join(this.root, slug, STORE_SUBDIR);
   }
 
-  /** Moves artifacts written before `.store` existed under it; returns their slugs. */
-  migrate(): string[] {
-    if (!existsSync(this.root)) return [];
-    const moved: string[] = [];
-    for (const d of readdirSync(this.root, { withFileTypes: true })) {
-      if (!d.isDirectory() || !SLUG_RE.test(d.name) || d.name === LOGS_DIR) continue;
-      const folder = this.folder(d.name);
-      if (!existsSync(join(folder, "manifest.json")) || existsSync(this.dir(d.name))) continue;
-      const names = readdirSync(folder).filter((name) => FLAT_LAYOUT.test(name));
-      mkdirSync(this.dir(d.name));
-      for (const name of names) renameSync(join(folder, name), join(this.dir(d.name), name));
-      moved.push(d.name);
-    }
-    return moved;
-  }
-
-  list(): Manifest[] {
+  private slugFolders(): string[] {
     if (!existsSync(this.root)) return [];
     return readdirSync(this.root, { withFileTypes: true })
       .filter((d) => d.isDirectory() && SLUG_RE.test(d.name) && d.name !== LOGS_DIR)
-      .map((d) => this.get(d.name))
+      .map((d) => d.name);
+  }
+
+  list(): Manifest[] {
+    return this.slugFolders()
+      .map((slug) => this.get(slug))
       .filter((m): m is Manifest => m !== null)
       .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
   }
 
+  /** Folders that hold a manifest the code cannot read: never listed, named so the server can say so. */
+  unreadable(): string[] {
+    return this.slugFolders().filter(
+      (slug) => existsSync(join(this.dir(slug), "manifest.json")) && this.get(slug) === null,
+    );
+  }
+
   get(slug: string): Manifest | null {
     if (!SLUG_RE.test(slug) || slug === LOGS_DIR || slug === CONTROL_DIR) return null;
-    const manifest = readJson<Manifest | null>(join(this.dir(slug), "manifest.json"), null);
-    return manifest && manifest.slug === slug ? manifest : null;
+    const manifest = readJson<unknown>(join(this.dir(slug), "manifest.json"), null);
+    return isManifest(manifest, slug) ? manifest : null;
   }
 
   exists(slug: string): boolean {
@@ -145,6 +172,7 @@ export class Store implements ArtifactStore {
       sessions: [input.session],
       pinned: false,
       pending: [],
+      type: input.type,
     };
     this.save(manifest);
     this.addVersion(slug, {
@@ -153,6 +181,9 @@ export class Store implements ArtifactStore {
       source: input.source,
       kind: input.kind,
       sourcePath: input.sourcePath,
+      label: input.label,
+      files: input.files,
+      capabilities: input.capabilities,
       session: input.session,
     });
     return this.get(slug) as Manifest;
@@ -167,22 +198,31 @@ export class Store implements ArtifactStore {
     writeAtomic(join(dir, `source.${input.kind}`), input.source);
     manifest.source = input.kind;
     const islandJson = input.island ? `${JSON.stringify(input.island, null, 2)}\n` : "null\n";
+    const files = Object.values(this.writeFiles(slug, n, input.files));
+    const declared = Object.keys(input.capabilities ?? {}).length ? input.capabilities : undefined;
     writeAtomic(join(dir, "versions", `v${n}.html`), input.html);
     writeAtomic(join(dir, "versions", `v${n}.json`), islandJson);
-    writeAtomic(join(dir, "index.html"), input.html);
     const record: VersionRecord = {
       n,
       at,
-      by: input.session,
+      by: input.session ?? VIEWER,
       bytes: Buffer.byteLength(input.html, "utf8"),
-      note: input.note,
+      label: input.label,
+      ...(files.length
+        ? { files: files.length, fileBytes: files.reduce((sum, f) => sum + f.bytes, 0) }
+        : {}),
+      ...(declared ? { capabilities: declared } : {}),
     };
+    manifest.capabilities = declared;
     manifest.versions.push(record);
     manifest.current = n;
     manifest.updatedAt = at;
     manifest.lastActivityAt = at;
-    manifest.owner = input.session;
-    if (!manifest.sessions.includes(input.session)) manifest.sessions.push(input.session);
+    // The viewer's own publish leaves the artifact with the session that owns it.
+    if (input.session !== undefined) {
+      manifest.owner = input.session;
+      if (!manifest.sessions.includes(input.session)) manifest.sessions.push(input.session);
+    }
     if (input.title) manifest.title = input.title;
     if (input.description !== undefined) manifest.description = input.description;
     if (input.icon !== undefined) manifest.icon = input.icon;
@@ -200,7 +240,6 @@ export class Store implements ArtifactStore {
     mkdirSync(join(dir, "responses"), { recursive: true });
     const json = `${JSON.stringify(input.island, null, 2)}\n`;
     writeAtomic(join(dir, "responses", `${responseName(version, r)}.json`), json);
-    writeAtomic(join(dir, "index.html"), input.html);
     const record: ResponseRecord = {
       r,
       version,
@@ -245,13 +284,102 @@ export class Store implements ArtifactStore {
     return { kind: manifest.source, source: readFileSync(path, "utf8") };
   }
 
-  readPage(slug: string, version?: number): string | null {
+  readPage(slug: string, version: number): string | null {
     if (!this.get(slug)) return null;
-    const path =
-      version === undefined
-        ? join(this.dir(slug), "index.html")
-        : join(this.dir(slug), "versions", `v${version}.html`);
+    const path = join(this.dir(slug), "versions", `v${version}.html`);
     return existsSync(path) ? readFileSync(path, "utf8") : null;
+  }
+
+  readFiles(slug: string, version: number): FileMap {
+    if (!this.get(slug)) return {};
+    return readJson<FileMap>(join(this.dir(slug), "versions", `v${version}.files.json`), {});
+  }
+
+  readBlob(slug: string, sha256: string): Uint8Array | null {
+    if (!SHA256_RE.test(sha256) || !this.get(slug)) return null;
+    const path = join(this.dir(slug), "blobs", sha256);
+    return existsSync(path) ? new Uint8Array(readFileSync(path)) : null;
+  }
+
+  readDb(slug: string): DbFile {
+    if (!this.get(slug)) return {};
+    const file = readJson<unknown>(join(this.dir(slug), "db.json"), {});
+    return typeof file === "object" && file !== null && !Array.isArray(file)
+      ? (file as DbFile)
+      : {};
+  }
+
+  writeDb(slug: string, file: DbFile): void {
+    this.must(slug);
+    writeAtomic(join(this.dir(slug), "db.json"), `${JSON.stringify(file, null, 1)}\n`);
+  }
+
+  listAssets(slug: string): AssetRecord[] {
+    if (!this.get(slug)) return [];
+    const index = readJson<unknown>(join(this.dir(slug), "assets", "index.json"), []);
+    return Array.isArray(index) ? (index as AssetRecord[]) : [];
+  }
+
+  readAsset(slug: string, id: string): Uint8Array | null {
+    if (!ASSET_ID_RE.test(id) || !this.listAssets(slug).some((a) => a.id === id)) return null;
+    const path = join(this.dir(slug), "assets", id);
+    return existsSync(path) ? new Uint8Array(readFileSync(path)) : null;
+  }
+
+  addAsset(slug: string, input: AssetInput): AssetRecord {
+    this.must(slug);
+    const record: AssetRecord = {
+      id: input.id ?? randomBytes(16).toString("hex"),
+      contentType: input.contentType,
+      sizeBytes: input.bytes.byteLength,
+      createdAt: input.createdAt ?? this.now().toISOString(),
+    };
+    if (!ASSET_ID_RE.test(record.id)) throw new Error(`invalid asset id "${record.id}"`);
+    const dir = join(this.dir(slug), "assets");
+    mkdirSync(dir, { recursive: true });
+    // The bytes first: an index never names an asset that is not there.
+    writeAtomic(join(dir, record.id), input.bytes);
+    this.saveAssets(slug, [...this.listAssets(slug).filter((a) => a.id !== record.id), record]);
+    return record;
+  }
+
+  removeAsset(slug: string, id: string): boolean {
+    const held = this.listAssets(slug);
+    if (!held.some((a) => a.id === id)) return false;
+    this.saveAssets(
+      slug,
+      held.filter((a) => a.id !== id),
+    );
+    const bytes = join(this.dir(slug), "assets", id);
+    if (existsSync(bytes)) renameSync(bytes, this.trashPath(`${slug}-asset-${id}`));
+    return true;
+  }
+
+  private saveAssets(slug: string, records: AssetRecord[]): void {
+    writeAtomic(
+      join(this.dir(slug), "assets", "index.json"),
+      `${JSON.stringify(records, null, 2)}\n`,
+    );
+  }
+
+  /** Stores a version's new content under its hash and writes the version's map; a version with no files writes nothing. */
+  private writeFiles(slug: string, n: number, files: VersionFiles | undefined): FileMap {
+    const map: FileMap = { ...files?.kept };
+    const blobs = join(this.dir(slug), "blobs");
+    for (const [path, file] of Object.entries(files?.written ?? {})) {
+      const sha256 = createHash("sha256").update(file.bytes).digest("hex");
+      mkdirSync(blobs, { recursive: true });
+      if (!existsSync(join(blobs, sha256))) writeAtomic(join(blobs, sha256), file.bytes);
+      map[path] = { sha256, contentType: file.contentType, bytes: file.bytes.byteLength };
+    }
+    const paths = Object.keys(map).sort();
+    if (!paths.length) return map;
+    const sorted = Object.fromEntries(paths.map((path) => [path, map[path]]));
+    writeAtomic(
+      join(this.dir(slug), "versions", `v${n}.files.json`),
+      `${JSON.stringify(sorted, null, 2)}\n`,
+    );
+    return map;
   }
 
   setWatched(slug: string, watched: boolean, session?: string): Manifest {
@@ -272,6 +400,14 @@ export class Store implements ArtifactStore {
   setPinned(slug: string, pinned: boolean): Manifest {
     const manifest = this.must(slug);
     manifest.pinned = pinned;
+    this.save(manifest);
+    return manifest;
+  }
+
+  rename(slug: string, title: string): Manifest {
+    const manifest = this.must(slug);
+    manifest.title = title;
+    manifest.renamed = true;
     this.save(manifest);
     return manifest;
   }
@@ -324,11 +460,17 @@ export class Store implements ArtifactStore {
 
   remove(slug: string): string {
     this.must(slug);
+    const dest = this.trashPath(slug);
+    renameSync(this.folder(slug), dest);
+    return dest;
+  }
+
+  /** A free name under today's trash folder: nothing already there is ever overwritten. */
+  private trashPath(name: string): string {
     const day = join(this.trashDir, "pi-artifacts", logDate(this.now()));
     mkdirSync(day, { recursive: true });
-    let dest = join(day, slug);
-    while (existsSync(dest)) dest = `${join(day, slug)}-${randomBytes(2).toString("hex")}`;
-    renameSync(this.folder(slug), dest);
+    let dest = join(day, name);
+    while (existsSync(dest)) dest = `${join(day, name)}-${randomBytes(2).toString("hex")}`;
     return dest;
   }
 

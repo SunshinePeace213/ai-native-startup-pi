@@ -1,8 +1,9 @@
-// The version rule. A version is an agent publish: v1 is the first, v(n+1)
-// the next republish. What the page sends back is a response to the version
-// it was viewing — r1, r2 … under that version — and never a version of its
-// own. The current island a reader sees is the version's island with the
-// newest response laid over it.
+// The version rule. A version is a publish — the agent's, or the viewer's own
+// through the page's `artifact` capability: v1 is the first, v(n+1) the next.
+// What the page sends back is a response to the version it was viewing — r1,
+// r2 … under that version — and never a version of its own. The current
+// island a reader sees is the version's island with the newest response laid
+// over it.
 
 import type { Island, Manifest, ResponseRecord } from "./types";
 

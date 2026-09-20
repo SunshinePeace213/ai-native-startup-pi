@@ -1,8 +1,9 @@
 // Structured logs with pino, one JSON line per action, timed in the local
 // zone with its offset (`2026-09-20T07:22:36.062+08:00`):
 //
-//   <root>/logs/<YYYY-MM-DD>/<session-id>.jsonl   the pi side of one session
-//   <root>/logs/<YYYY-MM-DD>/server.jsonl          the server, `session` on each line
+//   <root>/logs/<YYYY-MM-DD>/<session-id>.jsonl   the pi side of one session, `session` on each line
+//   <root>/logs/<YYYY-MM-DD>/server.jsonl          the server; a line names a session only when
+//                                                  one was behind the action (a publish, a watch)
 //
 // The destination is a plain synchronous appender that reopens under the
 // day's folder when the local date changes, so a session that crosses

@@ -1,8 +1,37 @@
 // A small Markdown renderer for .md artifacts: headings, paragraphs, fenced
 // code, lists, blockquotes, rules, pipe tables, and the inline set (code,
-// strong, emphasis, links, images). Raw HTML in the source is escaped, never
-// passed through — the page's only script is the runtime the shell adds.
+// strong, emphasis, links, images). A ```mermaid fence becomes the
+// <pre class="mermaid"> the page runtime draws. Raw HTML in the source is
+// escaped, never passed through — the page's only script is the runtime.
 // Enough for plan documents and reports; anything richer is written as HTML.
+
+/**
+ * The Markdown look: one column on its own ground, light and dark (the
+ * viewer's stamped data-theme first, the system otherwise). Every rule hangs
+ * off `.md`, the element the rendered body sits in.
+ */
+export const MARKDOWN_STYLE = [
+  ".md{--md-bg:#fff;--md-fg:#1b1f24;--md-muted:#5b6470;--md-line:#e3e6ea;--md-card:#f6f8fa;--md-accent:#3b5bdb;color-scheme:light;" +
+    "box-sizing:border-box;min-height:100vh;padding:40px max(24px,calc((100% - 860px)/2)) 64px;background:var(--md-bg);color:var(--md-fg);" +
+    'font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Inter,sans-serif}',
+  "@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .md{--md-bg:#0f1115;--md-fg:#e6e8eb;--md-muted:#9aa4b2;--md-line:#2a2f37;--md-card:#171a20;--md-accent:#7b93ff;color-scheme:dark}}",
+  ":root[data-theme=dark] .md{--md-bg:#0f1115;--md-fg:#e6e8eb;--md-muted:#9aa4b2;--md-line:#2a2f37;--md-card:#171a20;--md-accent:#7b93ff;color-scheme:dark}",
+  ".md h1{font-size:2rem;line-height:1.2;margin:0 0 .6em}",
+  ".md h2{font-size:1.4rem;margin:1.6em 0 .5em}",
+  ".md h3{font-size:1.15rem;margin:1.4em 0 .4em}",
+  ".md p,.md ul,.md ol{margin:0 0 1em}",
+  ".md a{color:var(--md-accent)}",
+  ".md code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--md-card);padding:.1em .35em;border-radius:4px}",
+  ".md pre{background:var(--md-card);border:1px solid var(--md-line);border-radius:8px;padding:14px 16px;overflow:auto}",
+  ".md pre code{background:none;padding:0;font-size:.85em}",
+  ".md pre.mermaid{background:none;border:0;padding:0;text-align:center}",
+  ".md blockquote{margin:0 0 1em;padding:.2em 1em;border-left:3px solid var(--md-line);color:var(--md-muted)}",
+  ".md table{border-collapse:collapse;margin:0 0 1em;width:100%}",
+  ".md th,.md td{border:1px solid var(--md-line);padding:6px 10px;text-align:left}",
+  ".md th{background:var(--md-card)}",
+  ".md hr{border:0;border-top:1px solid var(--md-line);margin:2em 0}",
+  ".md li.task{list-style:none;margin-left:-1.2em}",
+].join("");
 
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -40,8 +69,7 @@ export function renderInline(text: string): string {
 }
 
 const isTableRow = (line: string) => /^\s*\|.*\|\s*$/.test(line);
-const isTableRule = (line: string) =>
-  /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/.test(line);
+const isTableRule = (line: string) => /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(line);
 const splitRow = (line: string) =>
   line
     .trim()
@@ -82,8 +110,13 @@ export function renderMarkdown(source: string): string {
         i += 1;
       }
       i += 1;
+      const code = escapeHtml(body.join("\n"));
       const cls = lang ? ` class="language-${escapeHtml(lang)}"` : "";
-      out.push(`<pre><code${cls}>${escapeHtml(body.join("\n"))}</code></pre>`);
+      out.push(
+        lang === "mermaid"
+          ? `<pre class="mermaid">${code}</pre>`
+          : `<pre><code${cls}>${code}</code></pre>`,
+      );
       continue;
     }
     const heading = /^(#{1,6})\s+(.+?)\s*#*\s*$/.exec(line);

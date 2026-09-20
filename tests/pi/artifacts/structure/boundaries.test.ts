@@ -6,9 +6,13 @@
 //     src/infra/log, index.ts — never imports the server's modules
 //     (src/infra/http, src/infra/store/store, src/infra/render) or names Bun
 // B4: only src/infra/http/server.ts names the Bun global
-// B5: the page runtime is a classic script the shell can inline: no import/export,
-//     no template literal, and it parses
+// B5: the two browser scripts — the page runtime and the viewer shell's — are
+//     classic scripts the server hands over as they are: no import/export, and
+//     they parse
 // B6: every module under src/ is reachable from index.ts or src/server.ts
+// B7: the browser layers, src/page and src/shell, hold only what a browser loads —
+//     no TypeScript — and no module imports from them: they are served, never linked;
+//     nothing the old page layer left behind is still in the tree
 
 import { describe, expect, test } from "bun:test";
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -97,10 +101,9 @@ describe("layer boundaries", () => {
     expect(naming).toEqual(["src/infra/http/server.ts"]);
   });
 
-  test("B5 the page runtime is a classic script", () => {
-    const code = readFileSync(join(ROOT, "src/page/runtime.js"), "utf8");
+  test.each(["src/page/claude.js", "src/shell/shell.js"])("B5 %s is a classic script", (path) => {
+    const code = readFileSync(join(ROOT, path), "utf8");
     expect(code).not.toMatch(/^\s*(import|export)\b/m);
-    expect(code).not.toContain("`");
     expect(() => new Function(code)).not.toThrow();
   });
 
@@ -119,5 +122,17 @@ describe("layer boundaries", () => {
     const orphans = sources.filter((f) => !seen.has(f)).map(rel);
     expect(orphans).toEqual([]);
     expect(layerOf(join(ROOT, "src/ui/host.ts"))).toBe("ui/host.ts");
+  });
+
+  test("B7 the browser layers are served, never linked", () => {
+    const browser = walk(ROOT)
+      .map(rel)
+      .filter((f) => /^src\/(page|shell)\//.test(f))
+      .sort();
+    expect(browser).toEqual(["src/page/claude.js", "src/shell/shell.css", "src/shell/shell.js"]);
+    const linked = sources
+      .flatMap((f) => imports(f).map((spec) => [rel(f), spec] as const))
+      .filter(([, spec]) => /(^|\/)(page|shell)\/[^/]+\.(js|css)$/.test(spec));
+    expect(linked).toEqual([]);
   });
 });

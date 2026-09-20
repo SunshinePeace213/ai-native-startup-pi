@@ -19,9 +19,9 @@ ai-native-startup/
 ├── .agents/ — Reusable agent workflows
 │   └── skills/ — Task-specific skills and their evals
 │       ├── agent-self-evals/ — Contract-first test and eval design
-│       ├── artifact-design/ — The design pass for an artifact page: the read, the design plan, the generic looks to avoid, and building it cleanly
-│       ├── artifact-diagramming/ — When a figure earns its place on an artifact page and how to draw it in inline SVG
-│       ├── artifact-pages/ — The artifact page contract: page rules, how the shell serves a fragment, the island and window.artifact
+│       ├── artifact-capabilities/ — What a page can do at run time: the reply island and questions form, window.claude capabilities, the artifact_data tool, state across a republish
+│       ├── artifact-design/ — The page contract (skeleton, CSP allowlist, three-state theme, title, icon word) and the design pass for an artifact page
+│       ├── artifact-diagramming/ — When a figure earns its place on an artifact page and how to draw it: hand-written inline SVG, or host-drawn mermaid
 │       ├── commit-message/ — Commit message formatting and validation
 │       ├── grilling/ — Structured requirement interviews
 │       ├── llm-wiki-crystallize/ — Preserve session findings in the KB
@@ -39,7 +39,7 @@ ai-native-startup/
 │   ├── extensions/ — Deterministic Pi lifecycle integrations
 │   │   ├── access-guard/ — Sensitive-file and vendored-path access guard on every tool call
 │   │   ├── architecture-sync/ — Described repository tree generation and synchronization
-│   │   ├── artifacts/ — Claude Code's Artifact tool hosted locally: pages on localhost:5834 that send replies back to the session
+│   │   ├── artifacts/ — Claude Code's Artifact and ArtifactData tools hosted locally: pages on localhost:5834, each framed from its own origin, that send replies to the session
 │   │   ├── destructive-guard/ — Deny/ask gate on destructive bash, write, and edit calls
 │   │   ├── fast-search/ — ripgrep and fd as the grep and find tools, spawned directly
 │   │   ├── llm-wiki/ — KB grounding, reminders, and write protection
@@ -63,7 +63,7 @@ ai-native-startup/
 │   │   ├── _harness/ — Shared extension test doubles
 │   │   ├── access-guard/ — Sensitive, vendored, and toggle contract tests
 │   │   ├── architecture-sync/ — Tree, CLI, and lifecycle contract tests
-│   │   ├── artifacts/ — Domain, store, HTTP, process, session, and structure contracts on a scratch project
+│   │   ├── artifacts/ — Domain, store, HTTP, process, session, structure, and live-browser contracts on a scratch project
 │   │   ├── destructive-guard/ — Parser, path, catalog, config, and hook contract tests
 │   │   ├── fast-search/ — grep, find, binary resolution, and live rg/fd contracts
 │   │   ├── llm-wiki/ — KB extension hook and bridge tests
@@ -131,18 +131,27 @@ ai-native-startup/
   paints only with theme tokens, never blocks render on I/O, and persists nothing.
 - **Artifacts extension:** layered by responsibility under `src/`, with the
   pi/Bun runtime split enforced as a test. `domain/` is the rules and imports nothing:
-  types, the HTTP protocol and its two capabilities, the interaction schemas,
-  versioning (agent versions, page replies), retention, the feedback envelope, and
-  terminal-safe text. `app/` is the use-cases over ports: `core.ts` (publish, respond,
-  comments, pin, diagnostics, sweep — the store's only writer) and `routing.ts` (the
+  types, the HTTP protocol with its two kinds of host and three capabilities, the interaction schemas,
+  versioning (versions are publishes, page replies never are), the rules for a page's
+  supporting files and for the run-time capabilities it declares, the page's database
+  (`db`) and what it uploads (`assets`), retention, the
+  feedback envelope, and terminal-safe text. `app/` is the use-cases over ports:
+  `core.ts` (publish, the viewer's own publish from the page, respond, the page's
+  database and assets, comments, pin,
+  diagnostics, sweep — the store's only writer) and `routing.ts` (the
   owner-only route and the delivery decision). `infra/` is the adapters: `store/`
-  (the fs layout and the `.server/` control files), `http/` (Bun.serve on one fixed
-  port, viewer/session auth, SSE hub, page and API routes), `render/`, `client/`,
+  (the fs layout — versions, content-addressed file blobs, `db.json`, uploaded assets — and the `.server/` control files), `http/` (Bun.serve on one fixed
+  port, dispatch by Host — the shell host or a page's own `<slug>.localhost` — the
+  viewer/session/cap capabilities, the content policies, SSE hub, shell, frame and
+  API routes), `render/` (the stored document: Claude Code's skeleton), `client/`,
   `process/` (probe, lock, spawn, stop), `log/` (pino). `ui/` runs inside pi:
-  `host.ts` per project per session, `hooks.ts` the lifecycle and `alt+a`,
+  `host.ts` per project per session, `hooks.ts` the lifecycle and the `ctrl+]` / `alt+a` shortcut,
   `strip.ts` the footer badges, `selector.ts` and `editor.ts` the footer's keys and
-  the editor that hands it focus on `down`, `command.ts` and `gallery.ts` `/artifacts`, `tool/` the model-facing contract. `page/` is
-  the script and styles inlined into every page; `server.ts` the Bun entry;
+  the editor that hands it focus on `down`, `command.ts` and `gallery.ts` `/artifacts`, `tool/` the model-facing contract — the `artifact` tool, and `artifact_data` for a page's database. `page/` is
+  the runtime every page loads (`window.claude`, Claude Code's capability namespaces,
+  and the bridge), `shell/` the viewer shell that frames a page, draws the comments and
+  the Send bar around it, and does what a page's capabilities ask for; both are
+  served to the browser, never imported; `server.ts` the Bun entry;
   `index.ts` only wires. Replies never make versions, only the owning session is
   woken, nothing reaches the model unlabelled, and a page never answers a permission
   prompt. Operating reference: [docs/artifacts.md](docs/artifacts.md).

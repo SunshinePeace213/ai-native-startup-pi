@@ -1,9 +1,10 @@
-// The footer's keys. `down` on an empty editor hands focus to the strip; while
-// it is there ←/→ (or tab) move the selection, enter opens the page, c copies
-// its URL, x drops the badge from the strip, esc or ↑ hands focus back, and
-// any other key hands it back and is typed. The selection lives on the Strip,
-// which draws it; this is only what a key means, so it is testable without a
-// terminal.
+// The footer's keys. `down` on an empty editor hands focus to the strip,
+// starting on the newest pill — the rightmost, as in Claude Code; while it is
+// there ←/→ (or tab) move the selection and wrap, enter opens the page, c
+// copies its URL, x drops the badge from the strip, esc or ↑ hands focus back,
+// and any other key hands it back and is typed. The selection lives on the
+// Strip, which draws it; this is only what a key means, so it is testable
+// without a terminal.
 
 import type { Strip } from "./strip";
 
@@ -32,9 +33,9 @@ export class Selector {
     return this.strip.selected !== null;
   }
 
-  /** Hands focus to the footer; false when there is nothing to select. */
+  /** Hands focus to the footer, on the newest pill; false when there is nothing to select. */
   enter(): boolean {
-    this.strip.select(0);
+    this.strip.select(this.strip.list().length - 1);
     return this.active;
   }
 

@@ -12,7 +12,7 @@ export async function comments(a: ActionContext): Promise<ToolResult> {
   const slug = await a.need();
   const threads = await a.host.client.comments(slug);
   if (!threads.length) {
-    return text("No comment threads yet. Viewers add them from the page's 💬 panel.", {
+    return text("No comment threads yet. The user adds them from the viewer's 💬 panel.", {
       action: a.action,
       slug,
       summary: "no threads",
@@ -33,7 +33,12 @@ export async function reply(a: ActionContext): Promise<ToolResult> {
   const body = a.params.text?.trim();
   if (!body) throw new Error("reply needs text");
   if (body.length > REPLY_MAX) throw new Error(`reply text is over ${REPLY_MAX} characters`);
-  const thread = await a.host.client.reply(slug, a.params.thread_id, body);
+  const thread = await a.host.client.reply(
+    slug,
+    a.params.thread_id,
+    body,
+    a.params.acknowledge_duplicate === true,
+  );
   return text(`Replied on ${thread.id}; the page shows it.\n${threadSummary(thread)}`, {
     action: a.action,
     slug,

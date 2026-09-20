@@ -8,12 +8,18 @@
 //                     server to sweep
 //   session_shutdown  close the stream; stop the server only when keepAlive
 //                     is off. Idempotent: a second call finds no host.
-//   down              on an empty prompt: focus moves into the strip (the
-//                     Selector's keys: ←/→, enter opens, c copies, x dismisses)
-//   alt+a             open the newest page, as Claude Code's ctrl+] does
+//   down              on an empty prompt: focus moves into the strip, onto the
+//                     newest pill (the Selector's keys: ←/→, enter opens, c
+//                     copies, x dismisses)
+//   ctrl+] · alt+a    open the newest page: Claude Code's key, and the one pi
+//                     had before it. ctrl+] is pi's default for the editor's
+//                     jump-to-character (tui.editor.jumpForward); an extension
+//                     shortcut outranks it, and pi lists the conflict among
+//                     its startup diagnostics.
 //
-// The strip is one status text; the soriza statusline draws it on the token
-// line, and pi's default footer shows it with the other statuses.
+// The strip is one status text, `⧉` and the focus mark included; the soriza
+// statusline gives it the token line, and pi's default footer shows it with
+// the other statuses.
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { copyToClipboard } from "@earendil-works/pi-coding-agent";
@@ -29,7 +35,7 @@ import { type Paint, STRIP_KEY } from "./strip";
 
 export { STORE_DIR };
 
-export const OPEN_SHORTCUT = "alt+a" as const;
+const OPEN_SHORTCUTS = ["ctrl+]", "alt+a"] as const;
 
 export interface HookDeps {
   hostFor: (cwd: string, session: string) => Host;
@@ -41,11 +47,14 @@ export interface HookDeps {
   bindNotify: (notify: (message: string, type: "info" | "warning" | "error") => void) => void;
 }
 
+// A theme has no accent background, so the selected pill is the accent in
+// reverse video: the accent fills the cells and the terminal's own background
+// becomes the text — the pair the theme already made readable, swapped.
 const paintFor = (ctx: ExtensionContext): Paint => ({
   accent: (t) => ctx.ui.theme.fg("accent", t),
   dim: (t) => ctx.ui.theme.fg("dim", t),
   warn: (t) => ctx.ui.theme.fg("warning", t),
-  selected: (t) => ctx.ui.theme.bg("selectedBg", ctx.ui.theme.bold(t)),
+  selected: (t) => ctx.ui.theme.inverse(ctx.ui.theme.fg("accent", ctx.ui.theme.bold(t))),
 });
 
 /** Draws the strip into the footer and keeps it there as badges change. */
@@ -53,8 +62,7 @@ export function bindStrip(host: Host, ctx: ExtensionContext): () => void {
   if (!ctx.hasUI) return () => {};
   const paint = paintFor(ctx);
   const draw = () => {
-    const row = host.strip.render({ paint });
-    ctx.ui.setStatus(STRIP_KEY, row || undefined);
+    ctx.ui.setStatus(STRIP_KEY, host.strip.render(paint) || undefined);
   };
   draw();
   return host.strip.onChange(draw);
@@ -116,18 +124,20 @@ export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
     deps.forgetHost(ctx.cwd);
   });
 
-  pi.registerShortcut(OPEN_SHORTCUT, {
-    description: "Open the newest artifact page",
-    handler: async (ctx) => {
-      const host = deps.existingHost(ctx.cwd);
-      const badge = host?.badges()[0];
-      if (!host || !badge) {
-        ctx.ui.notify("No artifact pages in this session yet.", "info");
-        return;
-      }
-      await act(ctx, host, { action: "open", slug: badge.slug });
-    },
-  });
+  for (const key of OPEN_SHORTCUTS) {
+    pi.registerShortcut(key, {
+      description: "Open the newest artifact page",
+      handler: async (ctx) => {
+        const host = deps.existingHost(ctx.cwd);
+        const badge = host?.badges().at(-1);
+        if (!host || !badge) {
+          ctx.ui.notify("No artifact pages in this session yet.", "info");
+          return;
+        }
+        await act(ctx, host, { action: "open", slug: badge.slug });
+      },
+    });
+  }
 }
 
 /** What a choice made in the footer does. */

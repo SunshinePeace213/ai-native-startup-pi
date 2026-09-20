@@ -5,10 +5,10 @@ description: >-
   show the mechanism rather than name it, draw the difference when comparing
   options, label every arrow, and hand-author inline SVG that stays legible
   in light and dark (`viewBox` sizing, `currentColor`, marker arrowheads, a
-  grid, one figure one claim with a caption). Load it before adding any
-  figure — architecture, data flow, state machine, before/after, sequence —
-  to a page published with the artifact tool. Not for charts of data, and
-  not for the page's layout or contract: load artifact-pages for those.
+  grid, one figure one claim with a caption). Use when adding any figure —
+  architecture, data flow, state machine, before/after, sequence — to a page
+  published with the artifact tool; load it before drawing. Not for charts of data, and
+  not for the page's layout or contract: load artifact-design for those.
 ---
 
 # Artifact diagramming
@@ -37,10 +37,12 @@ passes through. If a sentence says it faster, write the sentence.
 
 ## Inline SVG
 
-Pages are one self-contained file under a CSP with no script hosts, so a
-figure is hand-written inline `<svg>` with native shapes and `<text>`: no
-library, no external image. The Markdown lane has no diagram fence — a page
-that needs a figure is an `.html` page.
+On an `.html` page a figure is hand-written inline `<svg>` with native shapes
+and `<text>`: no library, no external image. The host also draws mermaid by
+itself — a ```mermaid fence in a Markdown page, `<pre class="mermaid">` in
+HTML — which suits a quick flow or sequence where the exact layout does not
+matter; never load the mermaid library. A figure the argument turns on, or a
+comparison, is drawn by hand so every mark is placed on purpose.
 
 - **Size by `viewBox`**, scaled in CSS (`max-width: 100%; height: auto`).
   Choose the width and height for the content. Flows read left to right,

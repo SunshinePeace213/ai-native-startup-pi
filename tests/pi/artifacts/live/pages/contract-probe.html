@@ -1,0 +1,412 @@
+<title>Host Contract Probe</title>
+<style>
+  /* Diagnostic page: body is left unpainted on purpose, so the computed
+     styles below are the hosting platform's own reset, not this page's. */
+  .probe {
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 16px;
+    padding-block: 10px 24px;
+  }
+  .probe h1 {
+    font-size: 1.1rem;
+    margin: 0 0 2px;
+  }
+  .probe .sub {
+    margin: 0 0 8px;
+    opacity: 0.7;
+    font-size: 12px;
+  }
+  .probe .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 28px;
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+  .probe .row {
+    display: grid;
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+    gap: 8px;
+    padding: 3px 0;
+    border-top: 1px solid rgba(128, 128, 128, 0.35);
+  }
+  .probe .k {
+    font-weight: 600;
+  }
+  .probe .v {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  .probe h2 {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 12px 0 4px;
+    opacity: 0.7;
+  }
+  .probe .scroll {
+    overflow-x: auto;
+  }
+  .probe pre.mermaid {
+    margin: 8px 0;
+  }
+  .probe input {
+    font: inherit;
+    padding: 4px 8px;
+  }
+</style>
+
+<div class="probe">
+  <h1>Host Contract Probe</h1>
+  <p class="sub">
+    What this hosting platform gives a published page, measured from inside the page.
+  </p>
+
+  <h2>Results</h2>
+  <div class="grid" id="rows"></div>
+  <pre id="probe-json" hidden></pre>
+
+  <h2>State carried across a republish</h2>
+  <p>
+    <label for="carry"
+      >Type here, then republish: <input id="carry" type="text" placeholder="does this survive?"
+    /></label>
+    <span id="build">build C</span>
+  </p>
+
+  <h2>Mermaid</h2>
+  <pre class="mermaid" id="mermaid-probe">graph LR; Write[Write file] --> Publish --> View</pre>
+</div>
+
+<script>
+  (function () {
+    var R = {};
+    var order = [];
+    var violations = [];
+    function set(key, value) {
+      if (!(key in R)) order.push(key);
+      R[key] = value;
+      draw();
+    }
+    function draw() {
+      var rows = document.getElementById("rows");
+      if (!rows) return;
+      rows.innerHTML = "";
+      order.forEach(function (k) {
+        var tr = document.createElement("div");
+        tr.className = "row";
+        var th = document.createElement("span");
+        th.className = "k";
+        var td = document.createElement("span");
+        td.className = "v";
+        th.textContent = k;
+        td.textContent = typeof R[k] === "string" ? R[k] : JSON.stringify(R[k]);
+        tr.appendChild(th);
+        tr.appendChild(td);
+        rows.appendChild(tr);
+      });
+      document.getElementById("probe-json").textContent = JSON.stringify(R);
+      window.__probe = R;
+    }
+    function safe(fn) {
+      try {
+        return fn();
+      } catch (e) {
+        return "threw: " + ((e && e.message) || e);
+      }
+    }
+
+    document.addEventListener("securitypolicyviolation", function (e) {
+      violations.push(e.violatedDirective + " ← " + (e.blockedURI || "inline/eval"));
+      set("csp violations seen", violations.join(" | "));
+    });
+
+    // ---- host facts
+    set(
+      "location.origin",
+      safe(function () {
+        return location.origin;
+      }),
+    );
+    set(
+      "location.pathname",
+      safe(function () {
+        return location.pathname;
+      }),
+    );
+    set(
+      "framed (self !== top)",
+      safe(function () {
+        return String(window.self !== window.top);
+      }),
+    );
+    set(
+      "doctype / compatMode",
+      safe(function () {
+        return (document.doctype ? document.doctype.name : "none") + " / " + document.compatMode;
+      }),
+    );
+    set("document.title", document.title);
+    set(
+      "viewport meta",
+      safe(function () {
+        var m = document.querySelector('meta[name="viewport"]');
+        return m ? m.content : "(none)";
+      }),
+    );
+    set(
+      "favicon href (first 70)",
+      safe(function () {
+        var l = document.querySelector('link[rel~="icon"]');
+        return l ? l.href.slice(0, 70) : "(none)";
+      }),
+    );
+    set(
+      "csp <meta> present",
+      safe(function () {
+        return String(!!document.querySelector('meta[http-equiv="Content-Security-Policy"]'));
+      }),
+    );
+
+    // ---- theme
+    function theme() {
+      set(
+        "html[data-theme]",
+        document.documentElement.getAttribute("data-theme") || "(not stamped)",
+      );
+      set("prefers-color-scheme: dark", String(matchMedia("(prefers-color-scheme: dark)").matches));
+      set("root color-scheme", getComputedStyle(document.documentElement).colorScheme);
+    }
+    theme();
+    new MutationObserver(theme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    // ---- the platform's reset, read from the unpainted body
+    function reset() {
+      var b = getComputedStyle(document.body),
+        h = getComputedStyle(document.documentElement);
+      set("body class", document.body.className || "(none)");
+      set("body font", b.fontSize + " / " + b.lineHeight + " / " + b.fontFamily.slice(0, 60));
+      set("body background", b.backgroundColor);
+      set("body color", b.color);
+      set("body margin", b.margin);
+      set(":root padding (safe-area)", h.paddingTop + " / " + h.paddingBottom);
+    }
+
+    // ---- runtime APIs (first read is synchronous; re-read later, since a runtime may arrive after this script)
+    set(
+      "window.claude at first run",
+      safe(function () {
+        return typeof window.claude;
+      }),
+    );
+    set(
+      "window.artifact at first run",
+      safe(function () {
+        return typeof window.artifact;
+      }),
+    );
+    function runtimes() {
+      set(
+        "window.claude",
+        safe(function () {
+          return (
+            typeof window.claude +
+            (window.claude ? " {" + Object.keys(window.claude).join(",") + "}" : "")
+          );
+        }),
+      );
+      set(
+        "window.claude.hot",
+        safe(function () {
+          return typeof (window.claude && window.claude.hot);
+        }),
+      );
+      set(
+        "window.artifact",
+        safe(function () {
+          var a = window.artifact;
+          return (
+            typeof a +
+            (a ? " {" + Object.keys(a).join(",") + "} v" + a.version + " slug=" + a.slug : "")
+          );
+        }),
+      );
+    }
+
+    // ---- storage
+    set(
+      "localStorage",
+      safe(function () {
+        localStorage.setItem("contract-probe", String(Date.now()));
+        var keys = [];
+        for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+        return "ok; keys on this origin: " + keys.join(", ");
+      }),
+    );
+
+    // ---- CSP probes
+    set(
+      "eval()",
+      safe(function () {
+        return "allowed → " + eval("6*7");
+      }),
+    );
+    function loadScript(label, src, check) {
+      var s = document.createElement("script");
+      s.src = src;
+      s.onload = function () {
+        set(label, "LOADED" + (check ? " → " + safe(check) : ""));
+      };
+      s.onerror = function () {
+        set(label, "blocked / failed");
+      };
+      set(label, "pending…");
+      document.head.appendChild(s);
+    }
+    loadScript(
+      "script: cdnjs",
+      "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.13/dayjs.min.js",
+      function () {
+        return "dayjs " + typeof window.dayjs;
+      },
+    );
+    loadScript(
+      "script: jsdelivr",
+      "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js",
+      function () {
+        return "lodash " + typeof window._;
+      },
+    );
+    loadScript("script: unpkg", "https://unpkg.com/dayjs@1.11.13/plugin/utc.js");
+
+    (function () {
+      var l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = "https://fonts.googleapis.com/css2?family=Fraunces:wght@600&display=swap";
+      l.onload = function () {
+        set("stylesheet: Google Fonts", "LOADED");
+      };
+      l.onerror = function () {
+        set("stylesheet: Google Fonts", "blocked / failed");
+      };
+      set("stylesheet: Google Fonts", "pending…");
+      document.head.appendChild(l);
+    })();
+    (function () {
+      var l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = "https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css";
+      l.onload = function () {
+        set("stylesheet: cdnjs", "LOADED");
+      };
+      l.onerror = function () {
+        set("stylesheet: cdnjs", "blocked / failed");
+      };
+      set("stylesheet: cdnjs", "pending…");
+      document.head.appendChild(l);
+    })();
+    (function () {
+      var i = new Image();
+      i.onload = function () {
+        set("img: external host", "LOADED");
+      };
+      i.onerror = function () {
+        set("img: external host", "blocked / failed");
+      };
+      set("img: external host", "pending…");
+      i.src = "https://www.gstatic.com/images/branding/product/1x/googleg_32dp.png";
+    })();
+    (function () {
+      var i = new Image();
+      i.onload = function () {
+        set("img: data URI", "LOADED");
+      };
+      i.onerror = function () {
+        set("img: data URI", "blocked / failed");
+      };
+      i.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    })();
+    set("fetch: external", "pending…");
+    fetch("https://api.github.com/zen")
+      .then(function (r) {
+        set("fetch: external", "ALLOWED (HTTP " + r.status + ")");
+      })
+      .catch(function (e) {
+        set("fetch: external", "blocked (" + e.message + ")");
+      });
+    set("fetch: same origin", "pending…");
+    fetch(location.href)
+      .then(function (r) {
+        set("fetch: same origin", "ALLOWED (HTTP " + r.status + ")");
+      })
+      .catch(function (e) {
+        set("fetch: same origin", "blocked (" + e.message + ")");
+      });
+
+    // ---- what the platform injected
+    function injected() {
+      set(
+        "platform ids in document",
+        safe(function () {
+          return (
+            [].slice
+              .call(document.querySelectorAll("script[id],style[id]"))
+              .map(function (e) {
+                return e.tagName.toLowerCase() + "#" + e.id;
+              })
+              .join(", ") || "(none)"
+          );
+        }),
+      );
+      set(
+        "platform chrome in body",
+        safe(function () {
+          var n = [].slice.call(document.body.children).filter(function (e) {
+            return !e.classList.contains("probe") && e.tagName !== "SCRIPT";
+          });
+          return n.length
+            ? n
+                .map(function (e) {
+                  return (
+                    e.tagName.toLowerCase() +
+                    (e.className ? "." + String(e.className).split(" ")[0] : "")
+                  );
+                })
+                .join(", ")
+            : "(none)";
+        }),
+      );
+      set(
+        "mermaid <pre> rendered",
+        safe(function () {
+          var el = document.getElementById("mermaid-probe");
+          if (!el)
+            return (
+              "element replaced → " +
+              (document.querySelector(".probe svg") ? "svg present" : "no svg")
+            );
+          return el.querySelector("svg")
+            ? "yes (svg inside)"
+            : document.querySelector(".probe svg")
+              ? "yes (svg nearby)"
+              : "no — still text";
+        }),
+      );
+    }
+
+    function late() {
+      reset();
+      runtimes();
+      injected();
+      theme();
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", late);
+    else late();
+    setTimeout(late, 1500);
+    setTimeout(late, 4000);
+  })();
+</script>

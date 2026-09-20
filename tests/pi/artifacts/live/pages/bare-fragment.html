@@ -1,0 +1,41 @@
+<title>Unstyled Fragment</title>
+<h1>Unstyled Fragment</h1>
+<p>
+  This page brings no stylesheet. Everything about how it looks comes from the platform that serves
+  it: the font, the ground, the measure, and whether it follows a dark system theme.
+</p>
+<h2>Elements</h2>
+<ul>
+  <li>A list item with <code>inline code</code> and a <a href="#table">link to the table</a>.</li>
+  <li>A second item, with <strong>strong</strong> and <em>emphasised</em> text.</li>
+</ul>
+<blockquote>A blockquote, to see whether the platform styles it.</blockquote>
+<pre><code>const pair = { aperture: "f/16", shutter: "1/125" };</code></pre>
+<h2 id="table">Table</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Light</th>
+      <th>Aperture</th>
+      <th>EV</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bright sun</td>
+      <td>f/16</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <td>Cloudy bright</td>
+      <td>f/8</td>
+      <td>13</td>
+    </tr>
+  </tbody>
+</table>
+<p hidden>This paragraph carries the hidden attribute.</p>
+<script>
+  try {
+    localStorage.setItem("written-by-unstyled-fragment", "1");
+  } catch (e) {}
+</script>

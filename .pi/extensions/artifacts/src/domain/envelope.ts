@@ -35,7 +35,7 @@ export function envelope(input: EnvelopeInput): string {
     ].join("\n");
   }
   const lines = [
-    `${head}: the page sent reply ${event.response ?? 1} to v${event.version} at ${event.at}. The version is still v${event.version}; only your republish makes v${event.version + 1}.`,
+    `${head}: the page sent reply ${event.response ?? 1} to v${event.version} at ${event.at}. The version is still v${event.version}: a reply never makes one, a publish does.`,
   ];
   if (event.gesture === false) {
     lines.push(

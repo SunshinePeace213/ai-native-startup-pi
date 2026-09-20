@@ -26,6 +26,7 @@ export function parseConfig(raw: unknown): Config {
   if (typeof r.retentionDays === "number" && r.retentionDays >= 1) {
     out.retentionDays = Math.floor(r.retentionDays);
   }
+  if (r.isolation === "origin" || r.isolation === "sandbox") out.isolation = r.isolation;
   if (typeof r.bun === "string" && r.bun.trim()) out.bun = r.bun.trim();
   return out;
 }

@@ -17,6 +17,9 @@
 // P6: a server started before its own source last changed is replaced, not attached
 //     to: /reload after an edit must never leave the old process serving pages; a
 //     server newer than its source is attached to as before
+// P7: the isolation a session is configured with reaches the process it spawns: under
+//     `sandbox` the shell host itself serves what a frame loads, under `origin` only
+//     a page's own host does
 
 import { afterEach, describe, expect, test } from "bun:test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -184,5 +187,28 @@ describe("P6 a server older than its code", () => {
     expect(replaced.spawned).toBe(true);
     expect(replaced.record.pid).not.toBe(first.record.pid);
     expect(Date.parse(replaced.record.startedAt)).toBeGreaterThanOrEqual(edited);
+  }, 40_000);
+});
+
+describe("P7 isolation reaches the process", () => {
+  const runtimeOn = async (port: number, host: string) =>
+    (
+      await fetch(`http://127.0.0.1:${port}/_rt/claude.js`, {
+        headers: { host: `${host}:${port}` },
+      })
+    ).status;
+
+  test("P7 sandbox: the shell host serves the runtime; origin: only a frame host does", async () => {
+    const sandboxed = scratch();
+    const isolated = scratch();
+    const [a, b] = [await freePort(), await freePort()];
+    cleanups.push(() => void stopServer(sandboxed.root, a, readToken(sandboxed.root)));
+    cleanups.push(() => void stopServer(isolated.root, b, readToken(isolated.root)));
+    const base = { retentionDays: 14, waitMs: 15_000 };
+    await locateServer({ ...base, ...sandboxed, port: a, isolation: "sandbox" });
+    await locateServer({ ...base, ...isolated, port: b });
+    expect(await runtimeOn(a, "localhost")).toBe(200);
+    expect(await runtimeOn(b, "localhost")).toBe(404);
+    expect(await runtimeOn(b, "some-page.localhost")).toBe(200);
   }, 40_000);
 });

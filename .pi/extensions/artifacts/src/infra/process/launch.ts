@@ -21,7 +21,7 @@ import { delimiter, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { DISPLAY } from "../../domain/protocol";
-import type { Health, ServerRecord } from "../../domain/types";
+import type { Health, Isolation, ServerRecord } from "../../domain/types";
 import {
   acquireLock,
   clearServerRecord,
@@ -123,6 +123,7 @@ export interface LaunchOptions {
   port: number;
   trashDir: string;
   retentionDays: number;
+  isolation?: Isolation;
   bun?: string;
   /** Overrides for tests. */
   serveScript?: string;
@@ -209,6 +210,7 @@ export async function locateServer(options: LaunchOptions): Promise<Located> {
         options.trashDir,
         "--retention",
         String(options.retentionDays),
+        ...(options.isolation ? ["--isolation", options.isolation] : []),
       ],
       {
         detached: true,

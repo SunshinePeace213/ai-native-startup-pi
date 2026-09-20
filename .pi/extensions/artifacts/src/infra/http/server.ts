@@ -1,18 +1,23 @@
 // The HTTP surface: Bun.serve bound to the loopback interface inside the
 // server process (server.ts at the extension root). Binds one port and
 // only that port — a taken port is an error the caller reports, never a
-// fallback — checks the Host, and dispatches to the page routes (for the
-// browser) or the API routes (for sessions).
+// fallback — and dispatches by Host: a frame host (<slug>.localhost) reaches
+// that page's files, what it uploaded and the runtime, and nothing else; the
+// shell host reaches the viewer shell and gallery (for the browser) and the
+// API (for sessions). Under `sandbox` isolation there are no frame hosts to
+// rely on, so the shell host serves the frames too, by cap.
 
 import type { Server } from "bun";
 
 import type { Core } from "../../app/core";
 import { type Logger, silentLogger } from "../../app/ports";
 import { BIND, DISPLAY, galleryUrl, pageUrl, PREFIX } from "../../domain/protocol";
+import type { Isolation } from "../../domain/types";
 import { createAuth } from "./auth";
 import { EventHub } from "./events";
 import { json } from "./respond";
 import { handleApi } from "./routes/api";
+import { handleFrame, isFramePath } from "./routes/frame";
 import { handlePage } from "./routes/pages";
 
 export interface ArtifactServer {
@@ -31,6 +36,7 @@ export interface ServerOptions {
   viewer: string;
   /** The port to bind; 0 lets the OS pick (tests). */
   port: number;
+  isolation?: Isolation;
   startedAt?: string;
   log?: Logger;
   /** Called after the /api/stop response is sent. */
@@ -41,14 +47,10 @@ export function startServer(core: Core, options: ServerOptions): ArtifactServer 
   const hub = new EventHub();
   const log = options.log ?? silentLogger;
   const startedAt = options.startedAt ?? new Date().toISOString();
+  const isolation = options.isolation ?? "origin";
 
+  // Tabs are told by the route that took the request; this listener only finds the session.
   core.onEvent((event, manifest) => {
-    hub.broadcastPage(
-      event.slug,
-      event.kind === "response"
-        ? { type: "response", version: event.version, response: event.response }
-        : { type: "comment", threadId: event.thread?.id },
-    );
     const outcome = hub.routeToSession(event, manifest);
     log.info(
       { action: "route", slug: event.slug, kind: event.kind, owner: manifest.owner, outcome },
@@ -79,7 +81,12 @@ export function startServer(core: Core, options: ServerOptions): ArtifactServer 
 
   async function dispatch(req: Request): Promise<Response> {
     const url = new URL(req.url);
-    if (!auth.ownHost(req)) return json(421, { error: "misdirected request" });
+    const host = auth.host(req);
+    if (!host) return json(421, { error: "misdirected request" });
+    const frames = { core, auth, port: boundPort, isolation };
+    if (host.kind === "frame") return handleFrame(req, url, host.slug, frames);
+    if (isolation === "sandbox" && isFramePath(url.pathname))
+      return handleFrame(req, url, null, frames);
     if (url.pathname === "/") {
       return new Response(null, {
         status: 303,
@@ -92,12 +99,14 @@ export function startServer(core: Core, options: ServerOptions): ArtifactServer 
         hub,
         auth,
         port: boundPort,
+        origin,
+        isolation,
         startedAt,
         log,
         onStop: options.onStop,
       });
     }
-    return handlePage(req, url, { core, hub, auth });
+    return handlePage(req, url, { core, hub, auth, port: boundPort, isolation });
   }
 
   return {

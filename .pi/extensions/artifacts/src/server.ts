@@ -1,6 +1,7 @@
 // The artifact server process. Run by bun, never imported by the pi side:
 //
 //   bun src/server.ts --root <store dir> --port <n> [--trash <dir>] [--retention <days>]
+//                     [--isolation origin|sandbox]
 //
 // It binds Bun.serve on 127.0.0.1 at exactly the port it is given, writes
 // .server/record.json once listening, logs to logs/<date>/server.jsonl,
@@ -17,7 +18,7 @@ import { Core } from "./app/core";
 import { DEFAULT_CONFIG, DEFAULT_PORT } from "./domain/types";
 import { startServer } from "./infra/http/server";
 import { createLogger } from "./infra/log/logger";
-import { renderer } from "./infra/render/shell";
+import { renderer } from "./infra/render/document";
 import {
   clearServerRecord,
   ensureToken,
@@ -37,7 +38,7 @@ function arg(name: string, fallback?: string): string | undefined {
 const root = arg("root");
 if (!root) {
   console.error(
-    "usage: bun src/server.ts --root <store dir> --port <n> [--trash <dir>] [--retention <days>]",
+    "usage: bun src/server.ts --root <store dir> --port <n> [--trash <dir>] [--retention <days>] [--isolation origin|sandbox]",
   );
   process.exit(2);
 }
@@ -45,6 +46,7 @@ const absoluteRoot = resolve(root);
 const port = Number(arg("port", String(DEFAULT_PORT)));
 const trashDir = arg("trash", join(homedir(), ".Trash")) as string;
 const retentionDays = Number(arg("retention", String(DEFAULT_CONFIG.retentionDays)));
+const isolation = arg("isolation") === "sandbox" ? "sandbox" : DEFAULT_CONFIG.isolation;
 const startedAt = new Date().toISOString();
 
 const log = createLogger({
@@ -53,8 +55,12 @@ const log = createLogger({
   base: { pid: process.pid, component: "server" },
 });
 const store = new Store(absoluteRoot, trashDir);
-const migrated = store.migrate();
-if (migrated.length) log.info({ action: "migrate", slugs: migrated }, "moved under .store");
+const unreadable = store.unreadable();
+if (unreadable.length)
+  log.warn(
+    { action: "skip", slugs: unreadable },
+    "folders with a manifest this server cannot read",
+  );
 const core = new Core(store, renderer, {
   log,
   retentionDays: Number.isFinite(retentionDays) ? retentionDays : 14,
@@ -81,6 +87,7 @@ try {
     token: ensureToken(absoluteRoot),
     viewer: ensureViewer(absoluteRoot),
     port: Number.isFinite(port) ? port : DEFAULT_PORT,
+    isolation,
     startedAt,
     log,
     onStop: () => stop("api"),

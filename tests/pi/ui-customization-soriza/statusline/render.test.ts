@@ -36,8 +36,9 @@
 // R6: the last line lists other extensions' statuses with their icons in the
 //     fixed order (architecture-sync, llm-wiki, then unknown keys) and the
 //     theme status last on its left — the artifact strip apart, which takes the
-//     token line as `⧉  <strip>` and leaves the rest the line above — and the
-//     session's context length as
+//     token line exactly as the artifacts extension wrote it (its own `⧉`, focus
+//     mark and OSC 8 links, no icon added) and leaves the rest the line above —
+//     and the session's context length as
 //     `<count> Tokens` — the exact count, not the Context row's abbreviation —
 //     flush against its right edge; with no statuses the badge still holds the
 //     corner, it follows the Context row's own figure, and control characters
@@ -484,9 +485,10 @@ describe("R6 status line", () => {
     expect(line).toContain("██");
   });
 
-  test("R6 the artifact strip takes the token line as ⧉; the other statuses keep the line above", () => {
+  test("R6 the artifact strip takes the token line as it was written; the other statuses keep the line above", () => {
+    const pill = "\x1b]8;;http://localhost:5834/a/beaufort?t=tok\x1b\\beaufort\x1b]8;;\x1b\\";
     const statuses = new Map([
-      ["artifacts", "beaufort · article 2"],
+      ["artifacts", `⧉ ${pill} · article-2`],
       ["soriza-theme", themeStatus(theme)],
       ["llm-wiki", "wiki queue 2"],
     ]);
@@ -495,12 +497,14 @@ describe("R6 status line", () => {
     expect(lines[4]).toContain("📚 wiki queue 2");
     expect(lines[4]).toContain("🎨 nord");
     expect(lines[4]).not.toContain("Tokens");
-    expect(lines[5]!.startsWith("⧉  beaufort · article 2")).toBe(true);
+    expect(lines[5]!.startsWith(`⧉ ${pill} · article-2 `)).toBe(true);
     expect(lines[5]).toMatch(/ {2,}84,000 Tokens$/);
-    // with nothing else to show, the strip and the badge are the only last line
-    const alone = plain(snapshot({ statuses: new Map([["artifacts", "beaufort"]]) }));
+    // with nothing else to show, the strip and the badge are the only last line,
+    // and nothing is put in front of the strip's own focus mark
+    const focused = "❯ ⧉ beaufort · ←/→ to navigate · Enter to open · x to dismiss";
+    const alone = plain(snapshot({ statuses: new Map([["artifacts", focused]]) }));
     expect(alone).toHaveLength(5);
-    expect(alone[4]!.startsWith("⧉  beaufort")).toBe(true);
+    expect(alone[4]!.startsWith(`${focused} `)).toBe(true);
   });
 
   test("R6 no statuses → the badge still holds the line; newlines stay on one line", () => {

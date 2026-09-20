@@ -22,9 +22,10 @@ export default defineConfig([
     settings: { react: { version: "19.0" } },
   },
   {
-    // The artifact page runtime ships inside every published page and runs in
-    // the browser: a classic script (an IIFE, no imports) against DOM globals.
-    files: [".pi/extensions/artifacts/src/page/*.js"],
+    // The artifact page runtime and the viewer shell's script are served to
+    // the browser as they are: classic scripts (an IIFE, no imports) against
+    // DOM globals.
+    files: [".pi/extensions/artifacts/src/page/*.js", ".pi/extensions/artifacts/src/shell/*.js"],
     languageOptions: {
       sourceType: "script",
       globals: {
@@ -32,9 +33,23 @@ export default defineConfig([
         document: "readonly",
         navigator: "readonly",
         location: "readonly",
+        localStorage: "readonly",
         console: "readonly",
         fetch: "readonly",
         EventSource: "readonly",
+        Event: "readonly",
+        Element: "readonly",
+        Range: "readonly",
+        CSS: "readonly",
+        Blob: "readonly",
+        FileReader: "readonly",
+        TextEncoder: "readonly",
+        URL: "readonly",
+        AbortController: "readonly",
+        URLSearchParams: "readonly",
+        structuredClone: "readonly",
+        getComputedStyle: "readonly",
+        matchMedia: "readonly",
         setTimeout: "readonly",
         clearTimeout: "readonly",
       },

@@ -25,7 +25,9 @@ tests/
 │   │   │                            anything unstubbed throws
 │   │   ├── fake-ctx.ts              ExtensionContext: cwd, hasUI, records ui.setStatus
 │   │   ├── scripted-exec.ts         exec by verb, plus the fail-open matrix every hook must survive
-│   │   └── scratch-layer.ts         a throwaway project with a minimal llm-wiki/ and engine marker
+│   │   ├── scratch-layer.ts         a throwaway project with a minimal llm-wiki/ and engine marker
+│   │   └── fullscreen.ts            a footer mounted on pi's real alternate-screen renderer over a scripted
+│   │                                terminal: click a cell, read which URL pi opened
 │   ├── llm-wiki/                    one directory per user-observable feature = one hook
 │   │   ├── write-guard/hook.test.ts     tool_call
 │   │   ├── grounding/hook.test.ts       input → before_agent_start
@@ -44,17 +46,41 @@ tests/
 │   │   ├── find/tool.test.ts        params → fd argv, rows, limits, errors
 │   │   ├── binaries/probe.test.ts   session_start status, /fast-search, resolution order
 │   │   └── live/binaries.test.ts    the real rg and fd on a scratch repo; skipped when absent
-│   └── artifacts/                   the local artifact loop on a scratch project with an
-│       │                            in-process Bun server, a recording opener, a scratch trash;
-│       │                            directories mirror the extension's layers
-│       ├── fixture.ts               the wired extension; tool runner; page- and api-style HTTP helpers
-│       ├── domain/rules.test.ts     D1–D6  versions vs replies · retention · config · questions/v1 · envelope · terminal text
-│       ├── server/store.test.ts     T1–T6  layout · replies bound to versions · ownership · trash · sweep · same-path republish
-│       ├── server/http.test.ts      H1–H7  viewer cookie · page-only POSTs · session token · replies and 409 · Host · SSE · sweep
-│       ├── process/launch.test.ts   P1–P5  the real `bun src/server.ts` on a fixed port · token rotation · taken port refused · lock · logs
-│       ├── session/session.test.ts  S1–S8  publish · ask · republish in place · owner-only wakes · session_start · strip · selector · delete/verify
-│       └── structure/boundaries.test.ts B1–B6 domain pure · app over domain · pi side never imports the server · Bun only in http/server ·
-│                                    runtime is a classic script · no orphan modules
+│   ├── artifacts/                   the local artifact loop on a scratch project with an
+│   │   │                            in-process Bun server, a recording opener, a scratch trash;
+│   │   │                            directories mirror the extension's layers
+│   │   ├── fixture.ts               the wired extension; a runner for each tool; shell-, frame- and api-style HTTP helpers
+│   │   ├── domain/rules.test.ts     D1–D19 versions vs replies · retention · config · questions/v1 · envelope · terminal text ·
+│   │   │                            slugs and frame hosts · icon words · supporting-file rules · capability declarations · file pins ·
+│   │   │                            the database: paths, bodies, writes, queries, leases · uploads and SVG sanitising ·
+│   │   │                            a type's read-only paths
+│   │   ├── server/store.test.ts     T1–T21 layout · replies bound to versions · ownership · trash · sweep · same-path republish ·
+│   │   │                            the artifact is its folder · unreadable manifests · thread replies · title · icon · label ·
+│   │   │                            rename · duplicate · file blobs and maps · capability declarations · the viewer's own version ·
+│   │   │                            db.json · assets/ · artifacts made from a type
+│   │   ├── server/http.test.ts      H1–H25 viewer cookie · shell-only POSTs · session token · replies and 409 · Host · SSE · sweep ·
+│   │   │                            frame hosts and the cap · both policies · title menu · state and data · sandbox isolation ·
+│   │   │                            manifest text never markup · served files · the files API · self-publish · status and rename ·
+│   │   │                            the database's two routes and its pushes · uploads and /_blob/<id> · types over the API
+│   │   ├── server/render.test.ts    R1–R6  the stored document: Claude Code's skeleton plus the runtime tag · the island ·
+│   │   │                            full documents injected into · the Markdown lane and mermaid fences · source titles
+│   │   ├── process/launch.test.ts   P1–P7  the real `bun src/server.ts` on a fixed port · token rotation · taken port refused · lock ·
+│   │   │                            logs · a server older than its source is replaced · isolation reaches the process
+│   │   ├── session/session.test.ts  S1–S8, S10–S20  publish · ask · republish in place and `force` · owner-only wakes ·
+│   │   │                            session_start · the footer row and its clicks · the footer's keys · delete/verify · restart ·
+│   │   │                            Claude Code's parameter names · files · reading files · capabilities · the viewer's version ·
+│   │   │                            db and assets served · publish from a type · list types and quickstart
+│   │   ├── session/data.test.ts     A1–A6  the artifact_data tool: parameter names · reads · writes · pinned writes and batches ·
+│   │   │                            file_path and out_dir inside the project · what the call gets wrong
+│   │   ├── session/gallery.test.ts  G1–G13 the /artifacts panel the wired command opens: tabs · rows · window · search · guide ·
+│   │   │                            attach · row keys · rename · delete · loading and errors · the Status tab · /artifacts status
+│   │   ├── structure/boundaries.test.ts B1–B7 domain pure · app over domain · pi side never imports the server · Bun only in
+│   │   │                            http/server · both browser scripts are classic scripts · no orphan modules · page/ and
+│   │   │                            shell/ are served, never linked
+│   │   └── live/browser.test.ts     L1–L23 a real Chromium through playwright-core on the fixture's server: origins · the page
+│   │       │                        policy · the sandbox · the bridge · capabilities · state across a republish · the database
+│   │       │                        live across views · uploads · a typed artifact; skipped where no Chromium is found
+│   │       └── pages/               the pages it publishes: contract-probe.html · bare-fragment.html · markdown-lane.md
 │   └── destructive-guard/           one directory per layer, on a scratch workspace with
 │       │                            .git, src/, node_modules/, a home, and an escaping symlink
 │       ├── fixture.ts               the workspace, a scriptable select dialog, the wired extension
@@ -91,7 +117,7 @@ Every test file opens with its numbered contract; every case is named
 | `bun test tests/pi/fast-search` | grep and find tools, binary resolution, and the live rg/fd contracts |
 | `bun test tests/pi/destructive-guard` | Destructive guard: parser, paths, catalog, config, and hook contracts |
 | `bun test tests/pi/destructive-guard/engine` | The rule catalog alone — run after adding or changing a rule |
-| `bun test tests/pi/artifacts` | Artifacts: domain, store, HTTP, process, session, and structure contracts |
+| `bun test tests/pi/artifacts` | Artifacts: domain, store, render, HTTP, process, session, data-tool, panel, and structure contracts, and the live browser suite (skipped where no Chromium is found) |
 | `bun test tests/pi/architecture-sync` | Architecture generator, CLI, and lifecycle contracts |
 | `bun test tests/docs` | Local documentation links and heading targets |
 | `bun run architecture:check` | Generated map matches the current projected tree; no repairs |
@@ -141,12 +167,16 @@ Unknown folder descriptions are reported for curation, not inferred from filenam
 - A directory convention is not proof of eval coverage. The librarian has a
   standalone eval file; `source-archiver` currently does not. Trigger-eval files
   alone do not establish output quality for a skill or its delegated agent.
-- The artifacts browser runtime is parse-checked in the suite; whether it renders,
-  sends, and reports diagnostics in a real browser is verified by hand
-  (see [docs/artifacts.md](artifacts.md)) and is not automated. How the
-  footer strip and the `/artifacts` gallery look in a real terminal, and `down`
-  handing the editor's focus to the footer, are likewise by-hand checks; their key
-  handling is tested through the `Selector` and `Gallery` components.
+- The artifacts browser scripts are parse-checked, and `live/browser.test.ts` proves
+  in a real Chromium that a page renders, sends, carries state across a republish,
+  shares its database across views, uploads, and reports diagnostics — but only where
+  a Chromium is found; elsewhere L1–L23 are skipped and that ground is a by-hand check
+  (see [docs/artifacts.md](artifacts.md)).
+  The footer's keys run through the editor `session_start` installs, `down` handing
+  it the focus included, and clicks on a pill and on a panel tab run on pi's real
+  alternate-screen renderer over a scripted terminal. Still by hand: how the footer
+  row and the `/artifacts` panel look in a real terminal, the terminal's own
+  Ctrl/Cmd+click in regular mode, the clipboard copy, and the system opener.
 - AGENTS.md adherence requires clean-session behavioral trials (read-only tasks,
   unrelated KB leads, queue reminders, and generated-block ownership), not exact
   string assertions against the instructions. Those behavioral trials were not

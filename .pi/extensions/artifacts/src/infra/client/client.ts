@@ -14,11 +14,14 @@ import {
 import type {
   CommentThread,
   Diagnostic,
+  FileMap,
+  FileRecord,
   Island,
   Manifest,
   PageEvent,
   PublishRequest,
   PublishResponse,
+  ServerStatus,
   SourceKind,
   StreamMessage,
 } from "../../domain/types";
@@ -36,6 +39,13 @@ export interface ArtifactRead {
   manifest: Manifest;
   island: Island | null;
   source: { kind: SourceKind; source: string } | null;
+}
+
+/** One supporting file as the server reads it back; `text` only for a small text file. */
+export interface FileRead extends FileRecord {
+  version: number;
+  path: string;
+  text: string | null;
 }
 
 export interface StreamHandle {
@@ -110,10 +120,20 @@ export class ArtifactClient {
     }
     const parsed = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     if (!res.ok) {
-      const message = typeof parsed.error === "string" ? parsed.error : `HTTP ${res.status}`;
-      throw new ClientError(message, res.status, parsed);
+      // A capability's route refuses as {code, message}; every other route as {error}.
+      const said = [parsed.error, parsed.message].find((text) => typeof text === "string");
+      throw new ClientError(
+        (said as string | undefined) ?? `HTTP ${res.status}`,
+        res.status,
+        parsed,
+      );
     }
     return parsed as T;
+  }
+
+  /** What the server says of itself: never a secret. */
+  status(): Promise<ServerStatus> {
+    return this.call<ServerStatus>("GET", "/status");
   }
 
   list(): Promise<Manifest[]> {
@@ -141,6 +161,32 @@ export class ArtifactClient {
     );
   }
 
+  /** The supporting files of the current version. */
+  files(slug: string): Promise<{ version: number; files: FileMap }> {
+    return this.call("GET", `/artifacts/${slug}/files`);
+  }
+
+  /** One supporting file by its published path; null when the current version has none there. */
+  async file(slug: string, path: string): Promise<FileRead | null> {
+    try {
+      return await this.call<FileRead>(
+        "GET",
+        `/artifacts/${slug}/files?path=${encodeURIComponent(path)}`,
+      );
+    } catch (e) {
+      if (e instanceof ClientError && e.status === 404) return null;
+      throw e;
+    }
+  }
+
+  /**
+   * One operation on the artifact's database, in the body routes/db.ts reads. A
+   * refusal is a ClientError whose body is the server's {code, message, current?, entry?}.
+   */
+  db<T>(slug: string, body: Record<string, unknown>): Promise<T> {
+    return this.call<T>("POST", `/artifacts/${slug}/db`, body);
+  }
+
   pending(): Promise<PageEvent[]> {
     return this.call<{ events: PageEvent[] }>("GET", "/pending").then((r) => r.events);
   }
@@ -161,16 +207,29 @@ export class ArtifactClient {
     );
   }
 
+  /** The user's rename; the server trims the title, and refuses an empty or oversized one. */
+  rename(slug: string, title: string): Promise<Manifest> {
+    return this.call<{ manifest: Manifest }>("POST", `/artifacts/${slug}/rename`, { title }).then(
+      (r) => r.manifest,
+    );
+  }
+
   ack(slug: string, ids: string[]): Promise<number> {
     return this.call<{ acked: number }>("POST", `/artifacts/${slug}/ack`, { ids }).then(
       (r) => r.acked,
     );
   }
 
-  reply(slug: string, threadId: string, text: string): Promise<CommentThread> {
+  reply(
+    slug: string,
+    threadId: string,
+    text: string,
+    acknowledgeDuplicate = false,
+  ): Promise<CommentThread> {
     return this.call<{ thread: CommentThread }>("POST", `/artifacts/${slug}/reply`, {
       threadId,
       text,
+      acknowledgeDuplicate,
     }).then((r) => r.thread);
   }
 

@@ -3,16 +3,33 @@
 // infra/render; tests may implement either in memory. Nothing in app/
 // imports a runtime API.
 
+import type { AssetRecord } from "../domain/assets";
+import type { DbFile } from "../domain/db";
 import type {
+  Capabilities,
   CommentThread,
   Diagnostic,
+  FileMap,
   Island,
   Manifest,
   PendingEvent,
   ResponseRecord,
   SourceKind,
+  TypeRef,
   VersionRecord,
 } from "../domain/types";
+
+/** One supporting file as a publish hands it over: its bytes, and its media type when the path does not say. */
+export interface FileContent {
+  bytes: Uint8Array;
+  contentType?: string;
+}
+
+/** A version's supporting files: the records it keeps from the version before, and the content it stores anew. */
+export interface VersionFiles {
+  kept: FileMap;
+  written: Record<string, { bytes: Uint8Array; contentType: string }>;
+}
 
 export interface CreateInput {
   slug: string;
@@ -24,6 +41,12 @@ export interface CreateInput {
   source: string;
   html: string;
   island: Island | null;
+  label?: string;
+  files?: VersionFiles;
+  /** The whole declaration the artifact carries from this version on; absent or empty when it declares nothing. */
+  capabilities?: Capabilities;
+  /** The type the artifact is made from, with the paths that stay the type's. */
+  type?: TypeRef;
   session: string;
 }
 
@@ -36,15 +59,29 @@ export interface VersionInput {
   title?: string;
   description?: string;
   icon?: string;
-  note?: string;
-  session: string;
+  label?: string;
+  files?: VersionFiles;
+  /** The whole declaration the artifact carries from this version on; absent or empty when it declares nothing. */
+  capabilities?: Capabilities;
+  /**
+   * The session publishing, which owns the artifact from now on. Absent when
+   * the viewer published from the page: the version is attributed to VIEWER
+   * and nobody's ownership moves.
+   */
+  session?: string;
 }
 
 export interface ResponseInput {
   island: Island;
-  /** The current page, re-rendered with the response laid over the version. */
-  html: string;
   gesture: boolean;
+}
+
+/** An asset to store: its bytes and type, and — for a copy of another artifact's — the record it keeps. */
+export interface AssetInput {
+  bytes: Uint8Array;
+  contentType: string;
+  id?: string;
+  createdAt?: string;
 }
 
 export interface ArtifactStore {
@@ -64,11 +101,27 @@ export interface ArtifactStore {
   readIsland(slug: string): Island | null;
   readResponseIsland(slug: string, version: number, r: number): Island | null;
   readSource(slug: string): { kind: SourceKind; source: string } | null;
-  /** The current page, or one pristine version. */
-  readPage(slug: string, version?: number): string | null;
+  /** One version's document, exactly as it was published. */
+  readPage(slug: string, version: number): string | null;
+  /** One version's supporting files; empty when it has none. */
+  readFiles(slug: string, version: number): FileMap;
+  /** The bytes a file record names, or null when the store does not hold them. */
+  readBlob(slug: string, sha256: string): Uint8Array | null;
+  /** The artifact's database, whole; empty until something was written. */
+  readDb(slug: string): DbFile;
+  writeDb(slug: string, file: DbFile): void;
+  /** What the page uploaded, oldest first. */
+  listAssets(slug: string): AssetRecord[];
+  readAsset(slug: string, id: string): Uint8Array | null;
+  /** Stores an asset and indexes it; it gets a fresh id unless it brings one, as a copy does. */
+  addAsset(slug: string, input: AssetInput): AssetRecord;
+  /** False when nothing was stored under that id. */
+  removeAsset(slug: string, id: string): boolean;
   setWatched(slug: string, watched: boolean, session?: string): Manifest;
   setOwner(slug: string, session: string): Manifest;
   setPinned(slug: string, pinned: boolean): Manifest;
+  /** The user's rename: the title stays theirs across later publishes. */
+  rename(slug: string, title: string): Manifest;
   touch(slug: string): void;
   pushPending(slug: string, event: PendingEvent): void;
   takePending(slug: string, ids?: string[]): PendingEvent[];
@@ -88,25 +141,27 @@ export interface RenderInput {
   kind: SourceKind;
   /** Overrides whatever the island in the source says. */
   island?: Island | null;
-  title?: string;
-  icon?: string;
-  slug: string;
-  version: number;
-  /** The path the runtime posts to, e.g. `/a/<slug>`. */
-  endpoint: string;
 }
 
 export interface RenderedPage {
+  /** The stored document. */
   html: string;
-  title: string;
   island: Island | null;
 }
 
+/** What a source offers for a title: the one it declares, and its first heading. */
+export interface SourceTitle {
+  declared: string | null;
+  heading: string | null;
+}
+
+/** What `build` throws for a page over the size limit; anything else it throws is content it cannot store. */
+export class PageTooLarge extends Error {}
+
 export interface Renderer {
-  /** Throws when the island in the source is malformed or the page is too large. */
+  /** Throws PageTooLarge when the page is too large, and an Error when the island in the source is malformed. */
   build(input: RenderInput): RenderedPage;
-  /** The title a source carries, when it does. */
-  title(source: string, kind: SourceKind): string | null;
+  title(source: string, kind: SourceKind): SourceTitle;
 }
 
 export interface Logger {
