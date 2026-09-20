@@ -21,7 +21,10 @@
 //     the row leads with `❯`, fills the selected pill, and ends with
 //     `←/→ to navigate · Enter to open · x to dismiss`, without focus it has neither;
 //     every pill is an OSC 8 link to its tokened URL, so on pi's fullscreen screen a
-//     plain click on a pill's cells opens that page and a click elsewhere opens nothing
+//     plain click on a pill's cells opens that page and a click elsewhere opens nothing;
+//     the row is painted text pi keeps as given, so a theme switch repaints it on the
+//     next frame — colours, selection and all — and a frame under the same theme leaves
+//     it alone
 // S7: `down` on an empty prompt selects the newest pill — on a prompt with text, or
 //     with no pills, the key stays the editor's; there ←/→ move and wrap, enter
 //     opens, c copies, x dismisses, esc and ↑ hand focus back, any other key hands it
@@ -286,6 +289,7 @@ const linkOpen = (url: string) => `\x1b]8;;${url}\x1b\\`;
 interface PromptEditor {
   handleInput(data: string): void;
   getText(): string;
+  render(width: number): string[];
   onEscape?: () => void;
 }
 type EditorFactory = (tui: unknown, theme: unknown, keybindings: unknown) => PromptEditor;
@@ -294,7 +298,7 @@ async function footer(files: string[] = [], options: Parameters<typeof wire>[0] 
   let tick = Date.parse("2026-01-01T00:00:00.000Z");
   const w = wire({ now: () => new Date((tick += 1000)), ...options });
   const ui = w.ctx.ctx.ui as unknown as {
-    theme: object;
+    theme: { fg(token: string, text: string): string };
     setEditorComponent(factory?: EditorFactory): void;
   };
   // The harness theme paints nothing; marking the fill alone makes a row read as it looks.
@@ -335,6 +339,11 @@ async function footer(files: string[] = [], options: Parameters<typeof wire>[0] 
     press: (...keys: string[]) => {
       for (const key of keys) editor.handleInput(key);
     },
+    /** One draw of the screen, as pi makes after a theme switch invalidates it. */
+    frame: () => editor.render(120),
+    /** What a theme switch does: from here on the theme paints with `mark`. */
+    switchTheme: (mark: string) =>
+      Object.assign(ui.theme, { fg: (_token: string, text: string) => `${mark}${text}${mark}` }),
     interrupts: () => interrupts,
   };
 }
@@ -402,6 +411,32 @@ describe("S6 the strip", () => {
     );
     f.press(KEYS.esc);
     expect(f.row()).toBe("⧉ sunny-sixteen · bare-fragment · contract-probe · parity-audit");
+  });
+  test("S6 a theme switch repaints the row: no colour of the theme left behind", async () => {
+    const f = await footer(["plan.html", "roadmap.html"]);
+    expect(f.row()).toBe("⧉ plan · roadmap");
+    // alt+= / alt+- switch the theme: from here the same tokens paint differently.
+    f.switchTheme("~");
+    // Nothing redraws the row by itself — pi stores the string an extension painted.
+    expect(f.status()).not.toContain("~");
+    // The switch invalidates the screen; the frame that redraws the editor repaints it.
+    f.frame();
+    expect(f.row()).toBe("~⧉~ ~plan~~ · ~~roadmap~");
+    // A frame under an unchanged theme leaves the row as it stands.
+    const painted = f.status();
+    f.frame();
+    expect(f.status()).toBe(painted);
+  });
+  test("S6 a theme switch while the footer has the focus keeps the focus and the window", async () => {
+    const f = await footer([1, 2, 3, 4, 5, 6, 7].map((n) => `p${n}.html`));
+    f.press(KEYS.down, KEYS.left);
+    expect(f.row()).toBe(`❯ ⧉ +2 · p3 · p4 · p5 · [p6] · p7 · ${HINT}`);
+    f.switchTheme("~");
+    f.frame();
+    expect(f.status()).toContain("~");
+    // The row without the new theme's marks is the row it was, the selected pill
+    // still filled (its padding shows once the marks inside the fill are gone).
+    expect(f.row().replaceAll("~", "")).toBe(`❯ ⧉ +2 · p3 · p4 · p5 · [ p6 ] · p7 · ${HINT}`);
   });
   test("S6 on pi's fullscreen screen a click on a pill's cells opens that page; a click elsewhere opens nothing", async () => {
     const f = await footer(["sunny-sixteen.html", "parity-audit.html"]);

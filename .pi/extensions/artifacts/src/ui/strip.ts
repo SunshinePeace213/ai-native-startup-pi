@@ -55,6 +55,20 @@ export interface Paint {
   selected(text: string): string;
 }
 
+/**
+ * A fingerprint of what the active theme paints with: one sample character in
+ * each role the row uses, escape codes and all. A status is text pi keeps as
+ * it was handed over, so a row painted under one theme keeps that theme's
+ * colours until it is drawn again; comparing this tells the drawing apart
+ * from the recolouring. `selected` is left out on purpose — it is the accent
+ * in reverse video, so the accent already moves with it, and a theme that
+ * paints nothing (the tests') has no inverse to call.
+ */
+export function paintSignature(paint: Paint): string {
+  const sample = "·";
+  return `${paint.accent(sample)}\u0000${paint.dim(sample)}\u0000${paint.warn(sample)}`;
+}
+
 /** OSC 8: the text becomes a hyperlink; the terminal, or pi in fullscreen mode, opens it on a click. */
 const hyperlink = (url: string, text: string) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
 

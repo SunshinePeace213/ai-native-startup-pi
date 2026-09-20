@@ -601,6 +601,13 @@ never rewrite the line (D6).
   bound: it is pi's default for the editor's jump-to-character
   (`tui.editor.jumpForward`), and an extension shortcut would outrank it and
   show up as a conflict in pi's startup diagnostics (S7).
+- Themes — a status is painted text pi keeps exactly as the extension handed
+  it over, so the row would otherwise keep the colours of the theme it was
+  drawn in. Pi has no theme-change event, but every switch (`alt+=` / `alt+-`,
+  the picker and its live preview, a reloaded theme file) invalidates the
+  screen, so the editor's own draw (`editor.ts`, `onFrame`) compares what the
+  theme paints with against the row's paint and redraws the row — selection,
+  focus mark and hint included — when they differ (S6).
 - Clicks — every pill, padding included, is an OSC 8 hyperlink to the tokened
   page URL. In pi's fullscreen mode (`--tui-mode fullscreen`) pi's renderer
   hit-tests a plain left click against those links and opens the page; a click

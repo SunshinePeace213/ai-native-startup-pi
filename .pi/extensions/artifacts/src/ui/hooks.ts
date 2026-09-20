@@ -19,7 +19,10 @@
 //
 // The strip is one status text, `⧉` and the focus mark included; the soriza
 // statusline gives it the token line, and pi's default footer shows it with
-// the other statuses.
+// the other statuses. A status is painted text pi keeps as it was handed over,
+// so the row is drawn again whenever the theme's paint changes (alt+= / alt+-,
+// the picker and its preview, a reloaded theme file) — the editor's frame is
+// the signal, pi having no theme event.
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { copyToClipboard } from "@earendil-works/pi-coding-agent";
@@ -31,7 +34,7 @@ import type { Config } from "../domain/types";
 import type { Host } from "./host";
 import { ArtifactEditor } from "./editor";
 import { type Choice, Selector } from "./selector";
-import { type Paint, STRIP_KEY } from "./strip";
+import { type Paint, paintSignature, STRIP_KEY } from "./strip";
 
 export { STORE_DIR };
 
@@ -57,15 +60,36 @@ const paintFor = (ctx: ExtensionContext): Paint => ({
   selected: (t) => ctx.ui.theme.inverse(ctx.ui.theme.fg("accent", ctx.ui.theme.bold(t))),
 });
 
-/** Draws the strip into the footer and keeps it there as badges change. */
-export function bindStrip(host: Host, ctx: ExtensionContext): () => void {
-  if (!ctx.hasUI) return () => {};
+/** The strip's hold on the footer: drawn until `dispose`, repainted on `repaint`. */
+export interface StripBinding {
+  /** Draws the row again when the theme it was painted in is no longer the one in force. */
+  repaint: () => void;
+  dispose: () => void;
+}
+
+/**
+ * Draws the strip into the footer and keeps it there as badges change — and as
+ * the theme changes: a status is a painted string pi stores as given, so a row
+ * drawn under the old theme would keep its colours through a switch. `repaint`,
+ * called from the editor's frame, redraws it the moment the paint differs.
+ */
+export function bindStrip(host: Host, ctx: ExtensionContext): StripBinding {
+  if (!ctx.hasUI) return { repaint: () => {}, dispose: () => {} };
   const paint = paintFor(ctx);
+  let signature = paintSignature(paint);
   const draw = () => {
+    signature = paintSignature(paint);
     ctx.ui.setStatus(STRIP_KEY, host.strip.render(paint) || undefined);
   };
   draw();
-  return host.strip.onChange(draw);
+  const off = host.strip.onChange(draw);
+  return {
+    repaint: () => {
+      if (paintSignature(paint) === signature) return;
+      draw();
+    },
+    dispose: off,
+  };
 }
 
 export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
@@ -81,7 +105,8 @@ export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
       return;
     }
     unbind.get(ctx.cwd)?.();
-    unbind.set(ctx.cwd, bindStrip(host, ctx));
+    const strip = bindStrip(host, ctx);
+    unbind.set(ctx.cwd, strip.dispose);
     if (ctx.hasUI) {
       const selector = new Selector(host.strip, (data, key) => matchesKey(data, key as KeyId));
       ctx.ui.setEditorComponent(
@@ -92,6 +117,7 @@ export function registerHooks(pi: ExtensionAPI, deps: HookDeps): void {
             keybindings,
             selector,
             (choice) => void act(ctx, host, choice),
+            strip.repaint,
           ),
       );
     }
