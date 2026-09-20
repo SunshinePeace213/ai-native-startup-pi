@@ -111,7 +111,7 @@ export function publishLine(r: Published, open: OpenState, path: string): string
     typeLine(r.manifest),
     ...capabilityLines(r.manifest.capabilities),
     open.kind === "opened"
-      ? "Opened in the browser; the footer strip in the terminal shows the page (ctrl+] or alt+a opens the newest, and down on an empty prompt focuses the strip), so do not paste the URL."
+      ? "Opened in the browser; the footer strip in the terminal shows the page (alt+a opens the newest, and down on an empty prompt focuses the strip), so do not paste the URL."
       : open.kind === "live"
         ? "A viewer with the page open is moved to the new version in place, keeping what they had typed; the footer strip shows it."
         : open.kind === "skipped"

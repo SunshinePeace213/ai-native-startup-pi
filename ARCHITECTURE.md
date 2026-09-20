@@ -145,7 +145,7 @@ ai-native-startup/
   viewer/session/cap capabilities, the content policies, SSE hub, shell, frame and
   API routes), `render/` (the stored document: Claude Code's skeleton), `client/`,
   `process/` (probe, lock, spawn, stop), `log/` (pino). `ui/` runs inside pi:
-  `host.ts` per project per session, `hooks.ts` the lifecycle and the `ctrl+]` / `alt+a` shortcut,
+  `host.ts` per project per session, `hooks.ts` the lifecycle and the `alt+a` shortcut,
   `strip.ts` the footer badges, `selector.ts` and `editor.ts` the footer's keys and
   the editor that hands it focus on `down`, `command.ts` and `gallery.ts` `/artifacts`, `tool/` the model-facing contract — the `artifact` tool, and `artifact_data` for a page's database. `page/` is
   the runtime every page loads (`window.claude`, Claude Code's capability namespaces,

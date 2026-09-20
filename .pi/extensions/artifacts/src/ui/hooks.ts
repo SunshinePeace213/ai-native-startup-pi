@@ -11,11 +11,11 @@
 //   down              on an empty prompt: focus moves into the strip, onto the
 //                     newest pill (the Selector's keys: ←/→, enter opens, c
 //                     copies, x dismisses)
-//   ctrl+] · alt+a    open the newest page: Claude Code's key, and the one pi
-//                     had before it. ctrl+] is pi's default for the editor's
-//                     jump-to-character (tui.editor.jumpForward); an extension
-//                     shortcut outranks it, and pi lists the conflict among
-//                     its startup diagnostics.
+//   alt+a             open the newest page. Claude Code's ctrl+] is not bound
+//                     here: it is pi's default for the editor's
+//                     jump-to-character (tui.editor.jumpForward), and an
+//                     extension shortcut would outrank it and be reported as a
+//                     conflict among pi's startup diagnostics.
 //
 // The strip is one status text, `⧉` and the focus mark included; the soriza
 // statusline gives it the token line, and pi's default footer shows it with
@@ -35,7 +35,7 @@ import { type Paint, STRIP_KEY } from "./strip";
 
 export { STORE_DIR };
 
-const OPEN_SHORTCUTS = ["ctrl+]", "alt+a"] as const;
+const OPEN_SHORTCUTS = ["alt+a"] as const;
 
 export interface HookDeps {
   hostFor: (cwd: string, session: string) => Host;

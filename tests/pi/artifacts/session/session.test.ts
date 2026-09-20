@@ -25,7 +25,8 @@
 // S7: `down` on an empty prompt selects the newest pill — on a prompt with text, or
 //     with no pills, the key stays the editor's; there ←/→ move and wrap, enter
 //     opens, c copies, x dismisses, esc and ↑ hand focus back, any other key hands it
-//     back and is typed; ctrl+] and alt+a open the newest page; session_start installs
+//     back and is typed; alt+a opens the newest page (ctrl+] is left to pi's editor);
+//     session_start installs
 //     the editor that shares its focus
 // S10: a page the model authors at .pi/artifacts/<slug>/<file> publishes to that slug,
 //      beside the server's .store, and the same path republishes it
@@ -517,21 +518,22 @@ describe("S7 the footer's keys", () => {
     });
     expect(selector.active).toBe(false);
   });
-  test.each([["ctrl+]"], ["alt+a"]])("S7 %s opens the newest page", async (key) => {
+  test.each([["alt+a"]])("S7 %s opens the newest page", async (key) => {
     const f = await footer(["old.html", "new.html"]);
     const before = f.w.opened.length;
     await f.w.fake.shortcuts.get(key)?.handler(f.w.ctx.ctx);
     expect(f.w.opened.slice(before)).toEqual([f.w.host.url(f.slugs[1]!)]);
   });
-  test.each([["ctrl+]"], ["alt+a"]])(
-    "S7 %s with no pages opens nothing and says so",
-    async (key) => {
-      const f = await footer();
-      await f.w.fake.shortcuts.get(key)?.handler(f.w.ctx.ctx);
-      expect(f.w.opened).toHaveLength(0);
-      expect(f.w.ctx.notifications.some((n) => /no artifact/i.test(n.message))).toBe(true);
-    },
-  );
+  test.each([["alt+a"]])("S7 %s with no pages opens nothing and says so", async (key) => {
+    const f = await footer();
+    await f.w.fake.shortcuts.get(key)?.handler(f.w.ctx.ctx);
+    expect(f.w.opened).toHaveLength(0);
+    expect(f.w.ctx.notifications.some((n) => /no artifact/i.test(n.message))).toBe(true);
+  });
+  test("S7 ctrl+] stays pi's editor shortcut, unclaimed by the extension", async () => {
+    const f = await footer(["only.html"]);
+    expect(f.w.fake.shortcuts.has("ctrl+]")).toBe(false);
+  });
   test("S7 session_start installs the editor that shares its focus", async () => {
     const w = wire();
     expect(w.ctx.customEditor()).toBe(false);

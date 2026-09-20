@@ -12,7 +12,7 @@ panel follow Claude Code's. What differs on purpose — this machine is the
 host, there is one viewer, nothing reaches claude.ai — is listed under
 [Against Claude Code](#against-claude-code). The pages a session published sit
 in the terminal footer as pills; `down` from an empty prompt selects the newest
-and `ctrl+]` or `alt+a` opens it. Read this before publishing pages, changing
+and `alt+a` opens it. Read this before publishing pages, changing
 the extension, or writing the skills that drive it. The extension lives in
 `.pi/extensions/artifacts/`; its contract tests are `tests/pi/artifacts/`.
 
@@ -58,7 +58,7 @@ and never imported. This is pi's "directory with `index.ts`" style with a
     │   └── config.ts
     ├── ui/                  inside pi
     │   ├── host.ts          one per project per session: stream, delivery, the strip
-    │   ├── hooks.ts         session_start / session_shutdown · ctrl+] and alt+a
+    │   ├── hooks.ts         session_start / session_shutdown · alt+a
     │   ├── strip.ts         the footer row and its selection
     │   ├── selector.ts      the footer's keys · editor.ts  `down` hands it the focus
     │   ├── command.ts       /artifacts · gallery.ts  its panel and the Status tab
@@ -597,10 +597,10 @@ never rewrite the line (D6).
   and is typed (S7). It is the editor's own input handler (`editor.ts`, set
   with `setEditorComponent`), so an open picker never sees it, and `esc` in
   the footer is not pi's interrupt.
-- `ctrl+]` and `alt+a` — open the newest page: Claude Code's key, and the one
-  pi had before it. `ctrl+]` is pi's default for the editor's
-  jump-to-character; the extension's shortcut outranks it, and pi lists the
-  conflict among its startup diagnostics.
+- `alt+a` — opens the newest page. Claude Code's `ctrl+]` is deliberately not
+  bound: it is pi's default for the editor's jump-to-character
+  (`tui.editor.jumpForward`), and an extension shortcut would outrank it and
+  show up as a conflict in pi's startup diagnostics (S7).
 - Clicks — every pill, padding included, is an OSC 8 hyperlink to the tokened
   page URL. In pi's fullscreen mode (`--tui-mode fullscreen`) pi's renderer
   hit-tests a plain left click against those links and opens the page; a click
@@ -912,7 +912,7 @@ states of this code is the absence.
 | `artifact_data` | Mirrored | Claude Code's ArtifactData, action for action and name for name: `get`, `list`, `query`, `set`, `update`, `delete`, `str_replace`, `batch`; `if_version`, `file_path`, `out_dir` (A1–A6) |
 | Tool surface | Mirrored | `label`, the icon word, the title precedence, `force`, `pin`, `files` and `root` with the same limits and reserved names, the three `capabilities` gestures, `read` with `path`/`paths`, `list` with `scope`, `quickstart` with Claude Code's four intents (S12, S14–S16, S20) |
 | Update | Mirrored | Same file, same URL, within the session; another session passes the URL or attaches; a conflict names the newer version (T6, S3) |
-| Footer | Mirrored | The pill row, its focus, its keys and `ctrl+]` (S6, S7) |
+| Footer | Mirrored | The pill row, its focus and its keys; `alt+a` in place of Claude Code's `ctrl+]`, which stays pi's editor binding (S6, S7) |
 | `/artifacts` | Mirrored | The dialog's tabs with counts, its guide, notices, search and keys (G1–G11); two nouns differ, below |
 | Hosting | Different on purpose | `127.0.0.1` and a page origin per slug instead of claude.ai: no sign-in, no sharing, no public link, and no prompt before a publish |
 | Viewers | Different on purpose | One, who owns the page: `permissions` grants whatever a page is served and never prompts |
@@ -920,7 +920,7 @@ states of this code is the absence.
 | Artifact types | Different on purpose | Claude Code's types are pages hosted on claude.ai; here a type is a folder the project keeps, named by `type` — there is no `type_url` — and none ships with the extension. `quickstart` lists those folders and names the skill for a plain page (S19, S20) |
 | Tab labels | Different on purpose | **This session** — what this session published or attached — stands where Claude Code says "Created by me", with **Other sessions** beside it |
 | Delete | Different on purpose | Moves the folder to the Trash; nothing is unlinked (T4) |
-| Additions | Pi's own | The `reply` capability and `ask`; the Status tab and `w` in the panel; `alt+a` beside `ctrl+]`; the `sandbox` isolation fallback |
+| Additions | Pi's own | The `reply` capability and `ask`; the Status tab and `w` in the panel; `alt+a` instead of `ctrl+]`; the `sandbox` isolation fallback |
 | `claude.hot` | Partly served | `snapshot`, `ready`, `signal`, `restart` and `data` work; `accept` is stored and never called, and `from` / `gen` stay `null` / `0`, because a new version is always a new document here |
 | `comments` | Composer-only | The page opens the viewer's composer and writes nothing itself: every write verb rejects `not_granted` and `canSendToClaude()` answers `"off"` |
 | `artifact.edit` · `artifact.sync` | Not served | They belong to live docs, which this host does not make; both reject `capability_disabled` |
